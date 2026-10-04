@@ -1,68 +1,79 @@
-# Quadro Geral de Tarefas - Programação Dinâmica (AEDS-II)
+# Quadro de Tarefas da Equipe - Programação Dinâmica (AEDS-II)
 
-Este documento centraliza a alocação de responsabilidades, o fluxo de dependências e o status de desenvolvimento do trabalho em equipe.
-
----
-
-## 1. Matriz de Responsabilidades
-
-| Resp. | Integrante | Frente de Trabalho | Arquivo de Instruções | Depende de | Status |
-| :--- | :--- | :--- | :--- | :--- | :---: |
-| **P1** | [Nome 1] | **Relatório**: Seções 1, 2, 6, referências e montagem final | [`docs/tarefas/P1_relatorio_secoes_1_2_6.md`](tarefas/P1_relatorio_secoes_1_2_6.md) | Nenhum para iniciar; montagem final depende de todos | [ ] Em aberto |
-| **P2** | [Nome 2] | **Relatório**: Seções 3 e 4 (modelagem, pseudocódigos, TikZ, análise) | [`docs/tarefas/P2_relatorio_secoes_3_4.md`](tarefas/P2_relatorio_secoes_3_4.md) | Assinaturas dos stubs (já prontas) | [ ] Em aberto |
-| **P3** | [Nome 3] | **Código Base**: Algoritmos do Cormen em Python e validação de testes | [`docs/tarefas/P3_codigo_base.md`](tarefas/P3_codigo_base.md) | Nenhum (início imediato) | [ ] Em aberto |
-| **P4** | [Nome 4] | **Estudos de Caso & Benchmarks**: Diff, DNA, C++, medições, gráficos, Seção 5 | [`docs/tarefas/P4_estudo_de_caso_e_benchmarks.md`](tarefas/P4_estudo_de_caso_e_benchmarks.md) | **P3** (funções prontas para instrumentar) | [ ] Em aberto |
-| **P5** | [Nome 5] | **Comunicação Visual & Web**: Cheat sheet, slides (40 min) e simuladores web | [`docs/tarefas/P5_cheatsheet_slides_e_web.md`](tarefas/P5_cheatsheet_slides_e_web.md) | **P3** (código) e **P4** (dados) para partes específicas | [ ] Em aberto |
+Este documento centraliza as responsabilidades de cada integrante, as dependências de trabalho e o checklist operacional simplificado.
 
 ---
 
-## 2. Ordem Sugerida de Execução e Paralelismo
+## 1. Distribuição de Responsabilidades da Equipe
 
-```mermaid
-graph TD
-    subgraph Dia 1 - Paralelo Total
-        P1_Start[P1: Subir Overleaf, Seções 1 e 2]
-        P2_Start[P2: Pseudocódigos e Diagramas TikZ]
-        P3_Start[P3: Fibonacci, Hastes, Matrizes, LCS]
-        P5_Start[P5: Estrutura dos Slides e Cheat Sheet]
-    end
-
-    P3_Start -->|Módulos testados| P4_Bench[P4: Benchmarks E1-E7, C++, Gráficos e Seção 5]
-    P3_Start -->|Lógica algorítmica| P5_Web[P5: Simuladores Web interativos]
-    P4_Bench -->|results.json| P5_WebBench[P5: Painel web de benchmarks]
-    P2_Start -->|Tabela de complexidades| P5_Cheat[P5: Fechamento do Cheat Sheet]
-    
-    subgraph Reta Final - Integração
-        P4_Bench --> P1_Final[P1: Seção 6, Conclusões e Integração]
-        P2_Start --> P1_Final
-        P5_Start --> Ensaio[Todos: Ensaio Cronometrado 40 min]
-    end
-```
-
-### O que pode ser feito em paralelo desde o primeiro dia:
-- **P1**: Configura o Overleaf, escreve a introdução em funil e a fundamentação teórica formal.
-- **P2**: Escreve os pseudocódigos em `algorithm2e`, desenha os diagramas TikZ e deduz as análises assintóticas formais.
-- **P3**: Implementa os algoritmos de referência módulo a módulo (`fibonacci` $\to$ `rod_cutting` $\to$ `matrix_chain` $\to$ `lcs`), fazendo push assim que cada um passar nos testes.
-- **P5**: Estrutura a apresentação de slides (seguindo [`ROTEIRO_SLIDES.md`](ROTEIRO_SLIDES.md)), monta a estrutura do cheat sheet e inicia as interfaces web que não dependem de dados reais (`fib-tree.html`, `rod-cutting-duel.html`, `quiz.html`).
-
-### O que espera outra pessoa:
-- **P4** depende de **P3** para ter as funções prontas para rodar os benchmarks (`benchmarks/run_benchmarks.py`). *Enquanto P3 implementa, P4 pode adiantar os estudos de caso (`diff_tool.py`, `dna_alignment.py`) e a compilação de `cpp/lcs.cpp`*.
-- **P5** depende dos dados consolidados de **P4** (`web/data/results.json`) para ligar o gráfico interativo de `web/benchmarks.html`.
-- **P1** depende das seções de **P2** e **P4** para a revisão final cruzada e montagem do PDF definitivo.
-
-> [!TIP]
-> **Colaboração Ágil:** A divisão de tarefas é uma referência organizada. Se você concluir sua parte antes dos demais, apoie os colegas com maior sobrecarga de implementação (normalmente **P5** com os simuladores web ou **P4** com as medições e gráficos).
+| Integrante | Papel Principal | Frentes de Trabalho |
+| :--- | :--- | :--- |
+| **João Gabriel** | **Relatório Técnico Completo & Coordenação** | Redação integral das Seções 1 a 6 em LaTeX no Overleaf (introdução, fundamentação, pseudocódigos `algorithm2e`, TikZ, análise assintótica, interpretação dos resultados de Alisson e conclusões). |
+| **João Pedro** | **Códigos de Referência (Python & C++)** | Implementação das 4 versões de Fibonacci, Corte de Hastes, Cadeia de Matrizes, LCS, estudos de caso (Diff e DNA) e o binário C++17 (`cpp/lcs.cpp`). |
+| **Alisson** | **Benchmarks, Resultados & Web** | Execução dos benchmarks empíricos (E1 a E8), geração dos gráficos a 200 DPI, criação das páginas web interativas em `web/` e documentação de resultados no `README.md`. |
+| **Carlos** | **Apresentação & Slides (40 min)** | Construção dos slides do seminário (Google Slides, PowerPoint, Canva ou Beamer) seguindo o roteiro de 5 blocos e as dinâmicas interativas da aula. |
+| **Paulo** | **Cheat Sheet & Apoio Web** | Elaboração do Cheat Sheet de 1 a 2 páginas em LaTeX (`cheatsheet/`) e auxílio para Alisson no desenvolvimento do portal web interativo. |
 
 ---
 
-## 3. Onde Entra a Multiplicação em Cadeia de Matrizes?
+## 2. Checklist por Integrante
 
-A **Cadeia de Matrizes** (Cormen Seção 15.2) é um pilar obrigatório do projeto e perpassa todas as frentes de trabalho:
-- **P3**: Implementação de `matrix_chain_naive`, `matrix_chain_memo`, `matrix_chain_order`, `optimal_parens` e `count_parenthesizations` em `src/matrix_chain.py`.
-- **P4**: Experimento **E7** (tempo da PD vs. crescimento combinatório dos números de Catalan).
-- **P2**: Pseudocódigos de `Matrix-Chain-Order` e `Print-Optimal-Parens`, diagrama TikZ das tabelas $m$ e $s$ e análise assintótica $\Theta(n^3)$ tempo e $\Theta(n^2)$ espaço.
-- **P1**: Fundamentação da explosão combinatória dos números de Catalan $C(n-1) = \Omega(4^n / n^{3/2})$.
-- **P5**: Bloco dedicado no seminário (dinâmica com a turma) e simulador interativo em `web/matrix-chain.html`.
+### João Pedro (Código Base em Python e C++)
+* [ ] Implementar `src/fibonacci.py` (Naive, Memo, Bottom-Up, $O(1)$ Espaço).
+* [ ] Implementar `src/rod_cutting.py` (Corte de Hastes, Reconstrução e Heurística Gulosa).
+* [ ] Implementar `src/matrix_chain.py` (Multiplicação em Cadeia de Matrizes, Parentização Ótima e Catalan).
+* [ ] Implementar `src/lcs.py` (Subsequência Comum Máxima, Traceback, Otimização de duas linhas e Formatação).
+* [ ] Apoiar nos estudos de caso: `src/case_study/diff_tool.py` e `src/case_study/dna_alignment.py`.
+* [ ] Implementar o algoritmo LCS Bottom-Up em C++17 em `cpp/lcs.cpp` (compilável via `make cpp`).
+* [ ] Garantir que `make test` passe em todos os testes unitários sem `SKIPPED`.
 
-Consulte o documento completo com fundamentação, tabelas e dinâmica em:
-👉 [`docs/tarefas/EXTRA_cadeia_de_matrizes.md`](tarefas/EXTRA_cadeia_de_matrizes.md)
+### Alisson (Benchmarks, Resultados e Web)
+* [ ] Implementar o runner científico `benchmarks/run_benchmarks.py` (mediana de 5 execuções, semente fixa e `tracemalloc`).
+* [ ] Executar os experimentos empíricos E1 a E7 (E8 opcional), gerando os dados em `benchmarks/results/` e o consolidado `web/data/results.json`.
+* [ ] Gerar os gráficos padronizados em 200 DPI com `benchmarks/plot_results.py` em `docs/figures/`.
+* [ ] Programar as páginas interativas em `web/`:
+  - `web/fib-tree.html` (árvore com slider e memoização).
+  - `web/rod-cutting-duel.html` (comparativo guloso vs. PD com tabela editável).
+  - `web/matrix-chain.html` (preenchimento por diagonais das tabelas $m$ e $s$).
+  - `web/lcs-table.html` (matriz animada com setas de traceback).
+  - `web/benchmarks.html` (gráficos interativos lendo `data/results.json`).
+  - `web/quiz.html` (quiz conceitual de 8 perguntas).
+* [ ] Atualizar o `README.md` raiz com os dados e conclusões de benchmark obtidos.
+
+### Carlos (Slides e Seminário)
+* [ ] Consultar o roteiro minuto a minuto em [`docs/ROTEIRO_SLIDES.md`](ROTEIRO_SLIDES.md).
+* [ ] Estruturar a apresentação em 5 blocos bem definidos (0 a 7 min, 7 a 18 min, 18 a 25 min, 25 a 33 min, 33 a 40 min).
+* [ ] Incorporar as dinâmicas interativas recomendadas (aposta do Fibonacci, problema do corte de barra, voluntários multiplicando matrizes).
+* [ ] Alinhar com o grupo quem fala em cada bloco e guardar o arquivo final e o PDF em `slides/`.
+
+### Paulo (Cheat Sheet e Apoio Web)
+* [ ] Preencher os 4 blocos obrigatórios em `cheatsheet/cheatsheet_body.tex`:
+  - 1. Definição essencial em uma frase.
+  - 2. Diagrama de decisão em TikZ ("Quando utilizar esta abordagem?").
+  - 3. Tabela comparativa de complexidades de tempo e espaço.
+  - 4. Padrões de pseudocódigo Top-Down vs. Bottom-Up.
+* [ ] Conferir que `cheatsheet/cheatsheet.tex` compila perfeitamente em 1 a 2 páginas.
+* [ ] Auxiliar Alisson no desenvolvimento do front-end das páginas interativas em `web/`.
+
+### João Gabriel (Relatório Técnico Completo e Coordenação Geral)
+* [ ] Subir o projeto no Overleaf e conferir a compilação de `relatorio/main.tex`.
+* [ ] Redigir Seção 1 (Introdução em modelo funil).
+* [ ] Redigir Seção 2 (Fundamentação teórica formal, prova de cortar e colar, superposição de subproblemas e números de Catalan).
+* [ ] Redigir Seção 3 (Modelagem algorítmica em `algorithm2e` e diagramas em TikZ).
+* [ ] Redigir Seção 4 (Análise assintótica rigorosa com $O, \Omega, \Theta$).
+* [ ] Redigir Seção 5 (Estudos de caso reais e análise dos gráficos gerados por Alisson).
+* [ ] Redigir Seção 6 (Conclusões, limitações da técnica, mochila pseudo-polinomial e problemas NP-difíceis).
+* [ ] Coordenar a revisão final cruzada antes da entrega e da apresentação.
+
+---
+
+## 3. Resumo Teórico da Cadeia de Matrizes (Cormen 15.2)
+
+* **O Problema:** Dadas $n$ matrizes com dimensões `dims = [p0, p1, ..., pn]`, encontrar a parentização que minimiza o número de multiplicações escalares.
+* **Recorrência:** 
+  $$m[i, i] = 0$$
+  $$m[i, j] = \min_{i \le k < j} \{ m[i, k] + m[k+1, j] + p_{i-1} \cdot p_k \cdot p_j \}$$
+* **Ordem de Preenchimento:** Por diagonais sucessivas (comprimento de subcadeia $l = 2 \dots n$), e não linha a linha.
+* **Explosão de Catalan:** $n$ matrizes possuem $P(n) = C(n-1) = \frac{1}{n}\binom{2n-2}{n-1}$ parentizações possíveis, crescendo como $\Omega(4^n / n^{3/2})$. Para 6 matrizes são 42; para 15 são mais de 2,6 milhões.
+* **Complexidade:** Tempo $\Theta(n^3)$ e Espaço $\Theta(n^2)$.
+* **Instância Oficial do Cormen:** `dims = [30, 35, 15, 5, 10, 20, 25]` (6 matrizes) $\to$ custo mínimo **15.125** multiplicações e parentização ótima `((A1(A2A3))((A4A5)A6))`.

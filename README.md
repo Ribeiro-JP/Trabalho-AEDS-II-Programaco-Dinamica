@@ -14,13 +14,15 @@ Repositório público com a prova de conceito, suíte de experimentos empíricos
 
 ### Equipe de Desenvolvimento
 
-| Integrante | Papel Principal | Documento de Tarefa |
+| Integrante | Papel Principal | Foco no Projeto |
 | :--- | :--- | :--- |
-| **[Nome do Integrante 1]** | Relatório: Seções 1, 2, 6 e Coordenação Editorial | [`docs/tarefas/P1_relatorio_secoes_1_2_6.md`](docs/tarefas/P1_relatorio_secoes_1_2_6.md) |
-| **[Nome do Integrante 2]** | Relatório: Seções 3, 4, Pseudocódigos e Diagramas TikZ | [`docs/tarefas/P2_relatorio_secoes_3_4.md`](docs/tarefas/P2_relatorio_secoes_3_4.md) |
-| **[Nome do Integrante 3]** | Implementação do Código Base em Python | [`docs/tarefas/P3_codigo_base.md`](docs/tarefas/P3_codigo_base.md) |
-| **[Nome do Integrante 4]** | Estudos de Caso, Benchmarks, Gráficos e C++ | [`docs/tarefas/P4_estudo_de_caso_e_benchmarks.md`](docs/tarefas/P4_estudo_de_caso_e_benchmarks.md) |
-| **[Nome do Integrante 5]** | Cheat Sheet, Slides do Seminário e Simuladores Web | [`docs/tarefas/P5_cheatsheet_slides_e_web.md`](docs/tarefas/P5_cheatsheet_slides_e_web.md) |
+| **João Gabriel** | Relatório Técnico Completo & Coordenação | Redação integral em LaTeX (Caps. 1 a 6) e coordenação geral |
+| **João Pedro** | Códigos de Referência (Python & C++) | Algoritmos do Cormen, estudos de caso e `cpp/lcs.cpp` |
+| **Alisson** | Benchmarks, Resultados & Web | Medições empíricas, gráficos a 200 DPI e portal web |
+| **Carlos** | Apresentação e Slides do Seminário | Slides da apresentação de 40 min e dinâmicas de sala |
+| **Paulo** | Cheat Sheet & Apoio Web | Resumo conciso de 1 a 2 páginas e auxílio no front-end web |
+
+Consulte o checklist detalhado de cada membro em: 👉 [`docs/TAREFAS.md`](docs/TAREFAS.md).
 
 ---
 
