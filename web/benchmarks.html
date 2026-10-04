@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Resultados de Benchmarks | Programação Dinâmica</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="navbar">
+    <a href="index.html" class="nav-brand">
+      <span>⚡</span> Programação Dinâmica
+    </a>
+    <div class="nav-actions">
+      <button class="theme-toggle-btn" onclick="toggleTheme()" aria-label="Alternar tema">
+        🌓 Tema
+      </button>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="construction-banner">
+      <span class="construction-badge">Em construção (responsável: P5)</span>
+      <h1 class="construction-title">Visualizador de Resultados de Benchmarks</h1>
+      <p class="construction-text">
+        Esta página renderizará os gráficos interativos dos experimentos empíricos (E1 a E8) utilizando dados
+        gerados por P4 e salvos em <code>data/results.json</code>, exibindo curvas de tempo de execução, contagem
+        de chamadas, consumo de memória e comparações de linguagem.
+      </p>
+      <!-- TODO(P5): ver docs/tarefas/P5_cheatsheet_slides_e_web.md para integração com Chart.js via CDN cdnjs -->
+      <a href="index.html" class="btn-back">&larr; Voltar ao Menu Principal</a>
+    </div>
+  </main>
+
+  <footer>
+    <p>CEFET-MG • AEDS-II • Prof. Michel Pires da Silva</p>
+  </footer>
+
+  <script src="js/shared.js"></script>
+</body>
+</html>
