@@ -1,0 +1,7 @@
+Algoritmos e Estruturas de Dados II
+Tema: Programacao Dinamica
+Estudo de caso: comparador de arquivos texto (diff)
+Subsequencia Comum Maxima
+Linha compartilhada entre versoes
+Linha modificada na versao A
+Fim do arquivo
