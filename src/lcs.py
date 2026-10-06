@@ -32,7 +32,21 @@ def lcs_naive(x: str, y: str, counter: CallCounter | None = None) -> int:
     Returns:
         O comprimento da maior subsequência comum.
     """
-    raise NotImplementedError("TODO(P3): Implementar lcs_naive")
+
+    def resolver(i: int, j: int) -> int:
+        # Resolve o subproblema LCS(x[:i], y[:j]).
+        if counter is not None:
+            counter.increment()
+
+        if i == 0 or j == 0:
+            return 0
+
+        if x[i - 1] == y[j - 1]:
+            return resolver(i - 1, j - 1) + 1
+
+        return max(resolver(i - 1, j), resolver(i, j - 1))
+
+    return resolver(len(x), len(y))
 
 
 def lcs_memo(x: str, y: str) -> int:
@@ -49,7 +63,23 @@ def lcs_memo(x: str, y: str) -> int:
     Returns:
         O comprimento da maior subsequência comum.
     """
-    raise NotImplementedError("TODO(P3): Implementar lcs_memo")
+    memory: dict[tuple[int, int], int] = {}
+
+    def resolver(i: int, j: int) -> int:
+        if i == 0 or j == 0:
+            return 0
+
+        if (i, j) in memory:
+            return memory[(i, j)]
+
+        if x[i - 1] == y[j - 1]:
+            memory[(i, j)] = resolver(i - 1, j - 1) + 1
+        else:
+            memory[(i, j)] = max(resolver(i - 1, j), resolver(i, j - 1))
+
+        return memory[(i, j)]
+
+    return resolver(len(x), len(y))
 
 
 def lcs_table(x: str, y: str) -> tuple[list[list[int]], list[list[str]]]:
@@ -68,7 +98,24 @@ def lcs_table(x: str, y: str) -> tuple[list[list[int]], list[list[str]]]:
             - c: Matriz (m+1) x (n+1) de comprimentos acumulados.
             - b: Matriz (m+1) x (n+1) de direções de traceback ('diag', 'up', 'left').
     """
-    raise NotImplementedError("TODO(P3): Implementar lcs_table")
+    m, n = len(x), len(y)
+
+    c = [[0] * (n + 1) for _ in range(m + 1)]
+    b = [[""] * (n + 1) for _ in range(m + 1)]
+
+    for i in range(1, m + 1):
+        for j in range(1, n + 1):
+            if x[i - 1] == y[j - 1]:
+                c[i][j] = c[i - 1][j - 1] + 1
+                b[i][j] = "diag"
+            elif c[i - 1][j] >= c[i][j - 1]:
+                c[i][j] = c[i - 1][j]
+                b[i][j] = "up"
+            else:
+                c[i][j] = c[i][j - 1]
+                b[i][j] = "left"
+
+    return c, b
 
 
 def lcs_string(x: str, y: str) -> str:
@@ -88,7 +135,23 @@ def lcs_string(x: str, y: str) -> str:
     Returns:
         Uma string contendo os caracteres da LCS encontrada.
     """
-    raise NotImplementedError("TODO(P3): Implementar lcs_string")
+    _, b = lcs_table(x, y)
+
+    i, j = len(x), len(y)
+    caracteres = []
+
+    while i > 0 and j > 0:
+        if b[i][j] == "diag":
+            caracteres.append(x[i - 1])
+            i -= 1
+            j -= 1
+        elif b[i][j] == "up":
+            i -= 1
+        else:
+            j -= 1
+
+    # O traceback percorre do fim para o início, então inverte o resultado.
+    return "".join(reversed(caracteres))
 
 
 def lcs_length_two_rows(x: str, y: str) -> int:
@@ -108,7 +171,24 @@ def lcs_length_two_rows(x: str, y: str) -> int:
     Returns:
         O comprimento da maior subsequência comum.
     """
-    raise NotImplementedError("TODO(P3): Implementar lcs_length_two_rows")
+    # A LCS é simétrica: garante que y seja a menor cadeia (largura das linhas).
+    if len(y) > len(x):
+        x, y = y, x
+
+    anterior = [0] * (len(y) + 1)
+
+    for i in range(1, len(x) + 1):
+        atual = [0] * (len(y) + 1)
+
+        for j in range(1, len(y) + 1):
+            if x[i - 1] == y[j - 1]:
+                atual[j] = anterior[j - 1] + 1
+            else:
+                atual[j] = max(anterior[j], atual[j - 1])
+
+        anterior = atual
+
+    return anterior[len(y)]
 
 
 def format_table(c: list[list[int]], x: str, y: str) -> str:
@@ -122,4 +202,15 @@ def format_table(c: list[list[int]], x: str, y: str) -> str:
     Returns:
         String contendo a tabela tabulada com cabeçalhos de linhas e colunas.
     """
-    raise NotImplementedError("TODO(P3): Implementar format_table")
+    largura = max(len(str(valor)) for linha in c for valor in linha)
+
+    cabecalho_colunas = ["ε"] + list(y)
+    rotulos_linhas = ["ε"] + list(x)
+
+    linhas = ["  " + " ".join(rotulo.rjust(largura) for rotulo in cabecalho_colunas)]
+
+    for rotulo, linha in zip(rotulos_linhas, c):
+        valores = " ".join(str(valor).rjust(largura) for valor in linha)
+        linhas.append(f"{rotulo} {valores}")
+
+    return "\n".join(linhas)
