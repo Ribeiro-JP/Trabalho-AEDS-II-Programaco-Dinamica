@@ -10,7 +10,7 @@ Recorrência fundamental:
 
 from __future__ import annotations
 
-from src.common import CallCounter
+from .common import CallCounter
 
 # Preços de referência do livro do Cormen (índice 0 é 0 para alinhar com o tamanho)
 PRICES_CORMEN: list[int] = [0, 1, 5, 8, 9, 10, 17, 17, 20, 24, 30]

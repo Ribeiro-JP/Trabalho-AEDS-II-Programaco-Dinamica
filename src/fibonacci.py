@@ -14,7 +14,7 @@ Recorrência:
 
 from __future__ import annotations
 
-from src.common import CallCounter
+from .common import CallCounter
 
 
 def fib_naive(n: int, counter: CallCounter | None = None) -> int:

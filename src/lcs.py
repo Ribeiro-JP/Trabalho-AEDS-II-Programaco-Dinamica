@@ -14,7 +14,7 @@ para a reconstrução da solução ótima.
 
 from __future__ import annotations
 
-from src.common import CallCounter
+from .common import CallCounter
 
 
 def lcs_naive(x: str, y: str, counter: CallCounter | None = None) -> int:

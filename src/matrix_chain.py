@@ -13,7 +13,7 @@ A tabela auxiliar s[i, j] registra o índice k que produziu o custo mínimo para
 
 from __future__ import annotations
 
-from src.common import CallCounter
+from .common import CallCounter
 
 
 def matrix_chain_naive(dims: list[int], counter: CallCounter | None = None) -> int:
