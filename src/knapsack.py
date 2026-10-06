@@ -33,7 +33,38 @@ def knapsack_01(
     Returns:
         Tupla (valor_maximo, indices_itens_selecionados).
     """
-    raise NotImplementedError("TODO(P3): Implementar knapsack_01")
+    n = len(weights)
+    # Inicializa a matriz DP com zeros (n + 1 linhas por W + 1 colunas)
+    dp = [[0] * (W + 1) for _ in range(n + 1)]
+
+    # Preenche a matriz DP de forma bottom-up
+    for i in range(1, n + 1):
+        # weights e values são 0-indexed no Python, então acessamos com i - 1
+        w_i = weights[i - 1]
+        v_i = values[i - 1]
+        
+        for w in range(W + 1):
+            if w_i > w:
+                dp[i][w] = dp[i - 1][w]
+            else:
+                dp[i][w] = max(dp[i - 1][w], dp[i - 1][w - w_i] + v_i)
+
+    # O valor máximo estará na última célula da matriz
+    max_value = dp[n][W]
+
+    # Rastreia os itens que foram selecionados (backtracking)
+    selected_items = []
+    w = W
+    for i in range(n, 0, -1):
+        # Se o valor mudou em relação à linha anterior, o item i-1 foi incluído
+        if dp[i][w] != dp[i - 1][w]:
+            selected_items.append(i - 1)
+            w -= weights[i - 1]
+
+    # Inverte a lista para retornar os índices em ordem crescente
+    selected_items.reverse()
+
+    return max_value, selected_items
 
 
 def knapsack_one_row(weights: list[int], values: list[int], W: int) -> int:
@@ -54,4 +85,13 @@ def knapsack_one_row(weights: list[int], values: list[int], W: int) -> int:
     Returns:
         O valor máximo total atingível.
     """
-    raise NotImplementedError("TODO(P3): Implementar knapsack_one_row")
+    # Inicializa o vetor linha com zeros
+    dp = [0] * (W + 1)
+
+    for w_i, v_i in zip(weights, values):
+        # Itera de trás para frente até o peso do item atual
+        for w in range(W, w_i - 1, -1):
+            dp[w] = max(dp[w], dp[w - w_i] + v_i)
+
+    return dp[W]
+
