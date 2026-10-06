@@ -31,10 +31,23 @@ def cut_rod_naive(p: list[int], n: int, counter: CallCounter | None = None) -> i
     Returns:
         A receita máxima obtida para uma haste de tamanho n.
     """
-    raise NotImplementedError("TODO(P3): Implementar cut_rod_naive")
+    if counter is not None:
+        counter.increment()
+
+    if n == 0:
+        return 0
+
+    max_revenue = -float('inf')
+
+    for i in range(1, n + 1):
+        revenue = p[i] + cut_rod_naive(p, n - i, counter)
+        if revenue > max_revenue:
+            max_revenue = revenue
+
+    return int(max_revenue)
 
 
-def cut_rod_memo(p: list[int], n: int, counter: CallCounter | None = None) -> int:
+def cut_rod_memo(p: list[int], n: int, counter: CallCounter | None = None, memory: dict | None = None) -> int:
     """Resolve o corte de haste com recursão e memoização (Top-Down).
 
     Guarda os valores ótimos r[0..n] em um vetor de resultados conhecidos.
@@ -48,10 +61,34 @@ def cut_rod_memo(p: list[int], n: int, counter: CallCounter | None = None) -> in
         n: Comprimento total da haste inicial.
         counter: Instância opcional de CallCounter para registrar invocações.
 
+        memory: Guarda os valores para evitar recalcular.
+
     Returns:
         A receita máxima obtida para uma haste de tamanho n.
     """
-    raise NotImplementedError("TODO(P3): Implementar cut_rod_memo")
+
+    if memory is None:
+        memory = {}
+
+    if counter is not None:
+        counter.increment()
+
+    if n in memory:
+        return memory[n]
+
+    if n == 0:
+        return 0
+
+    max_revenue = -float('inf')
+    
+    for i in range(1, n + 1):
+        
+        revenue_atual = p[i] + cut_rod_memo(p, n - i, counter, memory)
+        if revenue_atual > max_revenue:
+            max_revenue = revenue_atual
+            
+    memory[n] = int(max_revenue)
+    return memory[n]
 
 
 def cut_rod_bottom_up(p: list[int], n: int) -> int:
@@ -70,7 +107,21 @@ def cut_rod_bottom_up(p: list[int], n: int) -> int:
     Returns:
         A receita máxima obtida para uma haste de tamanho n.
     """
-    raise NotImplementedError("TODO(P3): Implementar cut_rod_bottom_up")
+
+    tabela = [0] * (n + 1)
+
+    for j in range(1, n + 1):
+        max_revenue = -float('inf')
+        
+        for i in range(1, j + 1):
+            revenue_atual = p[i] + tabela[j - i]
+            
+            if revenue_atual > max_revenue:
+                max_revenue = revenue_atual
+                
+        tabela[j] = int(max_revenue)
+        
+    return tabela[n]
 
 
 def cut_rod_extended(p: list[int], n: int) -> tuple[int, list[int]]:
@@ -91,7 +142,23 @@ def cut_rod_extended(p: list[int], n: int) -> tuple[int, list[int]]:
         Uma tupla (receita_maxima, s), onde s[j] é o tamanho do primeiro corte ótimo
         para uma haste de comprimento j.
     """
-    raise NotImplementedError("TODO(P3): Implementar cut_rod_extended")
+
+    r = [0] * (n + 1)
+    s = [0] * (n + 1)
+
+    for j in range(1, n + 1):
+        max_revenue = -float('inf')
+        
+        for i in range(1, j + 1):
+            revenue_atual = p[i] + r[j - i]
+            
+            if revenue_atual > max_revenue:
+                max_revenue = revenue_atual
+                s[j] = i
+                
+        r[j] = int(max_revenue)
+        
+    return r[n], s
 
 
 def reconstruct_cuts(s: list[int], n: int) -> list[int]:
@@ -104,8 +171,19 @@ def reconstruct_cuts(s: list[int], n: int) -> list[int]:
     Returns:
         Lista com os comprimentos de cada pedaço cortado na solução ótima.
     """
-    raise NotImplementedError("TODO(P3): Implementar reconstruct_cuts")
 
+    pedacos = []
+    
+    # Enquanto ainda houver haste restante para ser cortada
+    while n > 0:
+        # s[n] nos diz o tamanho do pedaço ótimo a ser retirado de uma haste de tamanho n
+        first_piece = s[n]
+        pedacos.append(first_piece)
+        
+        # Subtrai o pedaço cortado do comprimento atual da haste
+        n -= first_piece
+        
+    return pedacos
 
 def cut_rod_greedy_ratio(p: list[int], n: int) -> tuple[int, list[int]]:
     """Heurística gulosa para o corte de hastes baseada na razão densidade de valor (p[i] / i).
@@ -125,4 +203,24 @@ def cut_rod_greedy_ratio(p: list[int], n: int) -> tuple[int, list[int]]:
     Returns:
         Tupla (receita_obtida, pedacos_escolhidos).
     """
-    raise NotImplementedError("TODO(P3): Implementar cut_rod_greedy_ratio")
+    if n == 0:
+        return 0, []
+
+    razoes = []
+    for i in range(1, len(p)):
+        razao = p[i] / i
+        razoes.append((razao, i))
+
+    razoes.sort(reverse=True, key=lambda x: x[0])
+
+    revenue = 0
+    pedacos = []
+    remaining_length = n
+
+    for razao, tamanho in razoes:
+        while remaining_length >= tamanho:
+            revenue += p[tamanho]
+            pedacos.append(tamanho)
+            remaining_length -= tamanho
+
+    return revenue, pedacos
