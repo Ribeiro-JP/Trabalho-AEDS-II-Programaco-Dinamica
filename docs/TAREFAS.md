@@ -21,7 +21,8 @@ Este documento centraliza as responsabilidades de cada integrante, as dependênc
 ### João Pedro (Código Base em Python e C++)
 * [X] Implementar `src/fibonacci.py` (Naive, Memo, Bottom-Up, $O(1)$ Espaço).
 * [X] Implementar `src/rod_cutting.py` (Corte de Hastes, Reconstrução e Heurística Gulosa).
-* [ ] Implementar `src/matrix_chain.py` (Multiplicação em Cadeia de Matrizes, Parentização Ótima e Catalan).
+* [X] Implementar `src/matrix_chain.py` (Multiplicação em Cadeia de Matrizes, Parentização Ótima e Catalan).
+* [ ] Implementar `src/knapsack.py` (01 e one row).
 * [ ] Implementar `src/lcs.py` (Subsequência Comum Máxima, Traceback, Otimização de duas linhas e Formatação).
 * [ ] Apoiar nos estudos de caso: `src/case_study/diff_tool.py` e `src/case_study/dna_alignment.py`.
 * [ ] Implementar o algoritmo LCS Bottom-Up em C++17 em `cpp/lcs.cpp` (compilável via `make cpp`).
