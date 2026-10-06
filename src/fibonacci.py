@@ -31,10 +31,16 @@ def fib_naive(n: int, counter: CallCounter | None = None) -> int:
     Returns:
         O valor do n-ésimo termo de Fibonacci.
     """
-    raise NotImplementedError("TODO(P3): Implementar fib_naive")
+    if counter is not None:
+        counter.increment()
+
+    if n <= 1:
+        return n
+
+    return fib_naive(n - 1, counter) + fib_naive(n - 2, counter)
 
 
-def fib_memo(n: int, counter: CallCounter | None = None) -> int:
+def fib_memo(n: int, counter: CallCounter | None = None, memory: dict | None = None) -> int:
     """Calcula o n-ésimo termo de Fibonacci com recursão e memoização (Top-Down).
 
     Evita recalcular subproblemas já resolvidos consultando uma tabela de cache.
@@ -47,11 +53,28 @@ def fib_memo(n: int, counter: CallCounter | None = None) -> int:
         n: Índice do termo desejado na sequência de Fibonacci (n >= 0).
         counter: Instância opcional de CallCounter para registrar invocações.
 
+        memory: Dicionario responsavel por guardar os valores.
+
     Returns:
         O valor do n-ésimo termo de Fibonacci.
     """
-    raise NotImplementedError("TODO(P3): Implementar fib_memo")
+    if memory is None:
+        memory = {}
 
+    if counter is not None:
+            counter.increment()
+
+    if n in memory:
+         return memory[n]
+
+    if n <= 1:
+            return n
+
+    memory[n] = fib_memo(n - 1,counter, memory) + fib_memo(n - 2, counter, memory)
+    
+    return memory[n]
+    
+    
 
 def fib_bottom_up(n: int) -> int:
     """Calcula o n-ésimo termo de Fibonacci iterativamente (Bottom-Up).
@@ -68,8 +91,18 @@ def fib_bottom_up(n: int) -> int:
     Returns:
         O valor do n-ésimo termo de Fibonacci.
     """
-    raise NotImplementedError("TODO(P3): Implementar fib_bottom_up")
+    if n <= 1:
+        return n
 
+    tabela = [0] * (n + 1)
+
+    tabela[0] = 0
+    tabela[1] = 1
+
+    for i in range(2, n + 1):
+        tabela[i] = tabela[i - 1] + tabela[i - 2]
+        
+    return tabela[n]
 
 def fib_o1_space(n: int) -> int:
     """Calcula o n-ésimo termo de Fibonacci com espaço constante O(1).
@@ -87,4 +120,10 @@ def fib_o1_space(n: int) -> int:
     Returns:
         O valor do n-ésimo termo de Fibonacci.
     """
-    raise NotImplementedError("TODO(P3): Implementar fib_o1_space")
+
+    a, b = 0, 1
+
+    for _ in range(2, n + 1):
+        a, b = b, a + b
+
+    return b
