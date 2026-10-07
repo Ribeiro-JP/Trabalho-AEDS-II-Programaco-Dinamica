@@ -3,39 +3,768 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Quiz de Programação Dinâmica | AEDS-II CEFET-MG</title>
+  <title>Quiz de Programação Dinâmica — PD LAB</title>
+  <meta name="description" content="Avaliação formativa conceitual de Programação Dinâmica com 8 questões interativas, feedback imediato e diagnóstico de tópicos.">
+  <script>
+    (function() {
+      try {
+        var saved = localStorage.getItem('pdlab_theme');
+        if (saved) {
+          var theme = JSON.parse(saved);
+          if (theme === 'dark' || theme === 'light') {
+            document.documentElement.setAttribute('data-theme', theme);
+          }
+        } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+      } catch (e) {}
+    })();
+  </script>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <header class="navbar">
-    <a href="index.html" class="nav-brand">
-      <span>⚡</span> Programação Dinâmica
-    </a>
-    <div class="nav-actions">
-      <button class="theme-toggle-btn" onclick="toggleTheme()" aria-label="Alternar tema">
-        🌓 Tema
-      </button>
+
+  <!-- CABEÇALHO GLOBAL -->
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="index.html" class="logo-area" aria-label="PD LAB - Início">
+        <span class="logo-mark">PD</span>
+        <span class="logo-title">PD LAB</span>
+        <span class="logo-subtitle">Laboratório de Algoritmos</span>
+      </a>
+
+      <nav class="site-nav" aria-label="Navegação principal">
+        <ul class="nav-list">
+          <li>
+            <a href="index.html" class="nav-link">Início</a>
+          </li>
+          <li class="nav-dropdown">
+            <button type="button" class="nav-link nav-dropdown-toggle" aria-expanded="false" aria-haspopup="true">
+              Experimentos
+            </button>
+            <ul class="nav-dropdown-menu" role="menu">
+              <li class="dropdown-item" role="none">
+                <a href="fib-tree.html" role="menuitem">
+                  <span>01. Fibonacci</span>
+                  <span class="dropdown-code">Árvore / Memo</span>
+                </a>
+              </li>
+              <li class="dropdown-item" role="none">
+                <a href="lcs-table.html" role="menuitem">
+                  <span>02. LCS</span>
+                  <span class="dropdown-code">Tabela 2D</span>
+                </a>
+              </li>
+              <li class="dropdown-item" role="none">
+                <a href="rod-cutting-duel.html" role="menuitem">
+                  <span>03. Rod Cutting</span>
+                  <span class="dropdown-code">PD vs Guloso</span>
+                </a>
+              </li>
+              <li class="dropdown-item" role="none">
+                <a href="matrix-chain.html" role="menuitem">
+                  <span>04. Matrix Chain</span>
+                  <span class="dropdown-code">Parentização</span>
+                </a>
+              </li>
+            </ul>
+          </li>
+          <li>
+            <a href="benchmarks.html" class="nav-link">Benchmarks</a>
+          </li>
+          <li>
+            <a href="quiz.html" class="nav-link active" aria-current="page">Quiz</a>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="header-actions">
+        <button type="button" class="theme-toggle-btn" data-action="toggle-theme" aria-label="Alternar tema claro/escuro" title="Alternar tema">
+          ☾
+        </button>
+        <button type="button" class="mobile-nav-toggle" aria-label="Abrir menu de navegação" aria-expanded="false">
+          ☰
+        </button>
+      </div>
     </div>
   </header>
 
-  <main class="container">
-    <div class="construction-banner">
-      <span class="construction-badge">Em construção (responsável: P5)</span>
-      <h1 class="construction-title">Quiz Interativo de Programação Dinâmica</h1>
-      <p class="construction-text">
-        Esta página conterá um quiz com 8 questões conceituais cobrindo subestrutura ótima, superposição de
-        subproblemas, os 4 passos do Cormen, memoização x bottom-up, problemas onde a técnica falha e
-        complexidades assintóticas, fornecendo pontuação imediata e explicações didáticas.
-      </p>
-      <!-- TODO(P5): ver docs/tarefas/P5_cheatsheet_slides_e_web.md para as 8 perguntas e motor de quiz -->
-      <a href="index.html" class="btn-back">&larr; Voltar ao Menu Principal</a>
+  <main class="main-container">
+
+    <!-- Cabeçalho do Módulo -->
+    <div class="lab-card" style="margin-bottom: 1.5rem;">
+      <div class="lab-card-header">
+        <div class="lab-card-title">
+          <span>Módulo 06</span>
+          <span class="badge badge-success">Avaliação Conceitual</span>
+        </div>
+        <div style="display: flex; gap: 0.5rem; align-items: center;">
+          <span class="badge badge-accent">8 Questões</span>
+          <span class="badge">Diagnóstico Formativo</span>
+        </div>
+      </div>
+      
+      <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 0.75rem;">
+        <div>
+          <h2>Quiz de Programação Dinâmica</h2>
+          <p style="margin: 0; font-size: 0.95rem;">
+            Teste seus conhecimentos fundamentais sobre os 8 pilares teóricos e práticos de Programação Dinâmica.
+            Ao responder, você receberá explicações imediatas e, ao final, um diagnóstico personalizado apontando seus pontos fortes e o que vale revisar.
+          </p>
+        </div>
+      </div>
     </div>
+
+    <!-- TELA 1: EXECUÇÃO DO QUIZ (Questões 1 a 8) -->
+    <div class="quiz-card" id="quiz-question-view">
+      
+      <!-- Trilho da Barra de Progresso -->
+      <div class="quiz-progress-track" aria-label="Progresso do quiz">
+        <div class="quiz-progress-fill" id="quiz-progress-bar" style="width: 12.5%;"></div>
+      </div>
+
+      <!-- Barra de Metadados da Questão -->
+      <div class="quiz-meta-bar">
+        <div style="display: flex; align-items: center; gap: 0.65rem;">
+          <span class="quiz-counter-badge" id="quiz-counter-text">PERGUNTA 1 / 8</span>
+          <span class="badge badge-secondary" id="quiz-topic-badge">Subestrutura Ótima</span>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 0.5rem; font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-secondary);">
+          <span>Acertos: <strong id="live-correct-count" style="color: var(--color-success);">0</strong></span>
+          <span>•</span>
+          <span>Erros: <strong id="live-incorrect-count" style="color: var(--color-danger);">0</strong></span>
+        </div>
+      </div>
+
+      <!-- Enunciado da Pergunta -->
+      <h3 class="quiz-question-text" id="quiz-question-statement">
+        Carregando pergunta...
+      </h3>
+
+      <!-- Lista de Alternativas -->
+      <div class="quiz-options-list" id="quiz-options-container" role="radiogroup" aria-label="Alternativas da questão">
+        <!-- Renderizado dinamicamente via JS -->
+      </div>
+
+      <!-- Painel de Feedback (Aparece após responder) -->
+      <div class="quiz-feedback-box" id="quiz-feedback-panel" style="display: none;" role="region" aria-live="polite">
+        <div class="quiz-feedback-header" id="quiz-feedback-title">
+          <!-- ✓ Correto ou ✕ Incorreto -->
+        </div>
+        <p class="quiz-feedback-text" id="quiz-feedback-explanation">
+          <!-- Explicação pedagógica detalhada -->
+        </p>
+      </div>
+
+      <!-- Barra de Ações -->
+      <div class="quiz-actions-bar">
+        <button type="button" class="btn btn-outline btn-sm" id="btn-restart-mid" title="Recomeçar o quiz desde a primeira pergunta">
+          ↺ Reiniciar quiz
+        </button>
+
+        <div style="display: flex; gap: 0.5rem;">
+          <button type="button" class="btn btn-primary" id="btn-submit-answer" disabled>
+            Responder
+          </button>
+          <button type="button" class="btn btn-primary" id="btn-next-question" style="display: none;">
+            Próxima pergunta →
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- TELA 2: RESULTADOS FINAIS E DIAGNÓSTICO -->
+    <div class="quiz-card quiz-results-container" id="quiz-results-view" style="display: none;">
+      
+      <div class="quiz-score-header-box">
+        <span class="badge badge-accent">Diagnóstico Final</span>
+        <div class="quiz-score-ratio" id="final-score-ratio">7 / 8</div>
+        <div class="quiz-score-percentage" id="final-score-pct">87,5%</div>
+        <p class="quiz-score-verdict" id="final-score-message">
+          Excelente domínio conceitual! Você compreende a lógica e os pilares de Programação Dinâmica.
+        </p>
+      </div>
+
+      <!-- Diagnóstico de Aprendizado: Domínio vs Vale Revisar -->
+      <div class="quiz-diagnostic-grid">
+        
+        <!-- Coluna 1: Demonstrou Domínio -->
+        <div class="quiz-diagnostic-card is-mastered">
+          <div class="quiz-diagnostic-title">
+            <span>✓</span>
+            <span>Você demonstrou domínio de:</span>
+          </div>
+          <ul class="quiz-diagnostic-list" id="list-mastered-topics">
+            <!-- Tópicos acertados -->
+          </ul>
+        </div>
+
+        <!-- Coluna 2: Vale Revisar -->
+        <div class="quiz-diagnostic-card is-review">
+          <div class="quiz-diagnostic-title">
+            <span>!</span>
+            <span>Vale revisar:</span>
+          </div>
+          <ul class="quiz-diagnostic-list" id="list-review-topics">
+            <!-- Tópicos errados com links dos módulos -->
+          </ul>
+        </div>
+
+      </div>
+
+      <!-- Ações Finais -->
+      <div style="display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; margin-top: 0.5rem; padding-top: 1rem; border-top: 1px solid var(--border-subtle);">
+        <button type="button" class="btn btn-primary" id="btn-retake-quiz">
+          ↺ Refazer quiz
+        </button>
+
+        <div style="display: flex; gap: 0.5rem;">
+          <a href="benchmarks.html" class="btn btn-outline">
+            Ver Benchmarks
+          </a>
+          <a href="index.html" class="btn btn-outline">
+            ← Voltar ao Início
+          </a>
+        </div>
+      </div>
+
+    </div>
+
   </main>
 
-  <footer>
-    <p>CEFET-MG • AEDS-II • Prof. Michel Pires da Silva</p>
+  <!-- RODAPÉ GLOBAL -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div><strong>PD LAB</strong> — Laboratório Interativo de Programação Dinâmica</div>
+      <div class="footer-meta"><span>Módulo 06</span> • <span>Etapa 8</span></div>
+    </div>
   </footer>
 
+  <!-- SCRIPTS -->
   <script src="js/shared.js"></script>
+  <script>
+    (function() {
+      'use strict';
+
+      // =========================================================================
+      // 1. ESTRUTURA ORGANIZADA DAS 8 QUESTÕES CONCEITUAIS
+      // =========================================================================
+      var QUESTIONS = [
+        {
+          id: 1,
+          topic: 'subestrutura_otima',
+          topicLabel: 'Subestrutura Ótima',
+          recommendedModule: 'matrix-chain.html',
+          recommendedName: '04. Matrix Chain',
+          question: 'O que significa formalmente dizer que um problema de otimização possui a propriedade de subestrutura ótima?',
+          alternatives: [
+            'Significa que o problema pode ser resolvido por uma escolha local gulosa sem avaliar subproblemas.',
+            'Significa que uma solução ótima para o problema global é necessariamente construída a partir de soluções ótimas de seus subproblemas constitutivos.',
+            'Significa que todos os subproblemas são estritamente disjuntos e não compartilham nenhuma chamada recursiva.',
+            'Significa que o algoritmo sempre executa com complexidade de tempo limitada em O(n log n).'
+          ],
+          correct: 1,
+          explanation: 'A subestrutura ótima estabelece que o ótimo global é formado por ótimos locais dos subproblemas. Se uma partição não fosse ótima para a sua subcadeia, poderíamos substituí-la por uma melhor e reduzir o custo global (prova por contradição / cut-and-paste).'
+        },
+        {
+          id: 2,
+          topic: 'subproblemas_sobrepostos',
+          topicLabel: 'Subproblemas Sobrepostos',
+          recommendedModule: 'fib-tree.html',
+          recommendedName: '01. Fibonacci',
+          question: 'Qual é o sintoma clássico de um algoritmo recursivo ingênuo quando aplicado a um problema com subproblemas sobrepostos?',
+          alternatives: [
+            'O algoritmo entra em loop infinito e trava a memória por ausência de casos base.',
+            'O algoritmo falha em encontrar casos base, necessitando de divisão e conquista com subproblemas disjuntos.',
+            'A mesma chamada com exatamente os mesmos argumentos é recalculada repetidas vezes, gerando uma árvore com nós redundantes e tempo exponencial.',
+            'O algoritmo produz valores incorretos devido a erros de arredondamento na pilha.'
+          ],
+          correct: 2,
+          explanation: 'Diferente da divisão e conquista tradicional (onde subproblemas são disjuntos, como no Merge Sort), na Programação Dinâmica os mesmos subproblemas reaparecem centenas ou milhares de vezes na árvore recursiva (ex: fib(3) recalculado em fib(5)).'
+        },
+        {
+          id: 3,
+          topic: 'memoizacao',
+          topicLabel: 'Memoização',
+          recommendedModule: 'fib-tree.html',
+          recommendedName: '01. Fibonacci (Memo)',
+          question: 'Em que consiste a técnica de Memoização (top-down) e como ela se diferencia da recursão pura?',
+          alternatives: [
+            'Consiste em substituir a recursão por laços for aninhados que iniciam estritamente a partir dos casos base.',
+            'Consiste em manter a estrutura recursiva descendente, interceptando cada chamada para consultar um cache em O(1) e salvar o valor na primeira vez que for computado.',
+            'Consiste em descartar a pilha de execução e transformar chamadas em filas de prioridade.',
+            'Consiste em calcular apenas os números ímpares da sequência para economizar ciclos de CPU.'
+          ],
+          correct: 1,
+          explanation: 'A memoização preserva a elegância do raciocínio recursivo descendente (top-down), mas associa uma tabela/dicionário que armazena os resultados resolvidos. Se a função for invocada com um argumento já visto, retorna o valor imediatamente em O(1).'
+        },
+        {
+          id: 4,
+          topic: 'tabulacao',
+          topicLabel: 'Tabulação',
+          recommendedModule: 'lcs-table.html',
+          recommendedName: '02. LCS (Tabela 2D)',
+          question: 'Qual é a característica distintiva da abordagem por Tabulação (bottom-up) em Programação Dinâmica?',
+          alternatives: [
+            'Constrói a solução iterativamente a partir dos menores subproblemas (casos base), preenchendo a tabela em ordem topológica de dependência sem usar a pilha recursiva.',
+            'Parte do problema maior e calcula sob demanda apenas as células que uma árvore recursiva requisitar.',
+            'Utiliza ponteiros aleatórios na memória para preencher matrizes sem ordem definida.',
+            'Elimina completamente o uso de memória alocando variáveis temporárias no disco.'
+          ],
+          correct: 0,
+          explanation: 'A tabulação (bottom-up) inicia nos casos mais simples (casos base) e preenche iterativamente uma tabela até o objetivo final. Essa abordagem elimina o overhead de chamadas na pilha de recursão e frequentemente permite otimizações de espaço.'
+        },
+        {
+          id: 5,
+          topic: 'recorrencia',
+          topicLabel: 'Relação de Recorrência',
+          recommendedModule: 'lcs-table.html',
+          recommendedName: '02. LCS (Recorrência)',
+          question: 'Na formalização de um algoritmo de Programação Dinâmica, qual é o papel da relação de recorrência?',
+          alternatives: [
+            'Provar que o algoritmo compila sem erros de sintaxe nas variáveis.',
+            'Definir a quantidade de laços for que serão escritos no código.',
+            'Expressar matematicamente o valor de um estado em função dos valores de subproblemas estritamente menores já definidos.',
+            'Ordenar o vetor de entrada em tempo linear antes de iniciar a busca.'
+          ],
+          correct: 2,
+          explanation: 'A recorrência é o coração formal da Programação Dinâmica (como dp[i][j] = dp[i-1][j-1] + 1 quando caracteres coincidem no LCS). Ela expressa a equação de Bellman que relaciona a solução de um estado aos seus estados predecessores.'
+        },
+        {
+          id: 6,
+          topic: 'escolha_de_estado',
+          topicLabel: 'Escolha de Estado',
+          recommendedModule: 'matrix-chain.html',
+          recommendedName: '04. Matrix Chain',
+          question: 'O que define a escolha adequada de "estado" em um problema de Programação Dinâmica?',
+          alternatives: [
+            'Um conjunto mínimo e suficiente de parâmetros que resume com precisão toda a informação necessária para tomar decisões futuras ótimas.',
+            'Armazenar todo o histórico cronológico de passos e variáveis intermediárias do algoritmo.',
+            'Utilizar sempre uma matriz tridimensional, independentemente do problema.',
+            'Garantir que todas as variáveis do estado sejam booleanas.'
+          ],
+          correct: 0,
+          explanation: 'O estado deve possuir a propriedade Markoviana: reter apenas as variáveis indispensáveis para determinar as próximas transições (ex: intervalo [i, j] no Matrix Chain). Estados com excesso de informação causam explosão dimensional de memória e tempo.'
+        },
+        {
+          id: 7,
+          topic: 'traceback',
+          topicLabel: 'Reconstrução de Solução (Traceback)',
+          recommendedModule: 'lcs-table.html',
+          recommendedName: '02. LCS (Traceback)',
+          question: 'Por que após o preenchimento de uma tabela de Programação Dinâmica é frequentemente necessária uma etapa de Traceback?',
+          alternatives: [
+            'Porque a tabela de custos calcula o valor numérico ótimo (ex: comprimento do LCS ou lucro máximo), sendo necessário retroceder pelas decisões para reconstruir os elementos da solução.',
+            'Porque a tabela original é descartada da memória pelo navegador antes de exibir a resposta.',
+            'Porque o traceback é responsável por verificar se houve divisão por zero na computação da matriz.',
+            'Porque sem o traceback a complexidade de tempo se tornaria exponencial O(2ⁿ).'
+          ],
+          correct: 0,
+          explanation: 'A tabela DP responde a perguntas como "Qual é o valor máximo?" ou "Quantos caracteres tem a subsequência?". Para descobrir a sequência concreta de caracteres ou os cortes exatos, fazemos o traceback (ou usamos uma tabela de decisões como s[i, j]).'
+        },
+        {
+          id: 8,
+          topic: 'guloso_vs_pd',
+          topicLabel: 'Diferença entre Guloso e PD',
+          recommendedModule: 'rod-cutting-duel.html',
+          recommendedName: '03. Rod Cutting Duel',
+          question: 'Qual é a diferença fundamental entre a tomada de decisão em um Algoritmo Guloso e na Programação Dinâmica?',
+          alternatives: [
+            'O algoritmo guloso avalia todos os subproblemas, enquanto a Programação Dinâmica faz uma escolha míope sem olhar para trás.',
+            'Não existe diferença prática: ambos sempre produzem a mesma resposta ótima.',
+            'O algoritmo guloso faz uma escolha localmente ótima imediata que nunca é reconsiderada, enquanto a Programação Dinâmica avalia sistematicamente todas as decisões possíveis garantindo o ótimo global.',
+            'A Programação Dinâmica só pode ser aplicada a listas encadeadas, enquanto o algoritmo guloso só funciona em matrizes.'
+          ],
+          correct: 2,
+          explanation: 'A estratégia gulosa é míope: escolhe o que parece melhor no instante (como maior densidade no Rod Cutting) sem voltar atrás. A Programação Dinâmica avalia todas as opções viáveis por meio de subproblemas, garantindo a solução ótima mesmo quando escolhas imediatas parecem inferiores.'
+        }
+      ];
+
+      // =========================================================================
+      // 2. ESTADO DO QUIZ E PERSISTÊNCIA EM LOCALSTORAGE
+      // =========================================================================
+      var STORAGE_KEY = 'pdlab_quiz_state';
+
+      var state = {
+        currentIndex: 0,         // Índice da questão atual (0 a 7)
+        selectedOption: null,    // Alternativa selecionada na questão atual (0 a 3)
+        isAnswered: false,       // Se a questão atual já foi respondida
+        userAnswers: [],         // Histórico de respostas: [{ questionId, selected, isCorrect }]
+        isFinished: false        // Se o quiz foi concluído
+      };
+
+      // Elementos do DOM
+      var dom = {
+        questionView: document.getElementById('quiz-question-view'),
+        resultsView: document.getElementById('quiz-results-view'),
+
+        progressBar: document.getElementById('quiz-progress-bar'),
+        counterText: document.getElementById('quiz-counter-text'),
+        topicBadge: document.getElementById('quiz-topic-badge'),
+        liveCorrectCount: document.getElementById('live-correct-count'),
+        liveIncorrectCount: document.getElementById('live-incorrect-count'),
+
+        questionStatement: document.getElementById('quiz-question-statement'),
+        optionsContainer: document.getElementById('quiz-options-container'),
+
+        feedbackPanel: document.getElementById('quiz-feedback-panel'),
+        feedbackTitle: document.getElementById('quiz-feedback-title'),
+        feedbackExplanation: document.getElementById('quiz-feedback-explanation'),
+
+        btnSubmitAnswer: document.getElementById('btn-submit-answer'),
+        btnNextQuestion: document.getElementById('btn-next-question'),
+        btnRestartMid: document.getElementById('btn-restart-mid'),
+
+        finalScoreRatio: document.getElementById('final-score-ratio'),
+        finalScorePct: document.getElementById('final-score-pct'),
+        finalScoreMessage: document.getElementById('final-score-message'),
+        listMasteredTopics: document.getElementById('list-mastered-topics'),
+        listReviewTopics: document.getElementById('list-review-topics'),
+        btnRetakeQuiz: document.getElementById('btn-retake-quiz')
+      };
+
+      function saveProgress() {
+        try {
+          var payload = {
+            currentIndex: state.currentIndex,
+            userAnswers: state.userAnswers,
+            isFinished: state.isFinished
+          };
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+        } catch (e) {
+          console.warn('[Quiz] Falha ao persistir no localStorage:', e);
+        }
+      }
+
+      function loadProgress() {
+        try {
+          var saved = localStorage.getItem(STORAGE_KEY);
+          if (!saved) return false;
+          var data = JSON.parse(saved);
+          if (data && Array.isArray(data.userAnswers)) {
+            state.currentIndex = data.currentIndex || 0;
+            state.userAnswers = data.userAnswers || [];
+            state.isFinished = !!data.isFinished;
+            return true;
+          }
+        } catch (e) {
+          console.warn('[Quiz] Falha ao ler do localStorage:', e);
+        }
+        return false;
+      }
+
+      function clearProgress() {
+        try {
+          localStorage.removeItem(STORAGE_KEY);
+        } catch (e) {}
+        state.currentIndex = 0;
+        state.selectedOption = null;
+        state.isAnswered = false;
+        state.userAnswers = [];
+        state.isFinished = false;
+      }
+
+      // =========================================================================
+      // 3. RENDERIZAÇÃO DA QUESTÃO ATUAL
+      // =========================================================================
+      function renderCurrentQuestion() {
+        var total = QUESTIONS.length;
+        var q = QUESTIONS[state.currentIndex];
+
+        // Atualiza cabeçalho e barra de progresso
+        var progressPct = ((state.currentIndex + 1) / total) * 100;
+        dom.progressBar.style.width = progressPct.toFixed(1) + '%';
+        dom.counterText.textContent = 'PERGUNTA ' + (state.currentIndex + 1) + ' / ' + total;
+        dom.topicBadge.textContent = q.topicLabel;
+
+        // Placar em tempo real
+        var corrects = state.userAnswers.filter(function(a) { return a.isCorrect; }).length;
+        var incorrects = state.userAnswers.filter(function(a) { return !a.isCorrect; }).length;
+        dom.liveCorrectCount.textContent = corrects;
+        dom.liveIncorrectCount.textContent = incorrects;
+
+        // Enunciado
+        dom.questionStatement.textContent = q.question;
+
+        // Limpa estado da resposta
+        state.selectedOption = null;
+        state.isAnswered = false;
+        dom.btnSubmitAnswer.disabled = true;
+        dom.btnSubmitAnswer.style.display = 'inline-block';
+        dom.btnNextQuestion.style.display = 'none';
+        dom.feedbackPanel.style.display = 'none';
+
+        // Renderiza alternativas
+        var letters = ['A', 'B', 'C', 'D'];
+        var html = '';
+
+        q.alternatives.forEach(function(altText, idx) {
+          html += '<div class="quiz-option-card" data-idx="' + idx + '" tabindex="0" role="radio" aria-checked="false">';
+          html += '  <div class="quiz-option-letter">' + letters[idx] + '</div>';
+          html += '  <div class="quiz-option-body">' + escapeHtml(altText) + '</div>';
+          html += '</div>';
+        });
+
+        dom.optionsContainer.innerHTML = html;
+        bindOptionClicks();
+      }
+
+      function bindOptionClicks() {
+        var cards = dom.optionsContainer.querySelectorAll('.quiz-option-card');
+        cards.forEach(function(card) {
+          card.addEventListener('click', function() {
+            if (state.isAnswered) return;
+
+            var idx = parseInt(card.getAttribute('data-idx'), 10);
+            selectOption(idx);
+          });
+
+          // Suporte a teclado (Enter ou Espaço para selecionar)
+          card.addEventListener('keydown', function(e) {
+            if (state.isAnswered) return;
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              var idx = parseInt(card.getAttribute('data-idx'), 10);
+              selectOption(idx);
+            }
+          });
+        });
+      }
+
+      function selectOption(idx) {
+        state.selectedOption = idx;
+        var cards = dom.optionsContainer.querySelectorAll('.quiz-option-card');
+
+        cards.forEach(function(c, i) {
+          if (i === idx) {
+            c.classList.add('is-selected');
+            c.setAttribute('aria-checked', 'true');
+          } else {
+            c.classList.remove('is-selected');
+            c.setAttribute('aria-checked', 'false');
+          }
+        });
+
+        dom.btnSubmitAnswer.disabled = false;
+      }
+
+      // =========================================================================
+      // 4. SUBMISSÃO DE RESPOSTA E FEEDBACK IMEDIATO
+      // =========================================================================
+      function submitAnswer() {
+        if (state.selectedOption === null || state.isAnswered) return;
+
+        state.isAnswered = true;
+        var q = QUESTIONS[state.currentIndex];
+        var isCorrect = (state.selectedOption === q.correct);
+
+        // Registra resposta
+        state.userAnswers.push({
+          questionId: q.id,
+          topic: q.topic,
+          topicLabel: q.topicLabel,
+          recommendedModule: q.recommendedModule,
+          recommendedName: q.recommendedName,
+          selected: state.selectedOption,
+          correct: q.correct,
+          isCorrect: isCorrect
+        });
+
+        saveProgress();
+
+        // Bloqueia as alternativas e adiciona classes visuais de acerto/erro
+        var cards = dom.optionsContainer.querySelectorAll('.quiz-option-card');
+        cards.forEach(function(card, idx) {
+          card.classList.add('is-disabled');
+          card.removeAttribute('tabindex');
+
+          if (idx === q.correct) {
+            card.classList.add('is-correct');
+          }
+          if (idx === state.selectedOption && !isCorrect) {
+            card.classList.add('is-incorrect');
+          }
+        });
+
+        // Configura e exibe o painel de feedback
+        dom.feedbackPanel.className = 'quiz-feedback-box ' + (isCorrect ? 'is-feedback-correct' : 'is-feedback-incorrect');
+        dom.feedbackTitle.innerHTML = isCorrect ?
+          '<span>✓ Correto!</span>' :
+          '<span>✕ Incorreto. A resposta correta era a alternativa ' + ['A', 'B', 'C', 'D'][q.correct] + '.</span>';
+        dom.feedbackExplanation.textContent = q.explanation;
+        dom.feedbackPanel.style.display = 'flex';
+
+        // Alterna botão de ação
+        dom.btnSubmitAnswer.style.display = 'none';
+        dom.btnNextQuestion.style.display = 'inline-block';
+
+        if (state.currentIndex === QUESTIONS.length - 1) {
+          dom.btnNextQuestion.textContent = 'Ver resultado final →';
+        } else {
+          dom.btnNextQuestion.textContent = 'Próxima pergunta →';
+        }
+
+        // Atualiza placar
+        var corrects = state.userAnswers.filter(function(a) { return a.isCorrect; }).length;
+        var incorrects = state.userAnswers.filter(function(a) { return !a.isCorrect; }).length;
+        dom.liveCorrectCount.textContent = corrects;
+        dom.liveIncorrectCount.textContent = incorrects;
+      }
+
+      function nextQuestion() {
+        if (state.currentIndex < QUESTIONS.length - 1) {
+          state.currentIndex++;
+          renderCurrentQuestion();
+          saveProgress();
+        } else {
+          finishQuiz();
+        }
+      }
+
+      // =========================================================================
+      // 5. TELA DE RESULTADOS FINAIS E DIAGNÓSTICO DE APRENDIZADO
+      // =========================================================================
+      function finishQuiz() {
+        state.isFinished = true;
+        saveProgress();
+
+        dom.questionView.style.display = 'none';
+        dom.resultsView.style.display = 'flex';
+
+        var total = QUESTIONS.length;
+        var correctCount = state.userAnswers.filter(function(a) { return a.isCorrect; }).length;
+        var percentage = Math.round((correctCount / total) * 100);
+
+        dom.finalScoreRatio.textContent = correctCount + ' / ' + total;
+        dom.finalScorePct.textContent = percentage.toLocaleString('pt-BR') + '%';
+
+        // Veredito geral
+        var verdictText = '';
+        if (correctCount === 8) {
+          verdictText = 'Desempenho Impecável! Você demonstrou domínio completo de todos os pilares essenciais de Programação Dinâmica.';
+        } else if (correctCount >= 6) {
+          verdictText = 'Excelente aproveitamento! Você compreende a lógica de subproblemas e decomposição ótima com grande maturidade.';
+        } else if (correctCount >= 4) {
+          verdictText = 'Bom desempenho! Você captou a essência da Programação Dinâmica, mas alguns conceitos formais merecem reforço nos simuladores.';
+        } else {
+          verdictText = 'Oportunidade de aprendizado! Recomendamos revisitar os módulos práticos do laboratório para consolidar a intuição de subproblemas.';
+        }
+        dom.finalScoreMessage.textContent = verdictText;
+
+        // Lista de tópicos dominados (acertos)
+        var masteredHtml = '';
+        var reviewHtml = '';
+
+        state.userAnswers.forEach(function(ans) {
+          if (ans.isCorrect) {
+            masteredHtml += '<li class="quiz-diagnostic-item">';
+            masteredHtml += '  <span style="color: var(--color-success); font-weight: 700;">✓</span>';
+            masteredHtml += '  <span>' + escapeHtml(ans.topicLabel) + '</span>';
+            masteredHtml += '</li>';
+          } else {
+            reviewHtml += '<li class="quiz-diagnostic-item">';
+            reviewHtml += '  <span style="color: var(--color-danger); font-weight: 700;">!</span>';
+            reviewHtml += '  <div>';
+            reviewHtml += '    <strong>' + escapeHtml(ans.topicLabel) + '</strong>: ';
+            reviewHtml += '    <span>Recomendamos praticar no módulo </span>';
+            reviewHtml += '    <a href="' + ans.recommendedModule + '" class="quiz-diagnostic-item-link">' + escapeHtml(ans.recommendedName) + '</a>';
+            reviewHtml += '  </div>';
+            reviewHtml += '</li>';
+          }
+        });
+
+        if (!masteredHtml) {
+          masteredHtml = '<li style="color: var(--text-muted); font-size: 0.85rem;">Nenhum tópico pontuado nesta tentativa. Não desanime!</li>';
+        }
+        if (!reviewHtml) {
+          reviewHtml = '<li style="color: var(--color-success); font-size: 0.85rem; font-weight: 600;">Nenhum ponto de atenção identificado! Você gabaritou o quiz.</li>';
+        }
+
+        dom.listMasteredTopics.innerHTML = masteredHtml;
+        dom.listReviewTopics.innerHTML = reviewHtml;
+      }
+
+      function retakeQuiz() {
+        clearProgress();
+        dom.resultsView.style.display = 'none';
+        dom.questionView.style.display = 'flex';
+        renderCurrentQuestion();
+      }
+
+      // =========================================================================
+      // 6. INICIALIZAÇÃO E EVENT LISTENERS
+      // =========================================================================
+      function initEvents() {
+        dom.btnSubmitAnswer.addEventListener('click', submitAnswer);
+        dom.btnNextQuestion.addEventListener('click', nextQuestion);
+        dom.btnRestartMid.addEventListener('click', function() {
+          if (confirm('Deseja realmente reiniciar o quiz desde a primeira pergunta?')) {
+            retakeQuiz();
+          }
+        });
+        dom.btnRetakeQuiz.addEventListener('click', retakeQuiz);
+
+        // Suporte a atalhos de teclado (Teclas 1, 2, 3, 4 para alternativas; Enter para responder/avançar)
+        window.addEventListener('keydown', function(e) {
+          if (dom.questionView.style.display === 'none') return;
+
+          if (!state.isAnswered) {
+            if (e.key === '1' || e.key === 'a' || e.key === 'A') selectOption(0);
+            else if (e.key === '2' || e.key === 'b' || e.key === 'B') selectOption(1);
+            else if (e.key === '3' || e.key === 'c' || e.key === 'C') selectOption(2);
+            else if (e.key === '4' || e.key === 'd' || e.key === 'D') selectOption(3);
+            else if (e.key === 'Enter' && !dom.btnSubmitAnswer.disabled) {
+              e.preventDefault();
+              submitAnswer();
+            }
+          } else {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              nextQuestion();
+            }
+          }
+        });
+      }
+
+      function escapeHtml(str) {
+        if (!str) return '';
+        return String(str)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#039;');
+      }
+
+      function init() {
+        initEvents();
+
+        // Tenta restaurar progresso salvo
+        var hasProgress = loadProgress();
+
+        if (hasProgress && state.isFinished) {
+          finishQuiz();
+        } else if (hasProgress && state.currentIndex > 0 && state.currentIndex < QUESTIONS.length) {
+          dom.questionView.style.display = 'flex';
+          dom.resultsView.style.display = 'none';
+          renderCurrentQuestion();
+        } else {
+          clearProgress();
+          dom.questionView.style.display = 'flex';
+          dom.resultsView.style.display = 'none';
+          renderCurrentQuestion();
+        }
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+      } else {
+        init();
+      }
+
+    })();
+  </script>
 </body>
 </html>

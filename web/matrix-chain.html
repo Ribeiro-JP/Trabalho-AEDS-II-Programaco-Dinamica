@@ -3,39 +3,1252 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cadeia de Matrizes - Tabelas m e s | Programação Dinâmica</title>
+  <title>Matrix Chain Multiplication — PD LAB</title>
+  <meta name="description" content="Visualização interativa do algoritmo de multiplicação de cadeia de matrizes, preenchimento diagonal das tabelas m e s, e reconstrução da parentização ótima.">
+  <script>
+    (function() {
+      try {
+        var saved = localStorage.getItem('pdlab_theme');
+        if (saved) {
+          var theme = JSON.parse(saved);
+          if (theme === 'dark' || theme === 'light') {
+            document.documentElement.setAttribute('data-theme', theme);
+          }
+        } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+      } catch (e) {}
+    })();
+  </script>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <header class="navbar">
-    <a href="index.html" class="nav-brand">
-      <span>⚡</span> Programação Dinâmica
-    </a>
-    <div class="nav-actions">
-      <button class="theme-toggle-btn" onclick="toggleTheme()" aria-label="Alternar tema">
-        🌓 Tema
-      </button>
+
+  <!-- CABEÇALHO GLOBAL -->
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="index.html" class="logo-area" aria-label="PD LAB - Início">
+        <span class="logo-mark">PD</span>
+        <span class="logo-title">PD LAB</span>
+        <span class="logo-subtitle">Laboratório de Algoritmos</span>
+      </a>
+
+      <nav class="site-nav" aria-label="Navegação principal">
+        <ul class="nav-list">
+          <li>
+            <a href="index.html" class="nav-link">Início</a>
+          </li>
+          <li class="nav-dropdown">
+            <button type="button" class="nav-link nav-dropdown-toggle active" aria-expanded="false" aria-haspopup="true">
+              Experimentos
+            </button>
+            <ul class="nav-dropdown-menu" role="menu">
+              <li class="dropdown-item" role="none">
+                <a href="fib-tree.html" role="menuitem">
+                  <span>01. Fibonacci</span>
+                  <span class="dropdown-code">Árvore / Memo</span>
+                </a>
+              </li>
+              <li class="dropdown-item" role="none">
+                <a href="lcs-table.html" role="menuitem">
+                  <span>02. LCS</span>
+                  <span class="dropdown-code">Tabela 2D</span>
+                </a>
+              </li>
+              <li class="dropdown-item" role="none">
+                <a href="rod-cutting-duel.html" role="menuitem">
+                  <span>03. Rod Cutting</span>
+                  <span class="dropdown-code">PD vs Guloso</span>
+                </a>
+              </li>
+              <li class="dropdown-item" role="none">
+                <a href="matrix-chain.html" class="active" role="menuitem">
+                  <span>04. Matrix Chain</span>
+                  <span class="dropdown-code">Parentização</span>
+                </a>
+              </li>
+            </ul>
+          </li>
+          <li>
+            <a href="benchmarks.html" class="nav-link">Benchmarks</a>
+          </li>
+          <li>
+            <a href="quiz.html" class="nav-link">Quiz</a>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="header-actions">
+        <button type="button" class="theme-toggle-btn" data-action="toggle-theme" aria-label="Alternar tema claro/escuro" title="Alternar tema">
+          ☾
+        </button>
+        <button type="button" class="mobile-nav-toggle" aria-label="Abrir menu de navegação" aria-expanded="false">
+          ☰
+        </button>
+      </div>
     </div>
   </header>
 
-  <main class="container">
-    <div class="construction-banner">
-      <span class="construction-badge">Em construção (responsável: P5)</span>
-      <h1 class="construction-title">Multiplicação em Cadeia de Matrizes</h1>
-      <p class="construction-text">
-        Esta página permitirá visualizar a resolução da Cadeia de Matrizes (Cormen 15.2), apresentando as
-        tabelas <em>m</em> (custos mínimos) e <em>s</em> (pontos ótimos de divisão) sendo preenchidas por
-        diagonais crescentes, além da expressão final com a parentização ótima recomendada.
-      </p>
-      <!-- TODO(P5): ver docs/tarefas/P5_cheatsheet_slides_e_web.md e docs/tarefas/EXTRA_cadeia_de_matrizes.md -->
-      <a href="index.html" class="btn-back">&larr; Voltar ao Menu Principal</a>
+  <main class="main-container">
+
+    <!-- Cabeçalho do Módulo -->
+    <div class="lab-card" style="margin-bottom: 1.25rem;">
+      <div class="lab-card-header">
+        <div class="lab-card-title">
+          <span>Módulo 04</span>
+          <span class="badge badge-accent">Multiplicação de Cadeia de Matrizes</span>
+        </div>
+        <div style="display: flex; gap: 0.5rem; align-items: center;">
+          <span class="badge badge-secondary">Preenchimento Diagonal</span>
+          <span class="badge">Ordem de Parentização Ótima</span>
+        </div>
+      </div>
+      
+      <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 0.75rem;">
+        <div>
+          <h2>Multiplicação de Cadeia de Matrizes (Matrix Chain)</h2>
+          <p style="margin: 0; font-size: 0.95rem;">
+            O produto matricial é associativo, mas a ordem dos parênteses altera brutalmente a quantidade de multiplicações escalares.
+            Acompanhe a construção diagonal das tabelas <code>m[i, j]</code> (custos mínimos) e <code>s[i, j]</code> (pontos de divisão ótimos),
+            avalie cada corte <code>k</code> e reconstrua a parentização ótima.
+          </p>
+        </div>
+      </div>
     </div>
+
+    <!-- Barra de Entradas de Dimensões -->
+    <div class="mcm-inputs-bar">
+      <div class="mcm-input-group">
+        <label for="input-dimensions">Dimensões:</label>
+        <input type="text" id="input-dimensions" value="10 × 30 × 5 × 60" spellcheck="false" autocomplete="off" aria-label="Dimensões das matrizes">
+      </div>
+
+      <button type="button" class="btn btn-primary" id="btn-apply-dims">
+        Atualizar cadeia
+      </button>
+
+      <div style="display: flex; gap: 0.4rem;">
+        <button type="button" class="btn btn-outline btn-sm" id="btn-add-matrix" title="Adicionar matriz ao final da cadeia">
+          + Matriz
+        </button>
+        <button type="button" class="btn btn-outline btn-sm" id="btn-remove-matrix" title="Remover última matriz">
+          − Matriz
+        </button>
+      </div>
+
+      <!-- Presets de Teste -->
+      <div style="display: flex; align-items: center; gap: 0.35rem; margin-left: auto; flex-wrap: wrap;">
+        <span style="font-size: 0.75rem; font-family: var(--font-mono); color: var(--text-muted);">Exemplos:</span>
+        <button type="button" class="btn btn-outline btn-sm btn-sample" data-dims="10 × 30 × 5 × 60">Clássico (3)</button>
+        <button type="button" class="btn btn-outline btn-sm btn-sample" data-dims="30 × 35 × 15 × 5 × 10 × 20 × 25">Cormen (6)</button>
+        <button type="button" class="btn btn-outline btn-sm btn-sample" data-dims="5 × 100 × 5 × 100">Contraste 20× (3)</button>
+        <button type="button" class="btn btn-outline btn-sm btn-sample" data-dims="10 × 20 × 30 × 40 × 30">4 Matrizes</button>
+      </div>
+    </div>
+
+    <!-- Faixa Visual de Matrizes (Matrix Strip) -->
+    <div class="mcm-matrix-strip" id="matrix-strip" aria-label="Visualização da cadeia de matrizes">
+      <!-- Gerado dinamicamente: Cartões de A1, A2, ..., An -->
+    </div>
+
+    <!-- Barra de Controles de Simulação -->
+    <div class="sim-controls-bar" style="margin-bottom: 1.25rem;">
+      <div class="control-group">
+        <button type="button" class="btn btn-icon" id="btn-prev" title="Passo anterior (⏮)" aria-label="Passo anterior">⏮</button>
+        <button type="button" class="btn btn-primary btn-icon" id="btn-play" title="Executar / Pausar (▶)" aria-label="Executar ou Pausar">▶</button>
+        <button type="button" class="btn btn-icon" id="btn-next" title="Próximo passo (⏭)" aria-label="Próximo passo">⏭</button>
+        <button type="button" class="btn btn-icon" id="btn-reset" title="Reiniciar simulação (↻)" aria-label="Reiniciar">↻</button>
+        <button type="button" class="btn btn-outline btn-sm" id="btn-fill-diagonal" title="Calcular diagonal de comprimento atual inteira">
+          Avançar diagonal
+        </button>
+        <button type="button" class="btn btn-outline btn-sm" id="btn-fill-all" title="Completar preenchimento total das tabelas">
+          Preencher tudo
+        </button>
+        <button type="button" class="btn btn-secondary btn-sm" id="btn-traceback" title="Reconstruir e destacar parentização ótima" disabled>
+          Mostrar parentização
+        </button>
+      </div>
+
+      <div class="control-separator"></div>
+
+      <div class="control-group">
+        <label class="control-label" for="slider-speed">
+          Velocidade:
+          <span id="label-speed-val" style="color: var(--text-primary); font-weight: 600;">1.0x</span>
+        </label>
+        <input type="range" id="slider-speed" min="0.2" max="3.0" step="0.2" value="1.0" style="width: 90px;" aria-label="Velocidade da animação">
+      </div>
+    </div>
+
+    <!-- Indicador de Fases e Progresso Diagonal -->
+    <div class="phase-stepper">
+      <span class="phase-step is-current" id="phase-step-len">
+        <span>Comprimento L:</span>
+        <strong id="badge-current-l" style="font-family: var(--font-mono);">2</strong>
+      </span>
+      <span class="phase-step" id="phase-step-cell">
+        <span>Célula:</span>
+        <strong id="badge-current-cell" style="font-family: var(--font-mono);">m[1, 2]</strong>
+      </span>
+      <span class="phase-step" id="phase-step-progress">
+        <span>Progresso:</span>
+        <strong id="badge-progress-count" style="font-family: var(--font-mono);">0 / 3 células</strong>
+      </span>
+      <span class="phase-step" id="phase-step-status" style="margin-left: auto;">
+        <span id="badge-status-text">Pronto para simular</span>
+      </span>
+    </div>
+
+    <!-- Grade de Tabelas m e s -->
+    <div class="mcm-tables-grid">
+      
+      <!-- Tabela m[i, j]: Custos Mínimos -->
+      <div class="mcm-table-card">
+        <div class="mcm-table-card-header">
+          <div class="mcm-table-title">
+            <span>Tabela m[i, j]</span>
+            <span style="font-weight: normal; font-size: 0.8rem; color: var(--text-secondary); margin-left: 0.5rem;">
+              Custo Mínimo de Multiplicações
+            </span>
+          </div>
+          <span class="badge badge-accent" id="badge-m-active">m[i, j]</span>
+        </div>
+        <p style="margin: 0; font-size: 0.825rem; color: var(--text-secondary);">
+          Preenchida por diagonais de comprimento <code>L = 2..n</code>. Células <code>i = j</code> têm custo 0 (caso base).
+        </p>
+        <div class="mcm-table-wrapper">
+          <table class="mcm-matrix-table" id="table-m" aria-label="Tabela m de custos mínimos">
+            <!-- Gerada dinamicamente via JS -->
+          </table>
+        </div>
+      </div>
+
+      <!-- Tabela s[i, j]: Ponto de Divisão Ótimo k -->
+      <div class="mcm-table-card">
+        <div class="mcm-table-card-header">
+          <div class="mcm-table-title">
+            <span>Tabela s[i, j]</span>
+            <span style="font-weight: normal; font-size: 0.8rem; color: var(--text-secondary); margin-left: 0.5rem;">
+              Ponto de Divisão Ótimo (k)
+            </span>
+          </div>
+          <span class="badge badge-secondary" id="badge-s-active">s[i, j]</span>
+        </div>
+        <p style="margin: 0; font-size: 0.825rem; color: var(--text-secondary);">
+          Armazena o índice de corte <code>k ∈ [i, j-1]</code> que dividiu <code>(Aᵢ..Aₖ)(Aₖ₊₁..Aⱼ)</code> com custo mínimo.
+        </p>
+        <div class="mcm-table-wrapper">
+          <table class="mcm-matrix-table" id="table-s" aria-label="Tabela s de pontos de divisão ótimos">
+            <!-- Gerada dinamicamente via JS -->
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Painel de Decisão da Célula Ativa -->
+    <div class="mcm-decision-container">
+
+      <!-- Informações do Subproblema e Recorrência -->
+      <div class="mcm-decision-card">
+        <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border-subtle); padding-bottom: 0.5rem;">
+          <span style="font-weight: 700; font-size: 0.95rem; color: var(--text-primary);">
+            SUBPROBLEMA: CADEIA <span id="label-subchain-title">A₁ ... A₂</span>
+          </span>
+          <span class="badge" id="label-subchain-len">Comprimento L = 2</span>
+        </div>
+
+        <div style="font-size: 0.875rem; color: var(--text-secondary); line-height: 1.55;">
+          <div style="margin-bottom: 0.5rem;">
+            <strong>Dimensão resultante:</strong> 
+            <span id="label-subchain-dims" style="font-family: var(--font-mono); font-weight: 700; color: var(--text-primary);">10 × 5</span>
+          </div>
+          <div style="margin-bottom: 0.5rem;">
+            <strong>Recorrência de Bellman:</strong>
+            <div style="font-family: var(--font-mono); background-color: var(--bg-surface-alt); padding: 0.5rem 0.75rem; border-radius: var(--radius-xs); border: 1px solid var(--border-color); margin-top: 0.35rem; font-size: 0.825rem; overflow-x: auto;">
+              m[i, j] = min { m[i, k] + m[k+1, j] + p_{i-1} · p_k · p_j }
+            </div>
+          </div>
+          <p id="label-subchain-desc" style="margin: 0; font-size: 0.825rem;">
+            Selecione qualquer linha de candidato ao lado para inspecionar os termos envolvidos no corte.
+          </p>
+        </div>
+
+        <!-- Legenda de Cores de Dependências -->
+        <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: auto; padding-top: 0.5rem; border-top: 1px solid var(--border-subtle); font-size: 0.775rem; font-family: var(--font-mono);">
+          <div style="display: flex; align-items: center; gap: 0.35rem;">
+            <span style="display: inline-block; width: 12px; height: 12px; background-color: var(--color-primary-subtle); border: 1.5px solid var(--color-primary); border-radius: 2px;"></span>
+            <span>m[i, k] (Esquerda)</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 0.35rem;">
+            <span style="display: inline-block; width: 12px; height: 12px; background-color: var(--color-secondary-subtle); border: 1.5px solid var(--color-secondary); border-radius: 2px;"></span>
+            <span>m[k+1, j] (Direita)</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 0.35rem;">
+            <span style="display: inline-block; width: 12px; height: 12px; background-color: var(--color-accent-subtle); border: 1.5px solid var(--color-accent); border-radius: 2px;"></span>
+            <span>m[i, j] (Ativa)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabela de Avaliação de Candidatos k -->
+      <div class="mcm-decision-card">
+        <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border-subtle); padding-bottom: 0.5rem;">
+          <span style="font-weight: 700; font-size: 0.95rem; color: var(--text-primary);">
+            AVALIAÇÃO DE DIVISÕES (k)
+          </span>
+          <span class="badge badge-accent" id="badge-best-k">k* = ?</span>
+        </div>
+
+        <div style="overflow-x: auto;">
+          <table class="mcm-candidates-table" id="table-candidates" aria-label="Candidatos de partição k">
+            <thead>
+              <tr>
+                <th scope="col">Corte (k)</th>
+                <th scope="col">Partição</th>
+                <th scope="col">m[i,k] + m[k+1,j] + (pᵢ₋₁ · pₖ · pⱼ)</th>
+                <th scope="col">Custo Total</th>
+                <th scope="col">Status</th>
+              </tr>
+            </thead>
+            <tbody id="table-candidates-body">
+              <tr>
+                <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 1.5rem;">
+                  Inicie a simulação para visualizar os candidatos de corte.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Painel de Parentização Ótima e Traceback -->
+    <div class="mcm-result-panel" id="result-panel">
+      <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border-subtle); padding-bottom: 0.5rem;">
+        <span style="font-weight: 700; font-size: 1.05rem; color: var(--text-primary);">
+          PARENTIZAÇÃO ÓTIMA DA CADEIA
+        </span>
+        <span class="badge badge-success" id="badge-result-status">Traceback Disponível</span>
+      </div>
+
+      <!-- Expressão de Parênteses Colorida -->
+      <div class="mcm-parens-display" id="parens-display" aria-label="Expressão de parênteses ótima">
+        ((A₁ × A₂) × A₃)
+      </div>
+
+      <!-- Métricas Comparativas: Ótimo vs Pior Caso -->
+      <div class="mcm-metrics-strip">
+        <div class="mcm-metric-box">
+          <span class="mcm-metric-title">Custo Ótimo (Mínimo)</span>
+          <span class="mcm-metric-value is-success" id="metric-optimal-cost">4.500</span>
+          <span style="font-size: 0.775rem; color: var(--text-secondary);">multiplicações escalares</span>
+        </div>
+
+        <div class="mcm-metric-box">
+          <span class="mcm-metric-title">Pior Parentização</span>
+          <span class="mcm-metric-value" id="metric-worst-cost">27.000</span>
+          <span style="font-size: 0.775rem; color: var(--text-secondary);">ordem ineficiente</span>
+        </div>
+
+        <div class="mcm-metric-box">
+          <span class="mcm-metric-title">Multiplicações Economizadas</span>
+          <span class="mcm-metric-value is-accent" id="metric-saved-ops">22.500 (−83.3%)</span>
+          <span style="font-size: 0.775rem; color: var(--text-secondary);">ganho com Programação Dinâmica</span>
+        </div>
+
+        <div class="mcm-metric-box">
+          <span class="mcm-metric-title">Matrizes na Cadeia</span>
+          <span class="mcm-metric-value" id="metric-total-matrices">3 matrizes</span>
+          <span style="font-size: 0.775rem; color: var(--text-secondary);">2 multiplicações de produtos</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Fundamentos Teóricos Acadêmicos -->
+    <div class="lab-card" style="margin-top: 1.5rem; margin-bottom: 2rem;">
+      <div class="lab-card-header">
+        <div class="lab-card-title">
+          <span>Fundamentos Conceituais</span>
+          <span class="badge badge-secondary">Cormen et al. (CLRS) — Cap. 15.2</span>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem;">
+        <div>
+          <h4 style="margin: 0 0 0.5rem; font-size: 0.95rem; color: var(--text-primary);">1. Por que a ordem importa?</h4>
+          <p style="margin: 0; font-size: 0.875rem; color: var(--text-secondary); line-height: 1.55;">
+            Embora a multiplicação de matrizes seja associativa — ou seja, \((AB)C = A(BC)\) geram exatamente a mesma matriz final —, o custo computacional depende das dimensões internas.
+            Multiplicar \(A_{p \times q}\) por \(B_{q \times r}\) consome \(p \cdot q \cdot r\) multiplicações escalares.
+            Uma má escolha pode tornar o processamento dezenas ou centenas de vezes mais lento.
+          </p>
+        </div>
+
+        <div>
+          <h4 style="margin: 0 0 0.5rem; font-size: 0.95rem; color: var(--text-primary);">2. Por que preencher por diagonais?</h4>
+          <p style="margin: 0; font-size: 0.875rem; color: var(--text-secondary); line-height: 1.55;">
+            Para calcular o custo da subcadeia \(A_i \dots A_j\), dependemos de subcadeias estritamente menores: \(A_i \dots A_k\) e \(A_{k+1} \dots A_j\).
+            Portanto, os subproblemas devem ser resolvidos em ordem crescente de <strong>comprimento da cadeia</strong> (\(L = j - i + 1\)).
+            Na matriz \(m\), subcadeias de mesmo comprimento formam uma <strong>diagonal</strong>.
+          </p>
+        </div>
+
+        <div>
+          <h4 style="margin: 0 0 0.5rem; font-size: 0.95rem; color: var(--text-primary);">3. Subestrutura Ótima & Memoização</h4>
+          <p style="margin: 0; font-size: 0.875rem; color: var(--text-secondary); line-height: 1.55;">
+            Se o corte ótimo da cadeia \(A_i \dots A_j\) for em \(k\), então a parentização de \(A_i \dots A_k\) deve ser ótima para essa subcadeia, e o mesmo para \(A_{k+1} \dots A_j\).
+            Guardando os resultados intermediários nas tabelas \(m\) e \(s\), evitamos recomputar os mesmos subproblemas repetidamente.
+          </p>
+        </div>
+
+        <div>
+          <h4 style="margin: 0 0 0.5rem; font-size: 0.95rem; color: var(--text-primary);">4. Força Bruta vs Programação Dinâmica</h4>
+          <p style="margin: 0; font-size: 0.875rem; color: var(--text-secondary); line-height: 1.55;">
+            O número de parentizações possíveis para \(n\) matrizes é o \((n-1)\)-ésimo Número de Catalan \(P(n) = C(n-1) = \Omega(4^n / n^{3/2})\), tornando a busca exaustiva impossível para \(n \ge 15\).
+            A Programação Dinâmica avalia apenas \(\frac{n(n-1)}{2}\) subproblemas, reduzindo o tempo para \(O(n^3)\) e espaço para \(O(n^2)\).
+          </p>
+        </div>
+      </div>
+    </div>
+
   </main>
 
-  <footer>
-    <p>CEFET-MG • AEDS-II • Prof. Michel Pires da Silva</p>
-  </footer>
-
+  <!-- SCRIPTS -->
   <script src="js/shared.js"></script>
+  <script>
+    (function() {
+      'use strict';
+
+      // =========================================================================
+      // ESTADO GLOBAL DO SIMULADOR DE MATRIX CHAIN
+      // =========================================================================
+      var state = {
+        p: [10, 30, 5, 60], // Dimensões: p0, p1, ..., pn
+        n: 3,                // Quantidade de matrizes A1..An
+        steps: [],           // Sequência de passos para execução
+        currentStepIdx: 0,   // Índice do passo ativo
+        isPlaying: false,    // Flag de reprodução automática
+        playInterval: null,  // Referência do temporizador
+        playbackSpeed: 1.0,  // Velocidade da animação (multiplicador)
+        mTable: [],          // Matriz m[n+1][n+1]
+        sTable: [],          // Matriz s[n+1][n+1]
+        activeCandidateK: null // Candidato k destacado para inspeção
+      };
+
+      // Elementos do DOM
+      var dom = {
+        inputDimensions: document.getElementById('input-dimensions'),
+        btnApplyDims: document.getElementById('btn-apply-dims'),
+        btnAddMatrix: document.getElementById('btn-add-matrix'),
+        btnRemoveMatrix: document.getElementById('btn-remove-matrix'),
+        matrixStrip: document.getElementById('matrix-strip'),
+        sampleButtons: document.querySelectorAll('.btn-sample'),
+
+        btnPrev: document.getElementById('btn-prev'),
+        btnPlay: document.getElementById('btn-play'),
+        btnNext: document.getElementById('btn-next'),
+        btnReset: document.getElementById('btn-reset'),
+        btnFillDiagonal: document.getElementById('btn-fill-diagonal'),
+        btnFillAll: document.getElementById('btn-fill-all'),
+        btnTraceback: document.getElementById('btn-traceback'),
+        sliderSpeed: document.getElementById('slider-speed'),
+        labelSpeedVal: document.getElementById('label-speed-val'),
+
+        badgeCurrentL: document.getElementById('badge-current-l'),
+        badgeCurrentCell: document.getElementById('badge-current-cell'),
+        badgeProgressCount: document.getElementById('badge-progress-count'),
+        badgeStatusText: document.getElementById('badge-status-text'),
+        badgeMActive: document.getElementById('badge-m-active'),
+        badgeSActive: document.getElementById('badge-s-active'),
+
+        tableM: document.getElementById('table-m'),
+        tableS: document.getElementById('table-s'),
+
+        labelSubchainTitle: document.getElementById('label-subchain-title'),
+        labelSubchainLen: document.getElementById('label-subchain-len'),
+        labelSubchainDims: document.getElementById('label-subchain-dims'),
+        labelSubchainDesc: document.getElementById('label-subchain-desc'),
+        badgeBestK: document.getElementById('badge-best-k'),
+        tableCandidatesBody: document.getElementById('table-candidates-body'),
+
+        parensDisplay: document.getElementById('parens-display'),
+        metricOptimalCost: document.getElementById('metric-optimal-cost'),
+        metricWorstCost: document.getElementById('metric-worst-cost'),
+        metricSavedOps: document.getElementById('metric-saved-ops'),
+        metricTotalMatrices: document.getElementById('metric-total-matrices'),
+        badgeResultStatus: document.getElementById('badge-result-status')
+      };
+
+      // =========================================================================
+      // 1. PARSER E VALIDAÇÃO DE ENTRADA
+      // =========================================================================
+      function parseDimensions(inputStr) {
+        if (!inputStr) return null;
+        // Divide por '×', 'x', 'X', ',', ou espaço
+        var parts = inputStr
+          .replace(/[×xX,]/g, ' ')
+          .trim()
+          .split(/\s+/)
+          .map(function(s) { return parseInt(s, 10); })
+          .filter(function(n) { return !isNaN(n) && n > 0; });
+
+        if (parts.length < 3) {
+          return null; // Mínimo de 2 matrizes requer 3 dimensões (p0, p1, p2)
+        }
+        if (parts.length > 9) {
+          // Limite pedagógico para visualização de matrizes caber na tela sem sobrecarregar (n <= 8)
+          parts = parts.slice(0, 9);
+        }
+        return parts;
+      }
+
+      function formatDimensions(pArray) {
+        return pArray.join(' × ');
+      }
+
+      // =========================================================================
+      // 2. GERAÇÃO DOS PASSOS DO ALGORITMO (DP MATRIX CHAIN)
+      // =========================================================================
+      function generateAlgorithmSteps(p) {
+        var n = p.length - 1;
+        var steps = [];
+
+        // Matrizes auxiliares locais para simulação progressiva
+        var m = Array.from({ length: n + 1 }, function() { return Array(n + 1).fill(null); });
+        var s = Array.from({ length: n + 1 }, function() { return Array(n + 1).fill(null); });
+
+        // Passo 0: Inicialização dos casos base L = 1 (m[i][i] = 0)
+        for (var i = 1; i <= n; i++) {
+          m[i][i] = 0;
+        }
+
+        steps.push({
+          type: 'init',
+          l: 1,
+          i: null,
+          j: null,
+          kStar: null,
+          mSnap: clone2D(m),
+          sSnap: clone2D(s),
+          candidates: [],
+          description: 'Inicialização: para qualquer matriz única Aᵢ (comprimento L=1), o custo de multiplicação é 0 (m[i, i] = 0).'
+        });
+
+        // Loop diagonal: comprimentos L = 2 até n
+        for (var l = 2; l <= n; l++) {
+          for (var row = 1; row <= n - l + 1; row++) {
+            var col = row + l - 1;
+
+            var candidates = [];
+            var minCost = Infinity;
+            var bestK = row;
+
+            // Avalia todas as divisões possíveis k de row até col - 1
+            for (var k = row; k <= col - 1; k++) {
+              var leftCost = m[row][k];
+              var rightCost = m[k + 1][col];
+              var multCost = p[row - 1] * p[k] * p[col];
+              var totalCost = leftCost + rightCost + multCost;
+
+              var cand = {
+                k: k,
+                leftCost: leftCost,
+                rightCost: rightCost,
+                pLeft: p[row - 1],
+                pK: p[k],
+                pRight: p[col],
+                multCost: multCost,
+                totalCost: totalCost
+              };
+              candidates.push(cand);
+
+              if (totalCost < minCost) {
+                minCost = totalCost;
+                bestK = k;
+              }
+            }
+
+            // Registra os valores encontrados
+            m[row][col] = minCost;
+            s[row][col] = bestK;
+
+            steps.push({
+              type: 'compute_cell',
+              l: l,
+              i: row,
+              j: col,
+              kStar: bestK,
+              minCost: minCost,
+              candidates: candidates,
+              mSnap: clone2D(m),
+              sSnap: clone2D(s),
+              description: 'Calculando m[' + row + ', ' + col + ']: melhor divisão em k = ' + bestK + ' com custo ' + minCost + '.'
+            });
+          }
+        }
+
+        // Passo final: Conclusão e Traceback
+        steps.push({
+          type: 'completed',
+          l: n,
+          i: 1,
+          j: n,
+          kStar: s[1][n],
+          minCost: m[1][n],
+          candidates: [],
+          mSnap: clone2D(m),
+          sSnap: clone2D(s),
+          description: 'Cadeia completa calculada! Custo mínimo ótimo: ' + m[1][n] + ' multiplicações escalares.'
+        });
+
+        return {
+          steps: steps,
+          finalM: m,
+          finalS: s
+        };
+      }
+
+      function clone2D(arr) {
+        return arr.map(function(row) {
+          return row.slice();
+        });
+      }
+
+      // =========================================================================
+      // 3. CÁLCULO DE PARENTIZAÇÃO ÓTIMA E PIOR CASO
+      // =========================================================================
+      function reconstructParenthesization(s, i, j) {
+        if (i === j) {
+          return '<span class="mcm-matrix-tok">A' + subDigit(i) + '</span>';
+        }
+        var k = s[i][j];
+        return '<span class="mcm-paren-open">(</span>' +
+          reconstructParenthesization(s, i, k) +
+          '<span class="mcm-op-tok">×</span>' +
+          reconstructParenthesization(s, k + 1, j) +
+          '<span class="mcm-paren-close">)</span>';
+      }
+
+      function reconstructPlainParens(s, i, j) {
+        if (i === j) return 'A' + i;
+        var k = s[i][j];
+        return '(' + reconstructPlainParens(s, i, k) + ' × ' + reconstructPlainParens(s, k + 1, j) + ')';
+      }
+
+      function getTracebackCells(s, i, j, cellsSet) {
+        if (!cellsSet) cellsSet = new Set();
+        if (i < j) {
+          cellsSet.add(i + ',' + j);
+          var k = s[i][j];
+          if (k) {
+            getTracebackCells(s, i, k, cellsSet);
+            getTracebackCells(s, k + 1, j, cellsSet);
+          }
+        }
+        return cellsSet;
+      }
+
+      // Calcula o pior caso (parentização que maximiza o número de operações) para fins pedagógicos
+      function calculateWorstCaseCost(p) {
+        var n = p.length - 1;
+        var worst = Array.from({ length: n + 1 }, function() { return Array(n + 1).fill(0); });
+
+        for (var l = 2; l <= n; l++) {
+          for (var i = 1; i <= n - l + 1; i++) {
+            var j = i + l - 1;
+            worst[i][j] = 0;
+            for (var k = i; k <= j - 1; k++) {
+              var q = worst[i][k] + worst[k + 1][j] + p[i - 1] * p[k] * p[j];
+              if (q > worst[i][j]) {
+                worst[i][j] = q;
+              }
+            }
+          }
+        }
+        return worst[1][n];
+      }
+
+      function subDigit(n) {
+        var subMap = { '0': '₀', '1': '₁', '2': '₂', '3': '₃', '4': '₄', '5': '₅', '6': '₆', '7': '₇', '8': '₈', '9': '₉' };
+        return String(n).split('').map(function(d) { return subMap[d] || d; }).join('');
+      }
+
+      // =========================================================================
+      // 4. RENDERIZAÇÃO VISUAL: STRIP DE MATRIZES
+      // =========================================================================
+      function renderMatrixStrip() {
+        var p = state.p;
+        var n = state.n;
+        var html = '';
+
+        for (var i = 1; i <= n; i++) {
+          var rows = p[i - 1];
+          var cols = p[i];
+
+          html += '<div class="mcm-matrix-card" id="matrix-card-' + i + '" data-idx="' + i + '">';
+          html += '  <div class="mcm-matrix-name">A' + subDigit(i) + '</div>';
+          html += '  <div class="mcm-matrix-dim">' + rows + ' × ' + cols + '</div>';
+          html += '</div>';
+
+          if (i < n) {
+            html += '<span class="mcm-matrix-sep">×</span>';
+          }
+        }
+
+        dom.matrixStrip.innerHTML = html;
+      }
+
+      function updateMatrixStripHighlights(curI, curJ, activeK) {
+        var n = state.n;
+        for (var idx = 1; idx <= n; idx++) {
+          var card = document.getElementById('matrix-card-' + idx);
+          if (!card) continue;
+
+          card.classList.remove('is-active-left', 'is-active-right', 'is-active-range');
+
+          if (curI !== null && curJ !== null && idx >= curI && idx <= curJ) {
+            if (activeK !== null) {
+              if (idx >= curI && idx <= activeK) {
+                card.classList.add('is-active-left');
+              } else if (idx > activeK && idx <= curJ) {
+                card.classList.add('is-active-right');
+              }
+            } else {
+              card.classList.add('is-active-range');
+            }
+          }
+        }
+      }
+
+      // =========================================================================
+      // 5. CONSTRUÇÃO DO DOM DAS TABELAS M E S
+      // =========================================================================
+      function buildTablesDOM() {
+        var n = state.n;
+
+        // --- TABELA M (Custos) ---
+        var htmlM = '<thead><tr><th>i \\ j</th>';
+        for (var j = 1; j <= n; j++) {
+          htmlM += '<th scope="col">j=' + j + '</th>';
+        }
+        htmlM += '</tr></thead><tbody>';
+
+        for (var i = 1; i <= n; i++) {
+          htmlM += '<tr><th scope="row">i=' + i + '</th>';
+          for (var j2 = 1; j2 <= n; j2++) {
+            if (j2 < i) {
+              htmlM += '<td class="is-empty" aria-label="inativo"></td>';
+            } else if (j2 === i) {
+              htmlM += '<td class="is-base" id="m-cell-' + i + '-' + j2 + '" data-i="' + i + '" data-j="' + j2 + '">0</td>';
+            } else {
+              htmlM += '<td id="m-cell-' + i + '-' + j2 + '" data-i="' + i + '" data-j="' + j2 + '">−</td>';
+            }
+          }
+          htmlM += '</tr>';
+        }
+        htmlM += '</tbody>';
+        dom.tableM.innerHTML = htmlM;
+
+        // --- TABELA S (Pontos de divisão) ---
+        var htmlS = '<thead><tr><th>i \\ j</th>';
+        for (var js = 1; js <= n; js++) {
+          htmlS += '<th scope="col">j=' + js + '</th>';
+        }
+        htmlS += '</tr></thead><tbody>';
+
+        for (var is = 1; is <= n; is++) {
+          htmlS += '<tr><th scope="row">i=' + is + '</th>';
+          for (var js2 = 1; js2 <= n; js2++) {
+            if (js2 <= is) {
+              htmlS += '<td class="is-empty" aria-label="inativo"></td>';
+            } else {
+              htmlS += '<td id="s-cell-' + is + '-' + js2 + '" data-i="' + is + '" data-j="' + js2 + '">−</td>';
+            }
+          }
+          htmlS += '</tr>';
+        }
+        htmlS += '</tbody>';
+        dom.tableS.innerHTML = htmlS;
+      }
+
+
+
+      // =========================================================================
+      // 6. RENDERIZAÇÃO DO ESTADO DO PASSO ATIVO
+      // =========================================================================
+      function renderCurrentStep() {
+        if (!state.steps || state.steps.length === 0) return;
+
+        var step = state.steps[state.currentStepIdx];
+        var n = state.n;
+        var totalCells = (n * (n - 1)) / 2;
+
+        // 1. Atualizar valores nas tabelas m e s
+        for (var i = 1; i <= n; i++) {
+          for (var j = i; j <= n; j++) {
+            var cellM = document.getElementById('m-cell-' + i + '-' + j);
+            var cellS = document.getElementById('s-cell-' + i + '-' + j);
+
+            // Limpa classes transientes
+            if (cellM) {
+              cellM.className = (i === j) ? 'is-base' : '';
+              var valM = step.mSnap[i][j];
+              if (valM !== null) {
+                cellM.textContent = valM.toLocaleString('pt-BR');
+                if (i !== j) cellM.classList.add('is-filled');
+              } else {
+                cellM.textContent = '−';
+              }
+            }
+
+            if (cellS) {
+              cellS.className = '';
+              var valS = step.sSnap[i][j];
+              if (valS !== null) {
+                cellS.textContent = valS;
+                cellS.classList.add('is-filled');
+              } else {
+                cellS.textContent = '−';
+              }
+            }
+          }
+        }
+
+        // 2. Destacar Célula Ativa e Dependências
+        var activeK = state.activeCandidateK !== null ? state.activeCandidateK : step.kStar;
+
+        if (step.type === 'compute_cell') {
+          var curM = document.getElementById('m-cell-' + step.i + '-' + step.j);
+          var curS = document.getElementById('s-cell-' + step.i + '-' + step.j);
+          if (curM) curM.classList.add('is-evaluating');
+          if (curS) curS.classList.add('is-evaluating');
+
+          // Células de dependência
+          if (activeK !== null) {
+            var depLeft = document.getElementById('m-cell-' + step.i + '-' + activeK);
+            var depRight = document.getElementById('m-cell-' + (activeK + 1) + '-' + step.j);
+            if (depLeft) depLeft.classList.add('is-dep-left');
+            if (depRight) depRight.classList.add('is-dep-right');
+          }
+        }
+
+        // 3. Atualizar faixa de matrizes
+        updateMatrixStripHighlights(step.i, step.j, activeK);
+
+        // 4. Indicadores de Status e Stepper
+        if (step.type === 'init') {
+          dom.badgeCurrentL.textContent = '1';
+          dom.badgeCurrentCell.textContent = 'Casos Base';
+          dom.badgeProgressCount.textContent = '0 / ' + totalCells + ' calculadas';
+          dom.badgeStatusText.textContent = 'Inicialização: m[i, i] = 0';
+          dom.badgeMActive.textContent = 'm[i, i] = 0';
+          dom.badgeSActive.textContent = 's[i, j]';
+        } else if (step.type === 'compute_cell') {
+          dom.badgeCurrentL.textContent = String(step.l);
+          dom.badgeCurrentCell.textContent = 'm[' + step.i + ', ' + step.j + ']';
+          var completedCount = state.currentStepIdx;
+          dom.badgeProgressCount.textContent = completedCount + ' / ' + totalCells + ' calculadas';
+          dom.badgeStatusText.textContent = 'Avaliando cadeia L=' + step.l + ' (A' + subDigit(step.i) + '..A' + subDigit(step.j) + ')';
+          dom.badgeMActive.textContent = 'm[' + step.i + ', ' + step.j + ']';
+          dom.badgeSActive.textContent = 's[' + step.i + ', ' + step.j + '] = ' + step.kStar;
+        } else if (step.type === 'completed') {
+          dom.badgeCurrentL.textContent = String(n);
+          dom.badgeCurrentCell.textContent = 'm[1, ' + n + ']';
+          dom.badgeProgressCount.textContent = totalCells + ' / ' + totalCells + ' concluído!';
+          dom.badgeStatusText.textContent = 'Solução Ótima Encontrada!';
+          dom.badgeMActive.textContent = 'Ótimo: ' + step.minCost;
+          dom.badgeSActive.textContent = 'Raiz: k = ' + step.kStar;
+        }
+
+        // 5. Atualizar Painel de Decisão
+        renderDecisionPanel(step, activeK);
+
+        // 6. Atualizar Painel de Resultado
+        if (step.type === 'completed' || step.sSnap[1][n] !== null) {
+          dom.btnTraceback.disabled = false;
+          renderTracebackResult(step.sSnap, step.minCost);
+        } else {
+          dom.btnTraceback.disabled = true;
+          dom.parensDisplay.innerHTML = '<span style="color: var(--text-muted); font-size: 1.05rem;">Complete a tabela para obter a expressão de parentização ótima.</span>';
+          dom.badgeResultStatus.textContent = 'Aguardando Conclusão';
+          dom.badgeResultStatus.className = 'badge';
+        }
+
+        // 7. Atualizar Botões de Controle
+        dom.btnPrev.disabled = state.currentStepIdx === 0;
+        dom.btnNext.disabled = state.currentStepIdx === state.steps.length - 1;
+        dom.btnFillDiagonal.disabled = state.currentStepIdx === state.steps.length - 1;
+        dom.btnFillAll.disabled = state.currentStepIdx === state.steps.length - 1;
+      }
+
+      // =========================================================================
+      // 7. RENDERIZAÇÃO DO PAINEL DE DECISÃO E CANDIDATOS
+      // =========================================================================
+      function renderDecisionPanel(step, activeK) {
+        if (!step || step.type === 'init') {
+          dom.labelSubchainTitle.textContent = 'Casos Base';
+          dom.labelSubchainLen.textContent = 'L = 1';
+          dom.labelSubchainDims.textContent = 'Aᵢ (Sem produto)';
+          dom.labelSubchainDesc.textContent = 'Nenhuma multiplicação é necessária para calcular uma única matriz isolada. m[i, i] = 0 para todo i.';
+          dom.badgeBestK.textContent = 'k = −';
+          dom.badgeBestK.className = 'badge';
+          dom.tableCandidatesBody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 1.25rem;">Nenhuma partição necessária em cadeias de comprimento 1.</td></tr>';
+          return;
+        }
+
+        var i = step.i;
+        var j = step.j;
+        var p = state.p;
+
+        dom.labelSubchainTitle.textContent = 'A' + subDigit(i) + ' ... A' + subDigit(j);
+        dom.labelSubchainLen.textContent = 'Comprimento L = ' + step.l;
+        dom.labelSubchainDims.textContent = p[i - 1] + ' × ' + p[j] + ' (Linhas de A' + subDigit(i) + ' × Colunas de A' + subDigit(j) + ')';
+        dom.labelSubchainDesc.textContent = 'Divisões testadas para particionar em duas subcadeias (A' + subDigit(i) + '..Aₖ) e (Aₖ₊₁..A' + subDigit(j) + '):';
+        dom.badgeBestK.textContent = 'k* = ' + step.kStar + ' (Menor custo: ' + (step.minCost !== undefined ? step.minCost.toLocaleString('pt-BR') : '') + ')';
+        dom.badgeBestK.className = 'badge badge-accent';
+
+        var rowsHtml = '';
+        var candidates = step.candidates || [];
+
+        candidates.forEach(function(cand) {
+          var isWinner = (cand.k === step.kStar);
+          var isSelected = (cand.k === activeK);
+
+          var rowClass = 'mcm-candidate-row';
+          if (isWinner) rowClass += ' is-winner';
+
+          rowsHtml += '<tr class="' + rowClass + '" data-k="' + cand.k + '">';
+          rowsHtml += '  <td><strong style="color: var(--text-primary);">k = ' + cand.k + '</strong></td>';
+          rowsHtml += '  <td style="font-family: var(--font-mono);">(A' + subDigit(i) + '..A' + subDigit(cand.k) + ') × (A' + subDigit(cand.k + 1) + '..A' + subDigit(j) + ')</td>';
+          rowsHtml += '  <td style="font-family: var(--font-mono);">' +
+            cand.leftCost.toLocaleString('pt-BR') + ' + ' +
+            cand.rightCost.toLocaleString('pt-BR') + ' + (' +
+            cand.pLeft + '×' + cand.pK + '×' + cand.pRight + ' = ' + cand.multCost.toLocaleString('pt-BR') + ')' +
+            '</td>';
+          rowsHtml += '  <td style="font-family: var(--font-mono); font-weight: 700; color: ' + (isWinner ? 'var(--color-accent)' : 'var(--text-primary)') + ';">' +
+            cand.totalCost.toLocaleString('pt-BR') +
+            '</td>';
+          rowsHtml += '  <td>' +
+            (isWinner ? '<span class="badge badge-accent" style="font-size: 0.7rem;">★ Mínimo</span>' : '<span style="color: var(--text-muted); font-size: 0.75rem;">−</span>') +
+            '</td>';
+          rowsHtml += '</tr>';
+        });
+
+        dom.tableCandidatesBody.innerHTML = rowsHtml;
+
+        // Permite ao usuário clicar em um candidato específico para inspecionar dependências visuais
+        var candRows = dom.tableCandidatesBody.querySelectorAll('.mcm-candidate-row');
+        candRows.forEach(function(row) {
+          row.addEventListener('click', function() {
+            pause();
+            var kVal = parseInt(row.getAttribute('data-k'), 10);
+            state.activeCandidateK = kVal;
+            renderCurrentStep();
+          });
+        });
+      }
+
+      function inspectSubproblem(i, j) {
+        pause();
+        // Encontra o passo correspondente a essa célula
+        for (var idx = 0; idx < state.steps.length; idx++) {
+          var st = state.steps[idx];
+          if (st.i === i && st.j === j) {
+            state.currentStepIdx = idx;
+            state.activeCandidateK = null;
+            renderCurrentStep();
+            return;
+          }
+        }
+      }
+
+      // =========================================================================
+      // 8. RENDERIZAÇÃO DO RESULTADO FINAL E TRACEBACK
+      // =========================================================================
+      function renderTracebackResult(sTable, optimalCost) {
+        var n = state.n;
+        var p = state.p;
+
+        if (!optimalCost) {
+          optimalCost = state.steps[state.steps.length - 1].minCost;
+        }
+
+        // Parentização colorida
+        var formattedParens = reconstructParenthesization(sTable, 1, n);
+        dom.parensDisplay.innerHTML = formattedParens;
+        dom.badgeResultStatus.textContent = 'Ótimo Concluído';
+        dom.badgeResultStatus.className = 'badge badge-success';
+
+        // Métricas comparativas
+        var worstCost = calculateWorstCaseCost(p);
+        var diff = worstCost - optimalCost;
+        var pct = worstCost > 0 ? ((diff / worstCost) * 100).toFixed(1) : '0';
+
+        dom.metricOptimalCost.textContent = optimalCost.toLocaleString('pt-BR');
+        dom.metricWorstCost.textContent = worstCost.toLocaleString('pt-BR');
+        dom.metricSavedOps.textContent = diff.toLocaleString('pt-BR') + ' (−' + pct + '%)';
+        dom.metricTotalMatrices.textContent = n + ' matrizes';
+
+        // Realçar caminho ótimo nas tabelas se solicitado
+        highlightTracebackCells(sTable);
+      }
+
+      function highlightTracebackCells(sTable) {
+        var n = state.n;
+        var cellsSet = getTracebackCells(sTable, 1, n);
+
+        cellsSet.forEach(function(coord) {
+          var parts = coord.split(',');
+          var i = parts[0];
+          var j = parts[1];
+
+          var cellM = document.getElementById('m-cell-' + i + '-' + j);
+          var cellS = document.getElementById('s-cell-' + i + '-' + j);
+
+          if (cellM) cellM.classList.add('is-trace-opt');
+          if (cellS) cellS.classList.add('is-trace-opt');
+        });
+      }
+
+      // =========================================================================
+      // 9. CONTROLE DE EXECUÇÃO E PLAYBACK
+      // =========================================================================
+      function play() {
+        if (state.currentStepIdx >= state.steps.length - 1) {
+          state.currentStepIdx = 0;
+        }
+        state.isPlaying = true;
+        updatePlayButtonUI();
+        runPlaybackLoop();
+      }
+
+      function pause() {
+        state.isPlaying = false;
+        if (state.playInterval) {
+          clearTimeout(state.playInterval);
+          state.playInterval = null;
+        }
+        updatePlayButtonUI();
+      }
+
+      function togglePlay() {
+        if (state.isPlaying) {
+          pause();
+        } else {
+          play();
+        }
+      }
+
+      function runPlaybackLoop() {
+        if (!state.isPlaying) return;
+
+        if (state.currentStepIdx < state.steps.length - 1) {
+          state.currentStepIdx++;
+          state.activeCandidateK = null;
+          renderCurrentStep();
+
+          var delay = Math.round(750 / state.playbackSpeed);
+          state.playInterval = setTimeout(runPlaybackLoop, delay);
+        } else {
+          pause();
+        }
+      }
+
+      function stepPrev() {
+        pause();
+        if (state.currentStepIdx > 0) {
+          state.currentStepIdx--;
+          state.activeCandidateK = null;
+          renderCurrentStep();
+        }
+      }
+
+      function stepNext() {
+        pause();
+        if (state.currentStepIdx < state.steps.length - 1) {
+          state.currentStepIdx++;
+          state.activeCandidateK = null;
+          renderCurrentStep();
+        }
+      }
+
+      function resetSimulation() {
+        pause();
+        state.currentStepIdx = 0;
+        state.activeCandidateK = null;
+        renderCurrentStep();
+      }
+
+      function fillDiagonal() {
+        pause();
+        if (state.currentStepIdx >= state.steps.length - 1) return;
+
+        var currentL = state.steps[state.currentStepIdx].l;
+        // Avança até o final da diagonal atual
+        while (state.currentStepIdx < state.steps.length - 1 &&
+               state.steps[state.currentStepIdx + 1].l === currentL) {
+          state.currentStepIdx++;
+        }
+        // Se já estava no final da diagonal, avança para a próxima
+        if (state.currentStepIdx < state.steps.length - 1 &&
+            state.steps[state.currentStepIdx].l === currentL) {
+          state.currentStepIdx++;
+        }
+
+        state.activeCandidateK = null;
+        renderCurrentStep();
+      }
+
+      function fillAll() {
+        pause();
+        state.currentStepIdx = state.steps.length - 1;
+        state.activeCandidateK = null;
+        renderCurrentStep();
+      }
+
+      function updatePlayButtonUI() {
+        if (state.isPlaying) {
+          dom.btnPlay.textContent = '⏸';
+          dom.btnPlay.setAttribute('title', 'Pausar (⏸)');
+        } else {
+          dom.btnPlay.textContent = '▶';
+          dom.btnPlay.setAttribute('title', 'Executar (▶)');
+        }
+      }
+
+      // =========================================================================
+      // 10. ATUALIZAÇÃO DA CADEIA DE ENTRADA
+      // =========================================================================
+      function applyInputDimensions(dimsString) {
+        var parsed = parseDimensions(dimsString);
+        if (!parsed) {
+          alert('Por favor, informe ao menos 3 dimensões válidas separadas por "×" ou vírgula (ex: 10 × 30 × 5 × 60).');
+          return;
+        }
+
+        state.p = parsed;
+        state.n = parsed.length - 1;
+        dom.inputDimensions.value = formatDimensions(parsed);
+
+        // Gera os passos
+        var algResult = generateAlgorithmSteps(state.p);
+        state.steps = algResult.steps;
+        state.mTable = algResult.finalM;
+        state.sTable = algResult.finalS;
+        state.currentStepIdx = 0;
+        state.activeCandidateK = null;
+
+        pause();
+        renderMatrixStrip();
+        buildTablesDOM();
+        renderCurrentStep();
+      }
+
+      function addMatrix() {
+        if (state.p.length >= 8) {
+          alert('O limite pedagógico é de 7 matrizes para permitir uma visualização clara na grade.');
+          return;
+        }
+        var lastDim = state.p[state.p.length - 1];
+        // Adiciona uma dimensão padrão coerente
+        var nextDim = (lastDim === 10 || lastDim === 20) ? 35 : (lastDim === 5 ? 40 : 20);
+        var newP = state.p.concat([nextDim]);
+        applyInputDimensions(formatDimensions(newP));
+      }
+
+      function removeMatrix() {
+        if (state.p.length <= 3) {
+          alert('A multiplicação em cadeia requer no mínimo 2 matrizes (3 dimensões).');
+          return;
+        }
+        var newP = state.p.slice(0, state.p.length - 1);
+        applyInputDimensions(formatDimensions(newP));
+      }
+
+      // =========================================================================
+      // 11. BIND DE EVENTOS E INICIALIZAÇÃO
+      // =========================================================================
+      function initEvents() {
+        dom.btnApplyDims.addEventListener('click', function() {
+          applyInputDimensions(dom.inputDimensions.value);
+        });
+
+        dom.inputDimensions.addEventListener('keydown', function(e) {
+          if (e.key === 'Enter') {
+            applyInputDimensions(dom.inputDimensions.value);
+          }
+        });
+
+        dom.btnAddMatrix.addEventListener('click', addMatrix);
+        dom.btnRemoveMatrix.addEventListener('click', removeMatrix);
+
+        dom.sampleButtons.forEach(function(btn) {
+          btn.addEventListener('click', function() {
+            var dims = btn.getAttribute('data-dims');
+            applyInputDimensions(dims);
+          });
+        });
+
+        dom.btnPlay.addEventListener('click', togglePlay);
+        dom.btnPrev.addEventListener('click', stepPrev);
+        dom.btnNext.addEventListener('click', stepNext);
+        dom.btnReset.addEventListener('click', resetSimulation);
+        dom.btnFillDiagonal.addEventListener('click', fillDiagonal);
+        dom.btnFillAll.addEventListener('click', fillAll);
+
+        dom.btnTraceback.addEventListener('click', function() {
+          pause();
+          var finalStep = state.steps[state.steps.length - 1];
+          highlightTracebackCells(finalStep.sSnap);
+        });
+
+        // Delegação de clique nas células da tabela de custos m para inspecionar subproblema
+        dom.tableM.addEventListener('click', function(e) {
+          var cell = e.target.closest('td[data-i]');
+          if (!cell) return;
+          var i = parseInt(cell.getAttribute('data-i'), 10);
+          var j = parseInt(cell.getAttribute('data-j'), 10);
+          if (j > i) {
+            inspectSubproblem(i, j);
+          }
+        });
+
+        dom.sliderSpeed.addEventListener('input', function() {
+          var val = parseFloat(dom.sliderSpeed.value);
+          state.playbackSpeed = val;
+          dom.labelSpeedVal.textContent = val.toFixed(1) + 'x';
+        });
+
+        // Suporte a atalhos de teclado (Espaço = Play/Pause, Setas = Anterior/Próximo)
+        window.addEventListener('keydown', function(e) {
+          if (document.activeElement && document.activeElement.tagName === 'INPUT') return;
+          if (e.code === 'Space') {
+            e.preventDefault();
+            togglePlay();
+          } else if (e.code === 'ArrowRight') {
+            e.preventDefault();
+            stepNext();
+          } else if (e.code === 'ArrowLeft') {
+            e.preventDefault();
+            stepPrev();
+          }
+        });
+      }
+
+      // Inicialização da aplicação
+      function init() {
+        initEvents();
+        applyInputDimensions(dom.inputDimensions.value);
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+      } else {
+        init();
+      }
+
+    })();
+  </script>
 </body>
 </html>

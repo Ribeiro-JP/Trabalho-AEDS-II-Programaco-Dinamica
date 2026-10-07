@@ -3,39 +3,1128 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Árvore de Recursão do Fibonacci | Programação Dinâmica</title>
+  <title>01. Fibonacci & Recursão — PD LAB</title>
+  <meta name="description" content="Simulador interativo da árvore de recursão de Fibonacci com visualização de chamadas redundantes e comparação com memoização.">
+  
+  <!-- Prevenção de FOUC de tema: restauração instantânea antes do render -->
+  <script>
+    (function() {
+      try {
+        var saved = localStorage.getItem('pdlab_theme');
+        if (saved) {
+          var theme = JSON.parse(saved);
+          if (theme === 'dark' || theme === 'light') {
+            document.documentElement.setAttribute('data-theme', theme);
+          }
+        } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+      } catch (e) {}
+    })();
+  </script>
+
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <header class="navbar">
-    <a href="index.html" class="nav-brand">
-      <span>⚡</span> Programação Dinâmica
-    </a>
-    <div class="nav-actions">
-      <button class="theme-toggle-btn" onclick="toggleTheme()" aria-label="Alternar tema">
-        🌓 Tema
-      </button>
+
+  <!-- CABEÇALHO GLOBAL -->
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="index.html" class="logo-area" aria-label="PD LAB - Início">
+        <span class="logo-mark">PD</span>
+        <span class="logo-title">PD LAB</span>
+        <span class="logo-subtitle">Laboratório de Algoritmos</span>
+      </a>
+
+      <!-- Navegação Global -->
+      <nav class="site-nav" aria-label="Navegação principal">
+        <ul class="nav-list">
+          <li>
+            <a href="index.html" class="nav-link">Início</a>
+          </li>
+          
+          <!-- Dropdown Experimentos -->
+          <li class="nav-dropdown">
+            <button type="button" class="nav-link nav-dropdown-toggle active" aria-expanded="false" aria-haspopup="true">
+              Experimentos
+            </button>
+            <ul class="nav-dropdown-menu" role="menu">
+              <li class="dropdown-item" role="none">
+                <a href="fib-tree.html" class="active" role="menuitem">
+                  <span>01. Fibonacci</span>
+                  <span class="dropdown-code">Árvore / Memo</span>
+                </a>
+              </li>
+              <li class="dropdown-item" role="none">
+                <a href="lcs-table.html" role="menuitem">
+                  <span>02. LCS</span>
+                  <span class="dropdown-code">Tabela 2D</span>
+                </a>
+              </li>
+              <li class="dropdown-item" role="none">
+                <a href="rod-cutting-duel.html" role="menuitem">
+                  <span>03. Rod Cutting</span>
+                  <span class="dropdown-code">PD vs Guloso</span>
+                </a>
+              </li>
+              <li class="dropdown-item" role="none">
+                <a href="matrix-chain.html" role="menuitem">
+                  <span>04. Matrix Chain</span>
+                  <span class="dropdown-code">Parentização</span>
+                </a>
+              </li>
+            </ul>
+          </li>
+
+          <li>
+            <a href="benchmarks.html" class="nav-link">Benchmarks</a>
+          </li>
+          <li>
+            <a href="quiz.html" class="nav-link">Quiz</a>
+          </li>
+        </ul>
+      </nav>
+
+      <!-- Ações do Header -->
+      <div class="header-actions">
+        <button type="button" class="theme-toggle-btn" data-action="toggle-theme" aria-label="Alternar tema claro/escuro" title="Alternar tema">
+          ☾
+        </button>
+        <button type="button" class="mobile-nav-toggle" aria-label="Abrir menu de navegação" aria-expanded="false">
+          ☰
+        </button>
+      </div>
     </div>
   </header>
 
-  <main class="container">
-    <div class="construction-banner">
-      <span class="construction-badge">Em construção (responsável: P5)</span>
-      <h1 class="construction-title">Árvore de Recursão do Fibonacci</h1>
-      <p class="construction-text">
-        Esta página exibirá a árvore de recursão dinâmica para o cálculo de Fibonacci, com slider para seleção
-        do valor de <em>n</em> (ex.: 1 a 6) e alternância entre a abordagem ingênua e a abordagem com memoização,
-        destacando visualmente nós e subproblemas repetidos.
-      </p>
-      <!-- TODO(P5): ver docs/tarefas/P5_cheatsheet_slides_e_web.md para especificações da árvore SVG/Canvas e animações -->
-      <a href="index.html" class="btn-back">&larr; Voltar ao Menu Principal</a>
+  <!-- CONTEÚDO PRINCIPAL (SIMULADOR DE FIBONACCI) -->
+  <main class="main-container">
+    
+    <!-- Cabeçalho do Experimento -->
+    <div class="lab-card" style="margin-bottom: 1.25rem;">
+      <div class="lab-card-header">
+        <div class="lab-card-title">
+          <span>MÓDULO 01</span>
+          <span class="badge badge-accent">Árvore de Decisão & Memoização</span>
+        </div>
+        <div style="display: flex; gap: 0.5rem; align-items: center;">
+          <span class="badge badge-primary">Recursão Real</span>
+          <span class="badge">Complexidade: O(2ⁿ) vs O(n)</span>
+        </div>
+      </div>
+      
+      <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 0.75rem;">
+        <div>
+          <h2>Fibonacci: Recursão e Subproblemas Redundantes</h2>
+          <p style="margin: 0; font-size: 0.95rem;">
+            Observe a expansão da árvore de chamadas recursivas reais, identifique a repetição inútil de subproblemas e experimente o impacto da memoização.
+          </p>
+        </div>
+      </div>
     </div>
+
+    <!-- Barra de Parâmetros e Controles de Execução -->
+    <div class="sim-controls-bar" style="margin-bottom: 1.25rem;">
+      <!-- Parâmetro n (Slider 0 a 12) -->
+      <div class="control-group">
+        <label class="control-label" for="slider-n">
+          <span>Entrada <strong>n =</strong></span>
+          <span id="label-n-val" style="color: var(--color-primary); font-size: 1rem; font-weight: 700;">5</span>
+        </label>
+        <input type="range" id="slider-n" min="0" max="12" step="1" value="5" style="width: 120px;" aria-label="Valor de n para Fibonacci">
+      </div>
+
+      <div class="control-separator"></div>
+
+      <!-- Controles de Passo e Playback [⏮] [▶] [⏭] [↻] -->
+      <div class="control-group">
+        <button type="button" class="btn btn-icon" id="btn-prev" title="Passo anterior (⏮)" aria-label="Passo anterior">⏮</button>
+        <button type="button" class="btn btn-primary btn-icon" id="btn-play" title="Executar / Pausar (▶)" aria-label="Executar ou Pausar">▶</button>
+        <button type="button" class="btn btn-icon" id="btn-next" title="Próximo passo (⏭)" aria-label="Próximo passo">⏭</button>
+        <button type="button" class="btn btn-icon" id="btn-reset" title="Reiniciar (↻)" aria-label="Reiniciar simulação">↻</button>
+        <button type="button" class="btn btn-outline btn-sm" id="btn-run-all" title="Executar tudo até o fim">
+          Executar tudo
+        </button>
+      </div>
+
+      <div class="control-separator"></div>
+
+      <!-- Velocidade -->
+      <div class="control-group">
+        <label class="control-label" for="slider-speed">
+          Velocidade:
+          <span id="label-speed-val" style="color: var(--text-primary); font-weight: 600;">1.0x</span>
+        </label>
+        <input type="range" id="slider-speed" min="0.2" max="3.0" step="0.2" value="1.0" style="width: 90px;" aria-label="Velocidade da simulação">
+      </div>
+
+      <div class="control-separator"></div>
+
+      <!-- Toggle de Memoização -->
+      <div class="control-group">
+        <label class="checkbox-label" for="check-memo">
+          <input type="checkbox" id="check-memo">
+          <span><strong>Usar memoização</strong></span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Layout do Simulador: Árvore à esquerda, Painéis à direita -->
+    <div class="sim-layout">
+      
+      <!-- Coluna da Árvore de Recursão (SVG) -->
+      <section class="sim-tree-panel" aria-label="Painel de visualização da árvore de recursão">
+        <div class="sim-tree-header">
+          <span>ÁRVORE DE RECURSÃO (SVG)</span>
+          <div style="display: flex; gap: 0.75rem; align-items: center;">
+            <span id="tree-nodes-count">Nós na árvore: 15</span>
+            <span class="badge" id="badge-mode-status">Modo: Recursão Pura</span>
+          </div>
+        </div>
+
+        <div class="sim-tree-viewport" id="tree-viewport">
+          <!-- Controles Flutuantes de Zoom e Centralização -->
+          <div class="floating-zoom-bar">
+            <button type="button" class="floating-zoom-btn" id="btn-zoom-in" title="Aproximar (+)">+</button>
+            <button type="button" class="floating-zoom-btn" id="btn-zoom-out" title="Afastar (-)">−</button>
+            <button type="button" class="floating-zoom-btn" id="btn-zoom-fit" title="Enquadrar árvore">Fit</button>
+          </div>
+
+          <!-- Elemento SVG dinâmico gerado pelo algoritmo -->
+          <svg id="tree-svg" aria-label="Grafo da árvore de chamadas do Fibonacci">
+            <g id="tree-canvas-group">
+              <g id="tree-edges-layer"></g>
+              <g id="tree-nodes-layer"></g>
+            </g>
+          </svg>
+        </div>
+
+        <!-- Legenda Técnica dos Estados dos Nós -->
+        <div class="sim-tree-legend">
+          <span style="font-weight: 700; color: var(--text-primary);">Legenda:</span>
+          <div class="legend-item">
+            <span class="legend-dot" style="background: var(--bg-surface); border-color: var(--border-color); border-style: dashed;"></span>
+            <span>Não visitado (?)</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-dot" style="background: var(--color-primary-subtle); border-color: var(--color-primary);"></span>
+            <span>Ativo / Chamado</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-dot" style="background: var(--color-accent-subtle); border-color: var(--color-accent);"></span>
+            <span>Calculando filhos</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-dot" style="background: var(--color-success-subtle); border-color: var(--color-success);"></span>
+            <span>Finalizado (✓)</span>
+          </div>
+          <div class="legend-item" id="legend-redundant">
+            <span class="legend-dot" style="background: var(--color-error-subtle); border-color: var(--color-error);"></span>
+            <span>↻ Redundante</span>
+          </div>
+          <div class="legend-item" id="legend-memoized">
+            <span class="legend-dot" style="background: var(--color-secondary-subtle); border-color: var(--color-secondary);"></span>
+            <span>⚡ Memoizado</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Coluna Lateral: Explicação, Comparação e Tabela de Memo -->
+      <aside class="sim-sidebar">
+        
+        <!-- 1. Painel "O que está acontecendo?" -->
+        <div class="explanation-card">
+          <div class="explanation-title">
+            <span>O que está acontecendo?</span>
+            <span class="badge badge-accent" id="step-badge">Passo 0 / 0</span>
+          </div>
+          <div class="explanation-body" id="explanation-text">
+            Selecione uma entrada ou pressione <strong>[▶ Play]</strong> ou <strong>[⏭ Próximo]</strong> para iniciar a execução passo a passo.
+          </div>
+          <div class="explanation-details" id="explanation-details">
+            Status: Pronto para simulação
+          </div>
+        </div>
+
+        <!-- 2. Comparação Empírica Real (Sem Memo vs Com Memo) -->
+        <div class="comparison-card">
+          <div class="comparison-header">
+            <span>Comparação Analítica Real</span>
+            <span class="badge badge-primary" id="compare-n-badge">n = 5</span>
+          </div>
+
+          <div class="comparison-grid">
+            <!-- Sem Memo -->
+            <div class="comparison-col" id="col-no-memo">
+              <span class="comparison-col-title">Sem Memoização</span>
+              <span class="comparison-col-val" id="stat-calls-no-memo">15</span>
+              <span class="comparison-col-meta">Chamadas: O(2ⁿ)</span>
+              <span style="font-size: 0.7rem; color: var(--color-error); font-weight: 600;" id="stat-redundant-count">
+                ↻ 9 redundantes
+              </span>
+            </div>
+
+            <!-- Com Memo -->
+            <div class="comparison-col" id="col-with-memo">
+              <span class="comparison-col-title">Com Memoização</span>
+              <span class="comparison-col-val" id="stat-calls-with-memo" style="color: var(--color-secondary);">9</span>
+              <span class="comparison-col-meta">Chamadas: O(n)</span>
+              <span style="font-size: 0.7rem; color: var(--color-secondary); font-weight: 600;" id="stat-memo-hits">
+                ⚡ 2 podas em O(1)
+              </span>
+            </div>
+          </div>
+
+          <div class="comparison-savings">
+            <span>Economia computacional:</span>
+            <strong id="stat-savings-pct">40.0% de chamadas evitadas</strong>
+          </div>
+        </div>
+
+        <!-- 3. Tabela de Memoização (Estrutura Real de Memória) -->
+        <div class="memo-panel">
+          <div class="memo-header">
+            <span>Tabela de Memoização (Memo)</span>
+            <span class="badge" id="memo-status-badge">Desativada</span>
+          </div>
+          <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.5rem;">
+            Valores de <code>fib(k)</code> armazenados após o primeiro cálculo:
+          </p>
+          <div class="memo-entries-list" id="memo-entries-container">
+            <span class="memo-empty-msg">Marque "Usar memoização" para visualizar o preenchimento da tabela.</span>
+          </div>
+        </div>
+
+        <!-- 4. Chamada e Pilha Atual -->
+        <div class="lab-card" style="margin: 0; padding: 0.85rem 1rem;">
+          <div style="font-family: var(--font-mono); font-size: 0.775rem; color: var(--text-muted); margin-bottom: 0.25rem;">
+            PILHA DE EXECUÇÃO ATIVA
+          </div>
+          <div id="call-stack-display" style="font-family: var(--font-mono); font-size: 0.825rem; color: var(--text-primary); min-height: 20px;">
+            [vazia]
+          </div>
+        </div>
+
+      </aside>
+
+    </div>
+
   </main>
 
-  <footer>
-    <p>CEFET-MG • AEDS-II • Prof. Michel Pires da Silva</p>
+  <!-- RODAPÉ GLOBAL -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div>
+        <strong>PD LAB</strong> — Laboratório Interativo de Programação Dinâmica
+      </div>
+      <div class="footer-meta">
+        <a href="index.html">Início</a> • <a href="lcs-table.html">Próximo: LCS →</a>
+      </div>
+    </div>
   </footer>
 
   <script src="js/shared.js"></script>
+  
+  <!-- LÓGICA ESPECÍFICA DO SIMULADOR FIBONACCI (FibTreeVisualizer) -->
+  <script>
+  (function () {
+    'use strict';
+
+    // Constantes e dimensões dos nós da árvore SVG
+    var NODE_WIDTH = 76;
+    var NODE_HEIGHT = 44;
+    var LEVEL_HEIGHT = 70;
+    var HORIZONTAL_GAP = 14;
+
+    /* -------------------------------------------------------------------------
+     * MOTOR DO ALGORITMO: Simulação e gravação real de passos
+     * ------------------------------------------------------------------------- */
+    var FibEngine = {
+      /**
+       * Executa fib(n) e gera a árvore completa e a lista cronológica de passos reais.
+       */
+      generateExecution: function (n, useMemo) {
+        var nodes = [];
+        var steps = [];
+        var memo = {};
+        var seenK = new Set();
+        var nextId = 0;
+
+        // Pré-cálculo das métricas para comparação analítica real
+        var statsNoMemo = FibEngine.calculateMetrics(n, false);
+        var statsWithMemo = FibEngine.calculateMetrics(n, true);
+
+        // Função recursiva que constrói a árvore de nós e grava os passos
+        function runFib(k, parentId, depth) {
+          var id = nextId++;
+          var node = {
+            id: id,
+            k: k,
+            parentId: parentId,
+            leftChildId: null,
+            rightChildId: null,
+            depth: depth,
+            value: null,
+            isMemoHit: false,
+            isRedundant: false,
+            status: 'unvisited',
+            x: 0,
+            y: 0
+          };
+          nodes.push(node);
+
+          if (parentId !== null) {
+            var parent = nodes[parentId];
+            if (parent.leftChildId === null) {
+              parent.leftChildId = id;
+            } else {
+              parent.rightChildId = id;
+            }
+          }
+
+          // Grava passo de entrada da chamada
+          steps.push({
+            type: 'CALL_ENTER',
+            nodeId: id,
+            k: k,
+            action: 'enter',
+            explanation: 'Iniciando chamada para fib(' + k + ').',
+            details: 'Subproblema fib(' + k + ') colocado na pilha de execução.'
+          });
+
+          // Caso 1: Memoização ativada e valor já está na memória
+          if (useMemo && memo[k] !== undefined) {
+            node.isMemoHit = true;
+            node.value = memo[k];
+            steps.push({
+              type: 'MEMO_HIT',
+              nodeId: id,
+              k: k,
+              value: memo[k],
+              action: 'memo_hit',
+              explanation: '⚡ fib(' + k + ') já foi resolvido anteriormente! Valor ' + memo[k] + ' recuperado diretamente da memória.',
+              details: 'A memoização podou a árvore de recursão em O(1), evitando recalcular todo o subgrafo.'
+            });
+            steps.push({
+              type: 'CALL_RETURN',
+              nodeId: id,
+              k: k,
+              value: memo[k],
+              action: 'return',
+              explanation: 'fib(' + k + ') retorna valor ' + memo[k] + ' para quem chamou.',
+              details: 'Retorno instantâneo via tabela de consulta.'
+            });
+            return memo[k];
+          }
+
+          // Caso 2: Sem memoização, verificar se já vimos esse subproblema antes (redundância)
+          if (!useMemo && seenK.has(k)) {
+            node.isRedundant = true;
+            steps.push({
+              type: 'REDUNDANT_NOTICE',
+              nodeId: id,
+              k: k,
+              action: 'redundant',
+              explanation: '↻ Atenção: fib(' + k + ') já foi calculado antes em outro ramo!',
+              details: 'Sem memoização, o algoritmo é forçado a recalcular todo este trabalho do zero.'
+            });
+          }
+
+          // Caso 3: Casos-base (k = 0 ou k = 1)
+          if (k <= 1) {
+            node.value = k;
+            seenK.add(k);
+            if (useMemo) memo[k] = k;
+
+            steps.push({
+              type: 'BASE_CASE',
+              nodeId: id,
+              k: k,
+              value: k,
+              action: 'base_case',
+              explanation: 'Caso base atingido: fib(' + k + ') = ' + k + '.',
+              details: 'Nenhum filho recursivo necessário. Valor retornado imediatamente.'
+            });
+
+            steps.push({
+              type: 'CALL_RETURN',
+              nodeId: id,
+              k: k,
+              value: k,
+              action: 'return',
+              explanation: 'fib(' + k + ') retorna ' + k + '.',
+              details: useMemo ? 'Gravado em memo[' + k + '] = ' + k : 'Retorno da recursão.'
+            });
+            return k;
+          }
+
+          // Caso 4: Caso recursivo geral: fib(k) = fib(k-1) + fib(k-2)
+          steps.push({
+            type: 'SPLIT_CHILDREN',
+            nodeId: id,
+            k: k,
+            action: 'split',
+            explanation: 'fib(' + k + ') precisa calcular fib(' + (k - 1) + ') e fib(' + (k - 2) + ').',
+            details: 'Expandindo primeiro o ramo esquerdo fib(' + (k - 1) + ').'
+          });
+
+          // Ramo esquerdo: fib(k - 1)
+          var leftVal = runFib(k - 1, id, depth + 1);
+
+          steps.push({
+            type: 'LEFT_RETURNED',
+            nodeId: id,
+            k: k,
+            leftVal: leftVal,
+            action: 'left_returned',
+            explanation: 'fib(' + (k - 1) + ') concluiu com resultado ' + leftVal + '. Agora calculando ramo direito fib(' + (k - 2) + ').',
+            details: 'Subproblema esquerdo resolvido. Passando para o segundo subproblema.'
+          });
+
+          // Ramo direito: fib(k - 2)
+          var rightVal = runFib(k - 2, id, depth + 1);
+
+          var totalVal = leftVal + rightVal;
+          node.value = totalVal;
+          seenK.add(k);
+          if (useMemo) memo[k] = totalVal;
+
+          steps.push({
+            type: 'SUM_COMPUTED',
+            nodeId: id,
+            k: k,
+            leftVal: leftVal,
+            rightVal: rightVal,
+            totalVal: totalVal,
+            action: 'sum',
+            explanation: 'Calculando soma para fib(' + k + '): ' + leftVal + ' + ' + rightVal + ' = ' + totalVal + '.',
+            details: useMemo ? 'Gravado em memo[' + k + '] = ' + totalVal : 'Subproblema finalizado.'
+          });
+
+          steps.push({
+            type: 'CALL_RETURN',
+            nodeId: id,
+            k: k,
+            value: totalVal,
+            action: 'return',
+            explanation: 'fib(' + k + ') retorna valor final ' + totalVal + '.',
+            details: 'Desempilhando chamada fib(' + k + ').'
+          });
+
+          return totalVal;
+        }
+
+        // Executa a raiz
+        runFib(n, null, 0);
+
+        // Calcula coordenadas (layout da árvore)
+        FibEngine.calculateTreeLayout(nodes);
+
+        return {
+          n: n,
+          useMemo: useMemo,
+          nodes: nodes,
+          steps: steps,
+          statsNoMemo: statsNoMemo,
+          statsWithMemo: statsWithMemo
+        };
+      },
+
+      /**
+       * Calcula métricas estritas de chamadas e redundâncias
+       */
+      calculateMetrics: function (n, withMemo) {
+        var calls = 0;
+        var redundant = 0;
+        var memoHits = 0;
+        var memo = {};
+        var seen = new Set();
+
+        function f(k) {
+          calls++;
+          if (withMemo && memo[k] !== undefined) {
+            memoHits++;
+            return memo[k];
+          }
+          if (!withMemo && seen.has(k)) {
+            redundant++;
+          }
+          if (k <= 1) {
+            seen.add(k);
+            if (withMemo) memo[k] = k;
+            return k;
+          }
+          var val = f(k - 1) + f(k - 2);
+          seen.add(k);
+          if (withMemo) memo[k] = val;
+          return val;
+        }
+
+        var res = f(n);
+        return {
+          n: n,
+          result: res,
+          calls: calls,
+          redundant: redundant,
+          memoHits: memoHits
+        };
+      },
+
+      /**
+       * Algoritmo de posicionamento simétrico de árvore binária sem sobreposição
+       */
+      calculateTreeLayout: function (nodes) {
+        if (!nodes.length) return;
+
+        var leafCount = 0;
+
+        // Atribui posições x aos nós folha através de travessia in-order
+        function assignX(node) {
+          if (!node) return;
+          var left = node.leftChildId !== null ? nodes[node.leftChildId] : null;
+          var right = node.rightChildId !== null ? nodes[node.rightChildId] : null;
+
+          if (!left && !right) {
+            node.x = leafCount * (NODE_WIDTH + HORIZONTAL_GAP) + (NODE_WIDTH / 2);
+            leafCount++;
+          } else {
+            if (left) assignX(left);
+            if (right) assignX(right);
+
+            if (left && right) {
+              node.x = (left.x + right.x) / 2;
+            } else if (left) {
+              node.x = left.x;
+            } else if (right) {
+              node.x = right.x;
+            }
+          }
+
+          node.y = 40 + node.depth * LEVEL_HEIGHT;
+        }
+
+        assignX(nodes[0]);
+      }
+    };
+
+    /* -------------------------------------------------------------------------
+     * RENDERIZADOR SVG & CONTROLADOR DE INTERFACE
+     * ------------------------------------------------------------------------- */
+    var FibVisualizer = {
+      data: null,
+      currentStepIndex: 0,
+      timerId: null,
+      isPlaying: false,
+      speedMultiplier: 1.0,
+
+      // Estado do Pan & Zoom SVG
+      zoom: 1.0,
+      panX: 0,
+      panY: 0,
+      isDragging: false,
+      dragStartX: 0,
+      dragStartY: 0,
+
+      init: function () {
+        this.cacheDOM();
+        this.bindEvents();
+        this.reloadSimulation();
+      },
+
+      cacheDOM: function () {
+        this.sliderN = document.getElementById('slider-n');
+        this.labelN = document.getElementById('label-n-val');
+        this.sliderSpeed = document.getElementById('slider-speed');
+        this.labelSpeed = document.getElementById('label-speed-val');
+        this.checkMemo = document.getElementById('check-memo');
+
+        this.btnPrev = document.getElementById('btn-prev');
+        this.btnPlay = document.getElementById('btn-play');
+        this.btnNext = document.getElementById('btn-next');
+        this.btnReset = document.getElementById('btn-reset');
+        this.btnRunAll = document.getElementById('btn-run-all');
+
+        this.btnZoomIn = document.getElementById('btn-zoom-in');
+        this.btnZoomOut = document.getElementById('btn-zoom-out');
+        this.btnZoomFit = document.getElementById('btn-zoom-fit');
+
+        this.treeViewport = document.getElementById('tree-viewport');
+        this.treeSvg = document.getElementById('tree-svg');
+        this.treeCanvasGroup = document.getElementById('tree-canvas-group');
+        this.edgesLayer = document.getElementById('tree-edges-layer');
+        this.nodesLayer = document.getElementById('tree-nodes-layer');
+        this.treeNodesCount = document.getElementById('tree-nodes-count');
+        this.badgeModeStatus = document.getElementById('badge-mode-status');
+
+        this.explanationText = document.getElementById('explanation-text');
+        this.explanationDetails = document.getElementById('explanation-details');
+        this.stepBadge = document.getElementById('step-badge');
+        this.callStackDisplay = document.getElementById('call-stack-display');
+
+        this.compareNBadge = document.getElementById('compare-n-badge');
+        this.statCallsNoMemo = document.getElementById('stat-calls-no-memo');
+        this.statRedundantCount = document.getElementById('stat-redundant-count');
+        this.statCallsWithMemo = document.getElementById('stat-calls-with-memo');
+        this.statMemoHits = document.getElementById('stat-memo-hits');
+        this.statSavingsPct = document.getElementById('stat-savings-pct');
+
+        this.memoStatusBadge = document.getElementById('memo-status-badge');
+        this.memoContainer = document.getElementById('memo-entries-container');
+      },
+
+      bindEvents: function () {
+        var self = this;
+
+        // Slider N
+        this.sliderN.addEventListener('input', function () {
+          self.labelN.textContent = this.value;
+          self.reloadSimulation();
+        });
+
+        // Toggle Memoização
+        this.checkMemo.addEventListener('change', function () {
+          self.reloadSimulation();
+        });
+
+        // Slider Velocidade
+        this.sliderSpeed.addEventListener('input', function () {
+          self.speedMultiplier = parseFloat(this.value);
+          self.labelSpeed.textContent = self.speedMultiplier.toFixed(1) + 'x';
+        });
+
+        // Controles de Simulação
+        this.btnNext.addEventListener('click', function () { self.stepForward(); });
+        this.btnPrev.addEventListener('click', function () { self.stepBackward(); });
+        this.btnPlay.addEventListener('click', function () { self.togglePlay(); });
+        this.btnReset.addEventListener('click', function () { self.reset(); });
+        this.btnRunAll.addEventListener('click', function () { self.runAll(); });
+
+        // Zoom & Pan
+        this.btnZoomIn.addEventListener('click', function () { self.adjustZoom(1.2); });
+        this.btnZoomOut.addEventListener('click', function () { self.adjustZoom(0.8); });
+        this.btnZoomFit.addEventListener('click', function () { self.fitTree(); });
+
+        // Mouse Drag Pan no SVG
+        this.treeViewport.addEventListener('mousedown', function (e) {
+          if (e.target.closest('.floating-zoom-bar')) return;
+          self.isDragging = true;
+          self.dragStartX = e.clientX - self.panX;
+          self.dragStartY = e.clientY - self.panY;
+        });
+
+        window.addEventListener('mousemove', function (e) {
+          if (!self.isDragging) return;
+          self.panX = e.clientX - self.dragStartX;
+          self.panY = e.clientY - self.dragStartY;
+          self.applyTransform();
+        });
+
+        window.addEventListener('mouseup', function () {
+          self.isDragging = false;
+        });
+
+        // Roda do mouse para zoom suave
+        this.treeViewport.addEventListener('wheel', function (e) {
+          e.preventDefault();
+          var factor = e.deltaY < 0 ? 1.1 : 0.9;
+          self.adjustZoom(factor);
+        }, { passive: false });
+
+        // Sincronização ao mudar o tema
+        window.addEventListener('pdlab:themechange', function () {
+          // Re-renderiza sem quebrar o estado
+          self.applyTransform();
+        });
+      },
+
+      /**
+       * Regenera toda a simulação ao mudar n ou o modo de memoização
+       */
+      reloadSimulation: function () {
+        this.pause();
+        var n = parseInt(this.sliderN.value, 10);
+        var useMemo = this.checkMemo.checked;
+
+        // Execução real do algoritmo
+        this.data = FibEngine.generateExecution(n, useMemo);
+        this.currentStepIndex = 0;
+
+        // Atualiza painéis estáticos
+        this.updateStaticMetrics();
+        this.renderSVGTree();
+        this.fitTree();
+        this.updateView();
+      },
+
+      updateStaticMetrics: function () {
+        var n = this.data.n;
+        var sm = this.data.statsNoMemo;
+        var wm = this.data.statsWithMemo;
+
+        this.compareNBadge.textContent = 'n = ' + n;
+        this.treeNodesCount.textContent = 'Nós na árvore: ' + this.data.nodes.length;
+        this.badgeModeStatus.textContent = this.data.useMemo ? 'Modo: Memoização Ativa' : 'Modo: Recursão Pura';
+
+        this.statCallsNoMemo.textContent = sm.calls;
+        this.statRedundantCount.textContent = '↻ ' + sm.redundant + ' redundantes';
+
+        this.statCallsWithMemo.textContent = wm.calls;
+        this.statMemoHits.textContent = '⚡ ' + wm.memoHits + ' podas em O(1)';
+
+        var savings = sm.calls > 0 ? (((sm.calls - wm.calls) / sm.calls) * 100).toFixed(1) : '0.0';
+        this.statSavingsPct.textContent = savings + '% de chamadas evitadas';
+
+        if (this.data.useMemo) {
+          this.memoStatusBadge.textContent = 'Ativa (Top-Down)';
+          this.memoStatusBadge.className = 'badge badge-secondary';
+        } else {
+          this.memoStatusBadge.textContent = 'Desativada';
+          this.memoStatusBadge.className = 'badge';
+        }
+      },
+
+      /**
+       * Desenha os nós e arestas estáticos no SVG inicial
+       */
+      renderSVGTree: function () {
+        this.edgesLayer.innerHTML = '';
+        this.nodesLayer.innerHTML = '';
+
+        var nodes = this.data.nodes;
+
+        // 1. Desenha arestas (ramos)
+        for (var i = 0; i < nodes.length; i++) {
+          var node = nodes[i];
+          if (node.parentId !== null) {
+            var parent = nodes[node.parentId];
+            var edge = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            var d = 'M ' + parent.x + ' ' + (parent.y + NODE_HEIGHT / 2) +
+                    ' C ' + parent.x + ' ' + (parent.y + (node.y - parent.y) / 2) +
+                    ', ' + node.x + ' ' + (parent.y + (node.y - parent.y) / 2) +
+                    ', ' + node.x + ' ' + (node.y - NODE_HEIGHT / 2);
+            edge.setAttribute('d', d);
+            edge.setAttribute('class', 'tree-edge');
+            edge.setAttribute('id', 'edge-' + parent.id + '-' + node.id);
+            this.edgesLayer.appendChild(edge);
+          }
+        }
+
+        // 2. Desenha nós
+        for (var j = 0; j < nodes.length; j++) {
+          var nObj = nodes[j];
+          var g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+          g.setAttribute('class', 'tree-node status-unvisited');
+          g.setAttribute('id', 'node-g-' + nObj.id);
+          g.setAttribute('transform', 'translate(' + (nObj.x - NODE_WIDTH / 2) + ',' + (nObj.y - NODE_HEIGHT / 2) + ')');
+
+          // Caixa de fundo
+          var rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+          rect.setAttribute('class', 'tree-node-bg');
+          rect.setAttribute('width', NODE_WIDTH);
+          rect.setAttribute('height', NODE_HEIGHT);
+          rect.setAttribute('rx', '4');
+          rect.setAttribute('ry', '4');
+
+          // Rótulo principal fib(k)
+          var textTitle = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+          textTitle.setAttribute('class', 'tree-node-text-title');
+          textTitle.setAttribute('x', NODE_WIDTH / 2);
+          textTitle.setAttribute('y', 15);
+          textTitle.textContent = 'fib(' + nObj.k + ')';
+
+          // Rótulo de valor = ?
+          var textVal = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+          textVal.setAttribute('class', 'tree-node-text-val');
+          textVal.setAttribute('id', 'node-val-' + nObj.id);
+          textVal.setAttribute('x', NODE_WIDTH / 2);
+          textVal.setAttribute('y', 31);
+          textVal.textContent = '= ?';
+
+          g.appendChild(rect);
+          g.appendChild(textTitle);
+          g.appendChild(textVal);
+
+          this.nodesLayer.appendChild(g);
+        }
+      },
+
+      /**
+       * Calcula os estados dos nós e da memoização no passo atual
+       */
+      updateView: function () {
+        var steps = this.data.steps;
+        var totalSteps = steps.length;
+        var curIdx = this.currentStepIndex;
+
+        // Atualiza badge de passos
+        this.stepBadge.textContent = 'Passo ' + curIdx + ' / ' + totalSteps;
+        this.btnPrev.disabled = curIdx === 0;
+        this.btnNext.disabled = curIdx >= totalSteps;
+
+        // Recria o estado dinâmico a partir dos passos até curIdx
+        var nodeStates = {};
+        var nodeValues = {};
+        var memoState = {};
+        var callStack = [];
+        var activeNodeId = null;
+
+        for (var i = 0; i < this.data.nodes.length; i++) {
+          nodeStates[i] = 'unvisited';
+          nodeValues[i] = '?';
+        }
+
+        for (var s = 0; s < curIdx; s++) {
+          var step = steps[s];
+          var nid = step.nodeId;
+
+          if (step.type === 'CALL_ENTER') {
+            nodeStates[nid] = 'active';
+            callStack.push(step.k);
+            activeNodeId = nid;
+          } else if (step.type === 'MEMO_HIT') {
+            nodeStates[nid] = 'memoized';
+            nodeValues[nid] = step.value;
+            activeNodeId = nid;
+          } else if (step.type === 'REDUNDANT_NOTICE') {
+            nodeStates[nid] = 'redundant';
+            activeNodeId = nid;
+          } else if (step.type === 'BASE_CASE') {
+            nodeStates[nid] = 'done';
+            nodeValues[nid] = step.value;
+            if (this.data.useMemo) memoState[step.k] = step.value;
+            activeNodeId = nid;
+          } else if (step.type === 'SPLIT_CHILDREN') {
+            nodeStates[nid] = 'calculating';
+            activeNodeId = nid;
+          } else if (step.type === 'LEFT_RETURNED') {
+            nodeStates[nid] = 'calculating';
+            activeNodeId = nid;
+          } else if (step.type === 'SUM_COMPUTED') {
+            nodeStates[nid] = 'done';
+            nodeValues[nid] = step.totalVal;
+            if (this.data.useMemo) memoState[step.k] = step.totalVal;
+            activeNodeId = nid;
+          } else if (step.type === 'CALL_RETURN') {
+            // Se o nó já estiver marcado como memoized, preserva a classe
+            if (nodeStates[nid] !== 'memoized') {
+              nodeStates[nid] = 'done';
+            }
+            nodeValues[nid] = step.value;
+            callStack.pop();
+          }
+        }
+
+        // Aplica classes visuais aos nós SVG
+        for (var id = 0; id < this.data.nodes.length; id++) {
+          var g = document.getElementById('node-g-' + id);
+          var vEl = document.getElementById('node-val-' + id);
+          if (g && vEl) {
+            var st = nodeStates[id];
+            g.setAttribute('class', 'tree-node status-' + st);
+            
+            var valSymbol = nodeValues[id];
+            if (st === 'memoized') {
+              vEl.textContent = '= ' + valSymbol + ' ⚡';
+            } else if (st === 'redundant' && valSymbol !== '?') {
+              vEl.textContent = '= ' + valSymbol + ' ↻';
+            } else if (st === 'done') {
+              vEl.textContent = '= ' + valSymbol + ' ✓';
+            } else if (st === 'active' || st === 'calculating') {
+              vEl.textContent = 'calculando...';
+            } else {
+              vEl.textContent = '= ?';
+            }
+          }
+        }
+
+        // Atualiza arestas ativas
+        var edges = this.edgesLayer.querySelectorAll('.tree-edge');
+        edges.forEach(function (edge) {
+          var parts = edge.id.split('-');
+          var pId = parseInt(parts[1], 10);
+          var cId = parseInt(parts[2], 10);
+
+          if (nodeStates[cId] === 'done' || nodeStates[cId] === 'memoized') {
+            edge.setAttribute('class', 'tree-edge edge-done');
+          } else if (nodeStates[cId] === 'active' || nodeStates[cId] === 'calculating' || nodeStates[cId] === 'redundant') {
+            edge.setAttribute('class', 'tree-edge edge-active');
+          } else {
+            edge.setAttribute('class', 'tree-edge');
+          }
+        });
+
+        // Atualiza textos do painel de explicação
+        if (curIdx === 0) {
+          this.explanationText.textContent = 'Início da simulação. Pressione [▶ Play] para assistir a execução ou [⏭ Próximo] para avançar passo a passo.';
+          this.explanationDetails.textContent = 'Árvore regenerada para n = ' + this.data.n + '.';
+        } else {
+          var lastStep = steps[curIdx - 1];
+          this.explanationText.textContent = lastStep.explanation;
+          this.explanationDetails.textContent = lastStep.details;
+        }
+
+        // Atualiza Pilha de Execução
+        if (callStack.length === 0) {
+          this.callStackDisplay.textContent = curIdx >= totalSteps ? '[concluída - pilha vazia]' : '[vazia]';
+        } else {
+          this.callStackDisplay.textContent = callStack.map(function(k) { return 'fib(' + k + ')'; }).join(' → ');
+        }
+
+        // Atualiza Painel de Memoização
+        this.renderMemoTable(memoState);
+
+        // Se a execução acabou, pausa o timer
+        if (curIdx >= totalSteps) {
+          this.pause();
+        }
+      },
+
+      renderMemoTable: function (memoMap) {
+        if (!this.data.useMemo) {
+          this.memoContainer.innerHTML = '<span class="memo-empty-msg">Memoização desativada. As chamadas repetidas são recalculadas por completo.</span>';
+          return;
+        }
+
+        var keys = Object.keys(memoMap).sort(function (a, b) { return Number(a) - Number(b); });
+        if (keys.length === 0) {
+          this.memoContainer.innerHTML = '<span class="memo-empty-msg">Aguardando a resolução do primeiro subproblema...</span>';
+          return;
+        }
+
+        this.memoContainer.innerHTML = '';
+        for (var i = 0; i < keys.length; i++) {
+          var k = keys[i];
+          var val = memoMap[k];
+          var chip = document.createElement('span');
+          chip.className = 'memo-entry-chip';
+          chip.innerHTML = '<span>fib(' + k + ')</span> <span style="color: var(--text-muted);">→</span> <strong>' + val + '</strong>';
+          this.memoContainer.appendChild(chip);
+        }
+      },
+
+      stepForward: function () {
+        if (!this.data) return;
+        if (this.currentStepIndex < this.data.steps.length) {
+          this.currentStepIndex++;
+          this.updateView();
+        }
+      },
+
+      stepBackward: function () {
+        if (!this.data) return;
+        if (this.currentStepIndex > 0) {
+          this.currentStepIndex--;
+          this.updateView();
+        }
+      },
+
+      runAll: function () {
+        if (!this.data) return;
+        this.pause();
+        this.currentStepIndex = this.data.steps.length;
+        this.updateView();
+      },
+
+      reset: function () {
+        this.pause();
+        this.currentStepIndex = 0;
+        this.updateView();
+      },
+
+      togglePlay: function () {
+        if (this.isPlaying) {
+          this.pause();
+        } else {
+          this.play();
+        }
+      },
+
+      play: function () {
+        var self = this;
+        if (!this.data) return;
+        if (this.currentStepIndex >= this.data.steps.length) {
+          this.currentStepIndex = 0;
+        }
+
+        this.isPlaying = true;
+        this.btnPlay.textContent = '⏸';
+        this.btnPlay.setAttribute('title', 'Pausar (⏸)');
+
+        function tick() {
+          if (!self.isPlaying) return;
+          if (self.currentStepIndex < self.data.steps.length) {
+            self.stepForward();
+            var delay = Math.max(40, Math.round(500 / self.speedMultiplier));
+            self.timerId = setTimeout(tick, delay);
+          } else {
+            self.pause();
+          }
+        }
+
+        var initialDelay = Math.max(40, Math.round(500 / this.speedMultiplier));
+        this.timerId = setTimeout(tick, initialDelay);
+      },
+
+      pause: function () {
+        this.isPlaying = false;
+        if (this.timerId !== null) {
+          clearTimeout(this.timerId);
+          this.timerId = null;
+        }
+        if (this.btnPlay) {
+          this.btnPlay.textContent = '▶';
+          this.btnPlay.setAttribute('title', 'Executar (▶)');
+        }
+      },
+
+      /* Controle de Pan e Zoom SVG */
+      adjustZoom: function (factor) {
+        this.zoom = Math.max(0.2, Math.min(3.0, this.zoom * factor));
+        this.applyTransform();
+      },
+
+      fitTree: function () {
+        if (!this.data || !this.data.nodes.length) return;
+        var nodes = this.data.nodes;
+
+        var minX = Infinity, maxX = -Infinity, maxY = 0;
+        for (var i = 0; i < nodes.length; i++) {
+          if (nodes[i].x < minX) minX = nodes[i].x;
+          if (nodes[i].x > maxX) maxX = nodes[i].x;
+          if (nodes[i].y > maxY) maxY = nodes[i].y;
+        }
+
+        var treeWidth = (maxX - minX) + NODE_WIDTH + 60;
+        var treeHeight = maxY + NODE_HEIGHT + 60;
+
+        var vpWidth = this.treeViewport.clientWidth || 700;
+        var vpHeight = this.treeViewport.clientHeight || 560;
+
+        var scaleX = (vpWidth - 40) / treeWidth;
+        var scaleY = (vpHeight - 40) / treeHeight;
+        this.zoom = Math.max(0.25, Math.min(1.1, Math.min(scaleX, scaleY)));
+
+        // Centraliza
+        var centerX = (minX + maxX) / 2;
+        this.panX = (vpWidth / 2) - (centerX * this.zoom);
+        this.panY = 25;
+
+        this.applyTransform();
+      },
+
+      applyTransform: function () {
+        if (this.treeCanvasGroup) {
+          this.treeCanvasGroup.setAttribute('transform', 'translate(' + this.panX + ',' + this.panY + ') scale(' + this.zoom + ')');
+        }
+      }
+    };
+
+    // Inicialização ao carregar a página
+    document.addEventListener('DOMContentLoaded', function () {
+      FibVisualizer.init();
+    });
+
+  })();
+  </script>
 </body>
 </html>

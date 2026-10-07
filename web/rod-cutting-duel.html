@@ -3,39 +3,919 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Duelo Guloso x PD - Corte de Hastes | Programação Dinâmica</title>
+  <title>03. Rod Cutting — Duelo Guloso × PD — PD LAB</title>
+  <meta name="description" content="Simulação interativa confrontando a estratégia gulosa de densidade de valor com a programação dinâmica no problema de corte de hastes.">
+  
+  <!-- Prevenção de FOUC de tema: restauração instantânea antes do render -->
+  <script>
+    (function() {
+      try {
+        var saved = localStorage.getItem('pdlab_theme');
+        if (saved) {
+          var theme = JSON.parse(saved);
+          if (theme === 'dark' || theme === 'light') {
+            document.documentElement.setAttribute('data-theme', theme);
+          }
+        } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+      } catch (e) {}
+    })();
+  </script>
+
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <header class="navbar">
-    <a href="index.html" class="nav-brand">
-      <span>⚡</span> Programação Dinâmica
-    </a>
-    <div class="nav-actions">
-      <button class="theme-toggle-btn" onclick="toggleTheme()" aria-label="Alternar tema">
-        🌓 Tema
-      </button>
+
+  <!-- CABEÇALHO GLOBAL -->
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="index.html" class="logo-area" aria-label="PD LAB - Início">
+        <span class="logo-mark">PD</span>
+        <span class="logo-title">PD LAB</span>
+        <span class="logo-subtitle">Laboratório de Algoritmos</span>
+      </a>
+
+      <!-- Navegação Global -->
+      <nav class="site-nav" aria-label="Navegação principal">
+        <ul class="nav-list">
+          <li>
+            <a href="index.html" class="nav-link">Início</a>
+          </li>
+          
+          <!-- Dropdown Experimentos -->
+          <li class="nav-dropdown">
+            <button type="button" class="nav-link nav-dropdown-toggle active" aria-expanded="false" aria-haspopup="true">
+              Experimentos
+            </button>
+            <ul class="nav-dropdown-menu" role="menu">
+              <li class="dropdown-item" role="none">
+                <a href="fib-tree.html" role="menuitem">
+                  <span>01. Fibonacci</span>
+                  <span class="dropdown-code">Árvore / Memo</span>
+                </a>
+              </li>
+              <li class="dropdown-item" role="none">
+                <a href="lcs-table.html" role="menuitem">
+                  <span>02. LCS</span>
+                  <span class="dropdown-code">Tabela 2D</span>
+                </a>
+              </li>
+              <li class="dropdown-item" role="none">
+                <a href="rod-cutting-duel.html" class="active" role="menuitem">
+                  <span>03. Rod Cutting</span>
+                  <span class="dropdown-code">PD vs Guloso</span>
+                </a>
+              </li>
+              <li class="dropdown-item" role="none">
+                <a href="matrix-chain.html" role="menuitem">
+                  <span>04. Matrix Chain</span>
+                  <span class="dropdown-code">Parentização</span>
+                </a>
+              </li>
+            </ul>
+          </li>
+
+          <li>
+            <a href="benchmarks.html" class="nav-link">Benchmarks</a>
+          </li>
+          <li>
+            <a href="quiz.html" class="nav-link">Quiz</a>
+          </li>
+        </ul>
+      </nav>
+
+      <!-- Ações do Header -->
+      <div class="header-actions">
+        <button type="button" class="theme-toggle-btn" data-action="toggle-theme" aria-label="Alternar tema claro/escuro" title="Alternar tema">
+          ☾
+        </button>
+        <button type="button" class="mobile-nav-toggle" aria-label="Abrir menu de navegação" aria-expanded="false">
+          ☰
+        </button>
+      </div>
     </div>
   </header>
 
-  <main class="container">
-    <div class="construction-banner">
-      <span class="construction-badge">Em construção (responsável: P5)</span>
-      <h1 class="construction-title">Duelo: Algoritmo Guloso vs. Programação Dinâmica</h1>
-      <p class="construction-text">
-        Esta página permitirá comparar lado a lado o corte de hastes pela heurística gulosa de densidade de valor
-        (preço/tamanho) contra a solução ótima da Programação Dinâmica. Contará com tabela de preços editável
-        e botão para carregar contra-exemplos automáticos (como o caso n=4 com preços [0, 1, 5, 8, 9]).
-      </p>
-      <!-- TODO(P5): ver docs/tarefas/P5_cheatsheet_slides_e_web.md para tabela editável e cálculo reativo -->
-      <a href="index.html" class="btn-back">&larr; Voltar ao Menu Principal</a>
+  <!-- CONTEÚDO PRINCIPAL (DUELO ROD CUTTING) -->
+  <main class="main-container">
+    
+    <!-- Cabeçalho do Experimento -->
+    <div class="lab-card" style="margin-bottom: 1.25rem;">
+      <div class="lab-card-header">
+        <div class="lab-card-title">
+          <span>MÓDULO 03</span>
+          <span class="badge badge-secondary">Duelo de Paradigmas: Guloso × PD</span>
+        </div>
+        <div style="display: flex; gap: 0.5rem; align-items: center;">
+          <span class="badge badge-accent">Heurística Local vs Ótimo Global</span>
+          <span class="badge">Problema do Corte de Hastes</span>
+        </div>
+      </div>
+      
+      <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 0.75rem;">
+        <div>
+          <h2>Corte de Hastes: Onde a Estratégia Gulosa Falha?</h2>
+          <p style="margin: 0; font-size: 0.95rem;">
+            Edite os preços das peças, ajuste o comprimento da haste e assista ao confronto simultâneo entre a escolha míope da maior densidade e a certeza matemática da Programação Dinâmica.
+          </p>
+        </div>
+      </div>
     </div>
+
+    <!-- Seção de Configuração: Tabela Editável de Preços & Tamanho da Barra -->
+    <div class="rod-config-grid">
+      
+      <!-- Tabela Editável de Preços -->
+      <div class="price-table-container">
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+          <span style="font-weight: 700; font-size: 0.9rem; color: var(--text-primary);">
+            TABELA DE PREÇOS POR COMPRIMENTO
+          </span>
+          <div style="display: flex; gap: 0.35rem;">
+            <button type="button" class="btn btn-outline btn-sm" id="btn-add-size" title="Adicionar novo tamanho">
+              + Adicionar tamanho
+            </button>
+            <button type="button" class="btn btn-outline btn-sm" id="btn-remove-size" title="Remover último tamanho">
+              − Remover
+            </button>
+          </div>
+        </div>
+
+        <div style="overflow-x: auto;">
+          <table class="price-table" id="price-table" aria-label="Tabela de preços de corte de hastes">
+            <thead>
+              <tr>
+                <th scope="col">Tamanho (i)</th>
+                <th scope="col">Preço ($ pᵢ)</th>
+                <th scope="col">Densidade (pᵢ / i)</th>
+                <th scope="col">Ação</th>
+              </tr>
+            </thead>
+            <tbody id="price-table-body">
+              <!-- Linhas geradas dinamicamente -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Configuração da Haste & Casos Pré-Configurados -->
+      <div class="lab-card" style="margin: 0; padding: 1.15rem; display: flex; flex-direction: column; gap: 1rem;">
+        <div>
+          <label for="rod-length-slider" style="display: flex; justify-content: space-between; font-weight: 700; font-size: 0.85rem; color: var(--text-primary); margin-bottom: 0.35rem;">
+            <span>Comprimento da Haste:</span>
+            <strong id="rod-length-display" style="color: var(--color-primary); font-size: 1.05rem;">N = 6</strong>
+          </label>
+          <input type="range" id="rod-length-slider" min="1" max="10" step="1" value="6" style="width: 100%;" aria-label="Comprimento total da haste">
+        </div>
+
+        <div style="border-top: 1px solid var(--border-subtle); padding-top: 0.75rem;">
+          <span style="font-size: 0.75rem; font-family: var(--font-mono); color: var(--text-muted); display: block; margin-bottom: 0.4rem;">
+            Cenários de Demonstração:
+          </span>
+          <div style="display: flex; flex-direction: column; gap: 0.4rem;">
+            <button type="button" class="btn btn-outline btn-sm btn-preset" data-preset="greedy-fails" style="text-align: left; justify-content: space-between;">
+              <span>1. Guloso Falha (Miopia de Densidade)</span>
+              <span class="badge badge-accent">N=4</span>
+            </button>
+            <button type="button" class="btn btn-outline btn-sm btn-preset" data-preset="classic-cormen" style="text-align: left; justify-content: space-between;">
+              <span>2. Caso Clássico do Livro</span>
+              <span class="badge badge-secondary">N=6</span>
+            </button>
+            <button type="button" class="btn btn-outline btn-sm btn-preset" data-preset="greedy-wins" style="text-align: left; justify-content: space-between;">
+              <span>3. Guloso Encontra o Ótimo</span>
+              <span class="badge badge-success">N=6</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Barra de Controles de Reprodução e Velocidade -->
+    <div class="sim-controls-bar" style="margin-bottom: 1.25rem;">
+      <div class="control-group">
+        <button type="button" class="btn btn-icon" id="btn-prev" title="Passo anterior (⏮)" aria-label="Passo anterior">⏮</button>
+        <button type="button" class="btn btn-primary btn-icon" id="btn-play" title="Executar / Pausar (▶)" aria-label="Executar ou Pausar">▶</button>
+        <button type="button" class="btn btn-icon" id="btn-next" title="Próximo passo (⏭)" aria-label="Próximo passo">⏭</button>
+        <button type="button" class="btn btn-icon" id="btn-reset" title="Reiniciar duelo (↻)" aria-label="Reiniciar simulação">↻</button>
+        <button type="button" class="btn btn-outline btn-sm" id="btn-duel-all" title="Completar o duelo instantaneamente">
+          Executar duelo
+        </button>
+      </div>
+
+      <div class="control-separator"></div>
+
+      <div class="control-group">
+        <label class="control-label" for="slider-speed">
+          Velocidade:
+          <span id="label-speed-val" style="color: var(--text-primary); font-weight: 600;">1.0x</span>
+        </label>
+        <input type="range" id="slider-speed" min="0.2" max="3.0" step="0.2" value="1.0" style="width: 90px;" aria-label="Velocidade da simulação">
+      </div>
+
+      <div class="control-group" style="margin-left: auto;">
+        <span class="badge badge-accent" id="duel-step-badge">Passo 0 / 0</span>
+      </div>
+    </div>
+
+    <!-- O DUELO VISUAL LADO A LADO -->
+    <div class="duel-layout">
+      
+      <!-- COLUNA 1: ALGORITMO GULOSO -->
+      <section class="duel-card greedy" aria-labelledby="heading-greedy">
+        <div class="duel-card-header">
+          <div>
+            <span class="badge badge-accent">Estratégia Heurística</span>
+            <h3 id="heading-greedy" style="margin: 0.2rem 0 0 0; font-size: 1.15rem; color: var(--text-primary);">
+              ALGORITMO GULOSO
+            </h3>
+          </div>
+          <span style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted);">
+            Regra: Maior Densidade (pᵢ / i)
+          </span>
+        </div>
+
+        <div class="duel-card-body">
+          <!-- Visual da Barra do Guloso -->
+          <div class="rod-visual-box">
+            <div class="rod-visual-label">
+              <span>ESTADO ATUAL DA BARRA</span>
+              <span id="greedy-cuts-label">Cortes: nenhum</span>
+            </div>
+            <div class="rod-track" id="greedy-rod-track" aria-label="Representação dos cortes na barra do algoritmo guloso">
+              <!-- Segmentos gerados dinamicamente -->
+            </div>
+          </div>
+
+          <!-- Métricas do Guloso -->
+          <div class="duel-metrics-panel">
+            <div class="duel-metric-item">
+              <span class="duel-metric-label">Lucro Acumulado</span>
+              <span class="duel-metric-val" id="greedy-profit-val" style="color: var(--color-accent);">$0</span>
+            </div>
+            <div class="duel-metric-item">
+              <span class="duel-metric-label">Comprimento Restante</span>
+              <span class="duel-metric-val" id="greedy-remaining-val">0</span>
+            </div>
+          </div>
+
+          <!-- Explicação do Passo Guloso -->
+          <div class="explanation-details" id="greedy-step-explanation" style="min-height: 85px;">
+            Aguardando o início do duelo...
+          </div>
+        </div>
+      </section>
+
+      <!-- COLUNA 2: PROGRAMAÇÃO DINÂMICA -->
+      <section class="duel-card dp" aria-labelledby="heading-dp">
+        <div class="duel-card-header">
+          <div>
+            <span class="badge badge-primary">Solução Exata</span>
+            <h3 id="heading-dp" style="margin: 0.2rem 0 0 0; font-size: 1.15rem; color: var(--text-primary);">
+              PROGRAMAÇÃO DINÂMICA
+            </h3>
+          </div>
+          <span style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted);">
+            Regra: Subestrutura Ótima (rⱼ = max)
+          </span>
+        </div>
+
+        <div class="duel-card-body">
+          <!-- Visual da Barra da PD -->
+          <div class="rod-visual-box">
+            <div class="rod-visual-label">
+              <span>ESTADO ATUAL DA BARRA</span>
+              <span id="dp-cuts-label">Cortes: nenhum</span>
+            </div>
+            <div class="rod-track" id="dp-rod-track" aria-label="Representação dos cortes na barra do algoritmo de programação dinâmica">
+              <!-- Segmentos gerados dinamicamente -->
+            </div>
+          </div>
+
+          <!-- Métricas da PD -->
+          <div class="duel-metrics-panel">
+            <div class="duel-metric-item">
+              <span class="duel-metric-label">Melhor Lucro</span>
+              <span class="duel-metric-val" id="dp-profit-val" style="color: var(--color-primary);">$0</span>
+            </div>
+            <div class="duel-metric-item">
+              <span class="duel-metric-label">Subproblema Atual</span>
+              <span class="duel-metric-val" id="dp-subproblem-val">j = 0</span>
+            </div>
+          </div>
+
+          <!-- Explicação do Passo da PD -->
+          <div class="explanation-details" id="dp-step-explanation" style="min-height: 85px;">
+            Aguardando o início do duelo...
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- Tabela dos Subproblemas Resolvidos pela PD -->
+    <div class="lab-card" style="margin-bottom: 1.5rem;">
+      <div class="lab-card-header">
+        <div class="lab-card-title">
+          <span>MEMÓRIA DA PROGRAMAÇÃO DINÂMICA (Tabela r[j])</span>
+          <span class="badge badge-primary">Tabulação Bottom-Up</span>
+        </div>
+        <span style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted);">
+          r[j] = max₁≤ᵢ≤ⱼ (pᵢ + r[j − i])
+        </span>
+      </div>
+
+      <div style="overflow-x: auto;">
+        <table class="dp-subproblems-table" id="dp-subproblems-table">
+          <thead>
+            <tr>
+              <th scope="col">Comprimento (j)</th>
+              <th scope="col">Cálculo Avaliado</th>
+              <th scope="col">Melhor Lucro r[j]</th>
+              <th scope="col">Primeiro Corte Ótimo s[j]</th>
+            </tr>
+          </thead>
+          <tbody id="dp-subproblems-tbody">
+            <!-- Linhas preenchidas dinamicamente -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- BANNER DE VEREDITO E DIAGNÓSTICO PEDAGÓGICO -->
+    <section class="duel-verdict-banner" id="duel-verdict-box">
+      <div class="duel-verdict-header">
+        <span class="duel-verdict-title">Diagnóstico do Duelo</span>
+        <span class="badge" id="verdict-status-badge">Aguardando Conclusão</span>
+      </div>
+      <p class="duel-verdict-explanation" id="verdict-explanation-text">
+        Execute o duelo até o fim para analisar a decisão do Algoritmo Guloso contra a solução ótima da Programação Dinâmica.
+      </p>
+    </section>
+
   </main>
 
-  <footer>
-    <p>CEFET-MG • AEDS-II • Prof. Michel Pires da Silva</p>
+  <!-- RODAPÉ GLOBAL -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div>
+        <strong>PD LAB</strong> — Laboratório Interativo de Programação Dinâmica
+      </div>
+      <div class="footer-meta">
+        <a href="lcs-table.html">← Anterior: LCS</a> • <a href="matrix-chain.html">Próximo: Matrix Chain →</a>
+      </div>
+    </div>
   </footer>
 
   <script src="js/shared.js"></script>
+
+  <!-- LÓGICA ESPECÍFICA DO DUELO ROD CUTTING (RodCuttingVisualizer) -->
+  <script>
+  (function () {
+    'use strict';
+
+    /* -------------------------------------------------------------------------
+     * MOTOR DOS ALGORITMOS: Guloso e Programação Dinâmica
+     * ------------------------------------------------------------------------- */
+    var RodEngine = {
+      /**
+       * Resolve o problema de corte de hastes pelos dois paradigmas e grava os passos.
+       */
+      compute: function (N, prices) {
+        // prices é um array 1-indexado onde prices[i] = preço do tamanho i
+        // 1. Execução do Algoritmo Guloso
+        var greedySteps = [];
+        var greedyRemaining = N;
+        var greedyProfit = 0;
+        var greedyCuts = [];
+
+        greedySteps.push({
+          action: 'INIT',
+          remaining: N,
+          profit: 0,
+          cuts: [],
+          explanation: 'Haste inicial de comprimento ' + N + '. O algoritmo guloso examinará os cortes que cabem e escolherá aquele com maior densidade de valor (pᵢ / i).'
+        });
+
+        while (greedyRemaining > 0) {
+          // Procura o corte cabível com maior densidade
+          var bestSize = null;
+          var bestDensity = -1;
+          var bestPrice = 0;
+
+          for (var i = 1; i <= Math.min(greedyRemaining, prices.length - 1); i++) {
+            var density = prices[i] / i;
+            if (density > bestDensity || (density === bestDensity && i > (bestSize || 0))) {
+              bestDensity = density;
+              bestSize = i;
+              bestPrice = prices[i];
+            }
+          }
+
+          if (bestSize === null) break;
+
+          greedyRemaining -= bestSize;
+          greedyProfit += bestPrice;
+          greedyCuts.push({ size: bestSize, price: bestPrice });
+
+          greedySteps.push({
+            action: 'CUT',
+            cutSize: bestSize,
+            cutPrice: bestPrice,
+            density: bestDensity,
+            remaining: greedyRemaining,
+            profit: greedyProfit,
+            cuts: greedyCuts.slice(),
+            explanation: 'O guloso escolheu um pedaço de tamanho ' + bestSize + ' ($' + bestPrice + ', densidade ' + bestDensity.toFixed(2) + '). Comprimento restante: ' + greedyRemaining + '.'
+          });
+        }
+
+        greedySteps.push({
+          action: 'FINISH',
+          remaining: greedyRemaining,
+          profit: greedyProfit,
+          cuts: greedyCuts.slice(),
+          explanation: 'Execução gulosa finalizada! Lucro total obtido: $' + greedyProfit + ' através dos cortes: [' + greedyCuts.map(function (c) { return c.size; }).join(', ') + '].'
+        });
+
+        // 2. Execução da Programação Dinâmica (Cormen r[j] e s[j])
+        var r = new Array(N + 1).fill(0);
+        var s = new Array(N + 1).fill(0);
+        var dpSteps = [];
+
+        dpSteps.push({
+          action: 'INIT',
+          j: 0,
+          profit: 0,
+          cuts: [],
+          explanation: 'Inicialização: r[0] = 0 (haste de comprimento zero tem lucro $0).'
+        });
+
+        for (var j = 1; j <= N; j++) {
+          var maxVal = -Infinity;
+          var bestCut = 0;
+          var triesText = [];
+
+          for (var cut = 1; cut <= Math.min(j, prices.length - 1); cut++) {
+            var candidate = prices[cut] + r[j - cut];
+            triesText.push('i=' + cut + ' (p' + cut + ' + r[' + (j - cut) + '] = ' + prices[cut] + '+' + r[j - cut] + '=' + candidate + ')');
+            if (candidate > maxVal) {
+              maxVal = candidate;
+              bestCut = cut;
+            }
+          }
+
+          r[j] = maxVal;
+          s[j] = bestCut;
+
+          dpSteps.push({
+            action: 'SUBPROBLEM',
+            j: j,
+            bestProfitForJ: maxVal,
+            bestCutForJ: bestCut,
+            tries: triesText.join('; '),
+            rTableSnapshot: r.slice(0, j + 1),
+            sTableSnapshot: s.slice(0, j + 1),
+            explanation: 'Subproblema j = ' + j + ': testou cortes possíveis. O valor máximo encontrado foi $' + maxVal + ' com primeiro corte de tamanho ' + bestCut + '.'
+          });
+        }
+
+        // Reconstrução dos cortes da PD para a haste completa N
+        var dpCuts = [];
+        var remDP = N;
+        while (remDP > 0) {
+          var cutMade = s[remDP];
+          if (cutMade <= 0) break;
+          dpCuts.push({ size: cutMade, price: prices[cutMade] });
+          remDP -= cutMade;
+        }
+
+        dpSteps.push({
+          action: 'FINISH',
+          j: N,
+          profit: r[N],
+          cuts: dpCuts,
+          rTableSnapshot: r.slice(),
+          sTableSnapshot: s.slice(),
+          explanation: 'A Programação Dinâmica completou a tabulação! Reconstrução ótima de N=' + N + ': [' + dpCuts.map(function (c) { return c.size; }).join(', ') + '] com lucro ótimo garantido de $' + r[N] + '.'
+        });
+
+        return {
+          N: N,
+          prices: prices,
+          greedySteps: greedySteps,
+          greedyFinalProfit: greedyProfit,
+          greedyFinalCuts: greedyCuts,
+          dpSteps: dpSteps,
+          dpFinalProfit: r[N],
+          dpFinalCuts: dpCuts,
+          rTable: r,
+          sTable: s
+        };
+      }
+    };
+
+    /* -------------------------------------------------------------------------
+     * CONTROLADOR DE INTERFACE DO DUELO (RodCuttingVisualizer)
+     * ------------------------------------------------------------------------- */
+    var RodCuttingVisualizer = {
+      prices: [0, 1, 5, 8, 9, 10, 17], // 1-indexed, default
+      rodLength: 4,
+      data: null,
+      stepIndex: 0,
+      maxSteps: 0,
+      isPlaying: false,
+      timerId: null,
+      speedMultiplier: 1.0,
+
+      init: function () {
+        this.cacheDOM();
+        this.bindEvents();
+        this.applyPreset('greedy-fails');
+      },
+
+      cacheDOM: function () {
+        this.priceTableBody = document.getElementById('price-table-body');
+        this.btnAddSize = document.getElementById('btn-add-size');
+        this.btnRemoveSize = document.getElementById('btn-remove-size');
+
+        this.rodLengthSlider = document.getElementById('rod-length-slider');
+        this.rodLengthDisplay = document.getElementById('rod-length-display');
+
+        this.btnPrev = document.getElementById('btn-prev');
+        this.btnPlay = document.getElementById('btn-play');
+        this.btnNext = document.getElementById('btn-next');
+        this.btnReset = document.getElementById('btn-reset');
+        this.btnDuelAll = document.getElementById('btn-duel-all');
+        this.sliderSpeed = document.getElementById('slider-speed');
+        this.labelSpeed = document.getElementById('label-speed-val');
+        this.duelStepBadge = document.getElementById('duel-step-badge');
+
+        this.greedyRodTrack = document.getElementById('greedy-rod-track');
+        this.greedyCutsLabel = document.getElementById('greedy-cuts-label');
+        this.greedyProfitVal = document.getElementById('greedy-profit-val');
+        this.greedyRemainingVal = document.getElementById('greedy-remaining-val');
+        this.greedyExplanation = document.getElementById('greedy-step-explanation');
+
+        this.dpRodTrack = document.getElementById('dp-rod-track');
+        this.dpCutsLabel = document.getElementById('dp-cuts-label');
+        this.dpProfitVal = document.getElementById('dp-profit-val');
+        this.dpSubproblemVal = document.getElementById('dp-subproblem-val');
+        this.dpExplanation = document.getElementById('dp-step-explanation');
+
+        this.dpSubproblemsTbody = document.getElementById('dp-subproblems-tbody');
+
+        this.verdictBox = document.getElementById('duel-verdict-box');
+        this.verdictBadge = document.getElementById('verdict-status-badge');
+        this.verdictExplanation = document.getElementById('verdict-explanation-text');
+      },
+
+      bindEvents: function () {
+        var self = this;
+
+        // Slider do Comprimento da Haste
+        this.rodLengthSlider.addEventListener('input', function () {
+          self.rodLength = parseInt(this.value, 10);
+          self.rodLengthDisplay.textContent = 'N = ' + self.rodLength;
+          self.recalculateSimulation();
+        });
+
+        // Adicionar Tamanho
+        this.btnAddSize.addEventListener('click', function () {
+          var nextSize = self.prices.length;
+          if (nextSize > 12) return;
+          var prevPrice = self.prices[nextSize - 1] || 1;
+          self.prices.push(prevPrice + 2);
+          self.renderPriceTable();
+          self.recalculateSimulation();
+        });
+
+        // Remover Tamanho
+        this.btnRemoveSize.addEventListener('click', function () {
+          if (self.prices.length > 2) {
+            self.prices.pop();
+            self.renderPriceTable();
+            self.recalculateSimulation();
+          }
+        });
+
+        // Presets de Demonstração
+        document.querySelectorAll('.btn-preset').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            self.applyPreset(this.dataset.preset);
+          });
+        });
+
+        // Slider de Velocidade
+        this.sliderSpeed.addEventListener('input', function () {
+          self.speedMultiplier = parseFloat(this.value);
+          self.labelSpeed.textContent = self.speedMultiplier.toFixed(1) + 'x';
+        });
+
+        // Controles de Simulação
+        this.btnNext.addEventListener('click', function () { self.stepForward(); });
+        this.btnPrev.addEventListener('click', function () { self.stepBackward(); });
+        this.btnPlay.addEventListener('click', function () { self.togglePlay(); });
+        this.btnReset.addEventListener('click', function () { self.reset(); });
+        this.btnDuelAll.addEventListener('click', function () { self.runAll(); });
+      },
+
+      applyPreset: function (presetName) {
+        if (presetName === 'greedy-fails') {
+          // Exemplo onde a densidade do pedaço de 3 é alta, mas dois pedaços de 2 são melhores
+          this.rodLength = 4;
+          this.prices = [0, 1, 5, 8, 9]; // densidades: 1: 1.0, 2: 2.5, 3: 2.67, 4: 2.25
+        } else if (presetName === 'classic-cormen') {
+          // N=6 clássico: 1:2, 2:5, 3:7, 4:8, 5:10, 6:13
+          this.rodLength = 6;
+          this.prices = [0, 2, 5, 7, 8, 10, 13];
+        } else if (presetName === 'greedy-wins') {
+          // Preços convexos onde o maior pedaço tem a maior densidade e é a melhor escolha
+          this.rodLength = 6;
+          this.prices = [0, 2, 5, 8, 11, 14, 17];
+        }
+
+        this.rodLengthSlider.value = this.rodLength;
+        this.rodLengthDisplay.textContent = 'N = ' + this.rodLength;
+
+        this.renderPriceTable();
+        this.recalculateSimulation();
+      },
+
+      renderPriceTable: function () {
+        var self = this;
+        var html = '';
+
+        // Calcula a maior densidade para destacar
+        var maxDensity = -1;
+        for (var i = 1; i < this.prices.length; i++) {
+          var d = this.prices[i] / i;
+          if (d > maxDensity) maxDensity = d;
+        }
+
+        for (var s = 1; s < this.prices.length; s++) {
+          var price = this.prices[s];
+          var density = (price / s).toFixed(2);
+          var isMax = (price / s) === maxDensity;
+
+          html += '<tr>';
+          html += '<td><strong>' + s + '</strong></td>';
+          html += '<td>';
+          html += '<input type="number" min="0" max="99" value="' + price + '" class="price-input" data-size="' + s + '" aria-label="Preço para tamanho ' + s + '">';
+          html += '</td>';
+          html += '<td>';
+          html += '<span class="density-badge' + (isMax ? ' is-max' : '') + '">' + density + (isMax ? ' ★' : '') + '</span>';
+          html += '</td>';
+          html += '<td>';
+          html += '<button type="button" class="btn btn-outline btn-sm btn-delete-row" data-size="' + s + '" title="Remover" aria-label="Remover tamanho ' + s + '">';
+          html += '✕';
+          html += '</button>';
+          html += '</td>';
+          html += '</tr>';
+        }
+
+        this.priceTableBody.innerHTML = html;
+
+        // Escuta edições de preços
+        this.priceTableBody.querySelectorAll('.price-input').forEach(function (inp) {
+          inp.addEventListener('change', function () {
+            var sz = parseInt(this.dataset.size, 10);
+            var val = Math.max(0, parseInt(this.value, 10) || 0);
+            self.prices[sz] = val;
+            self.renderPriceTable();
+            self.recalculateSimulation();
+          });
+        });
+
+        // Escuta botões de remover linha
+        this.priceTableBody.querySelectorAll('.btn-delete-row').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            var sz = parseInt(this.dataset.size, 10);
+            if (self.prices.length > 2) {
+              self.prices.splice(sz, 1);
+              self.renderPriceTable();
+              self.recalculateSimulation();
+            }
+          });
+        });
+      },
+
+      recalculateSimulation: function () {
+        this.pause();
+        this.data = RodEngine.compute(this.rodLength, this.prices);
+        this.maxSteps = Math.max(this.data.greedySteps.length, this.data.dpSteps.length);
+        this.stepIndex = 0;
+        this.updateView();
+      },
+
+      updateView: function () {
+        var gSteps = this.data.greedySteps;
+        var dSteps = this.data.dpSteps;
+        var curIdx = this.stepIndex;
+
+        this.duelStepBadge.textContent = 'Passo ' + curIdx + ' / ' + (this.maxSteps - 1);
+        this.btnPrev.disabled = curIdx === 0;
+        this.btnNext.disabled = curIdx >= this.maxSteps - 1;
+
+        // 1. Atualização do Algoritmo Guloso
+        var gStep = gSteps[Math.min(curIdx, gSteps.length - 1)];
+        this.renderRodBar(this.greedyRodTrack, this.data.N, gStep.cuts, gStep.remaining);
+        this.greedyProfitVal.textContent = '$' + gStep.profit;
+        this.greedyRemainingVal.textContent = gStep.remaining;
+        this.greedyCutsLabel.textContent = 'Cortes: ' + (gStep.cuts.length > 0 ? gStep.cuts.map(function (c) { return c.size; }).join(' + ') : 'nenhum');
+        this.greedyExplanation.textContent = gStep.explanation;
+
+        // 2. Atualização da Programação Dinâmica
+        var dStep = dSteps[Math.min(curIdx, dSteps.length - 1)];
+        var isDPDone = curIdx >= dSteps.length - 1;
+        var dpCutsToShow = isDPDone ? this.data.dpFinalCuts : [];
+        var dpRemainingToShow = isDPDone ? 0 : this.data.N;
+        this.renderRodBar(this.dpRodTrack, this.data.N, dpCutsToShow, dpRemainingToShow);
+
+        this.dpProfitVal.textContent = '$' + (dStep.action === 'FINISH' ? this.data.dpFinalProfit : (dStep.bestProfitForJ !== undefined ? dStep.bestProfitForJ : 0));
+        this.dpSubproblemVal.textContent = 'j = ' + (dStep.j !== undefined ? dStep.j : 0);
+        this.dpCutsLabel.textContent = 'Cortes: ' + (isDPDone ? this.data.dpFinalCuts.map(function (c) { return c.size; }).join(' + ') : 'calculando subproblemas...');
+        this.dpExplanation.textContent = dStep.explanation;
+
+        // 3. Atualização da Tabela de Subproblemas da PD
+        this.renderDPSubproblemsTable(dStep);
+
+        // 4. Banner de Diagnóstico e Conclusão
+        if (curIdx >= this.maxSteps - 1) {
+          this.pause();
+          this.renderVerdict();
+        } else {
+          this.verdictBadge.textContent = 'Em Andamento';
+          this.verdictBadge.className = 'badge badge-accent';
+          this.verdictExplanation.textContent = 'Acompanhe as decisões de corte da barra em tempo real. Observe como o guloso toma decisões sem olhar o futuro, enquanto a Programação Dinâmica acumula os subproblemas.';
+        }
+      },
+
+      renderRodBar: function (container, totalLength, cuts, remaining) {
+        container.innerHTML = '';
+
+        cuts.forEach(function (cut, idx) {
+          var seg = document.createElement('div');
+          var colorClass = 'segment-color-' + ((cut.size % 8) + 1);
+          seg.className = 'rod-cut-segment ' + colorClass;
+          seg.style.flex = cut.size;
+          seg.innerHTML = '<span>Tam ' + cut.size + '</span><span style="font-size: 0.65rem; opacity: 0.85;">($' + cut.price + ')</span>';
+          seg.title = 'Pedaço de tamanho ' + cut.size + ' (Preço: $' + cut.price + ')';
+          container.appendChild(seg);
+        });
+
+        if (remaining > 0) {
+          var rem = document.createElement('div');
+          rem.className = 'rod-uncut-remaining';
+          rem.style.flex = remaining;
+          rem.textContent = 'Restante: ' + remaining;
+          container.appendChild(rem);
+        }
+      },
+
+      renderDPSubproblemsTable: function (currentStep) {
+        var r = this.data.rTable;
+        var s = this.data.sTable;
+        var currentJ = currentStep.j || 0;
+        var html = '';
+
+        for (var j = 0; j <= this.data.N; j++) {
+          var isActive = j === currentJ && currentStep.action !== 'FINISH';
+          var isComputed = j <= currentJ;
+
+          html += '<tr class="' + (isActive ? 'row-active' : '') + '">';
+          html += '<td><strong>j = ' + j + '</strong></td>';
+          html += '<td style="font-size: 0.75rem; color: var(--text-secondary);">';
+          if (j === 0) {
+            html += 'caso base (haste vazia)';
+          } else if (isComputed) {
+            html += 'max₁≤ᵢ≤' + j + ' (pᵢ + r[' + j + ' - i])';
+          } else {
+            html += '—';
+          }
+          html += '</td>';
+
+          html += '<td>';
+          html += isComputed ? '<strong style="color: var(--color-primary);">' + r[j] + '</strong>' : '<span style="color: var(--text-muted);">?</span>';
+          html += '</td>';
+
+          html += '<td>';
+          html += isComputed ? (s[j] > 0 ? 'tam ' + s[j] : '—') : '<span style="color: var(--text-muted);">?</span>';
+          html += '</td>';
+
+          html += '</tr>';
+        }
+
+        this.dpSubproblemsTbody.innerHTML = html;
+      },
+
+      renderVerdict: function () {
+        var gProfit = this.data.greedyFinalProfit;
+        var dpProfit = this.data.dpFinalProfit;
+        var diff = dpProfit - gProfit;
+
+        var gCutsStr = '[' + this.data.greedyFinalCuts.map(function (c) { return c.size; }).join(', ') + ']';
+        var dpCutsStr = '[' + this.data.dpFinalCuts.map(function (c) { return c.size; }).join(', ') + ']';
+
+        if (diff > 0) {
+          this.verdictBadge.textContent = 'A PD venceu por +$' + diff + '!';
+          this.verdictBadge.className = 'badge badge-primary';
+          this.verdictExplanation.innerHTML = 
+            '<strong>O Guloso falhou e perdeu $' + diff + '</strong>! ' +
+            '<br>• Guloso obteve <strong>$' + gProfit + '</strong> com os cortes ' + gCutsStr + '.' +
+            '<br>• Programação Dinâmica obteve <strong>$' + dpProfit + '</strong> com os cortes ' + dpCutsStr + '.' +
+            '<br><br><em>Conclusão pedagógica:</em> A escolha gulosa baseada na maior densidade imediata foi <strong>míope</strong>. Ela escolheu o pedaço que parecia mais rentável agora, mas deixou um pedaço restante que gerou prejuízo global. A Programação Dinâmica avaliou sistematicamente todas as subestruturas e garantiu o lucro máximo global.';
+        } else {
+          this.verdictBadge.textContent = 'Empate: Ótimo Coincidente ($' + dpProfit + ')';
+          this.verdictBadge.className = 'badge badge-secondary';
+          this.verdictExplanation.innerHTML = 
+            '<strong>Empate com $' + dpProfit + '!</strong> ' +
+            '<br>• Ambos os algoritmos alcançaram o lucro máximo de <strong>$' + dpProfit + '</strong>.' +
+            '<br><br><em>Conclusão pedagógica:</em> Nesta entrada específica, a melhor densidade local coincidiu com a combinação globalmente ótima. <strong>Entretanto, não há garantia geral para o algoritmo guloso em qualquer conjunto de preços.</strong> Altere os preços acima para verificar instâncias onde o guloso perde!';
+        }
+      },
+
+      stepForward: function () {
+        if (!this.data) return;
+        if (this.stepIndex < this.maxSteps - 1) {
+          this.stepIndex++;
+          this.updateView();
+        }
+      },
+
+      stepBackward: function () {
+        if (!this.data) return;
+        if (this.stepIndex > 0) {
+          this.stepIndex--;
+          this.updateView();
+        }
+      },
+
+      runAll: function () {
+        if (!this.data) return;
+        this.pause();
+        this.stepIndex = this.maxSteps - 1;
+        this.updateView();
+      },
+
+      reset: function () {
+        this.pause();
+        this.stepIndex = 0;
+        this.updateView();
+      },
+
+      togglePlay: function () {
+        if (this.isPlaying) this.pause();
+        else this.play();
+      },
+
+      play: function () {
+        var self = this;
+        if (!this.data) return;
+
+        if (this.stepIndex >= this.maxSteps - 1) {
+          this.stepIndex = 0;
+        }
+
+        this.isPlaying = true;
+        this.btnPlay.textContent = '⏸';
+        this.btnPlay.setAttribute('title', 'Pausar (⏸)');
+
+        function tick() {
+          if (!self.isPlaying) return;
+          if (self.stepIndex < self.maxSteps - 1) {
+            self.stepForward();
+            var delay = Math.max(40, Math.round(550 / self.speedMultiplier));
+            self.timerId = setTimeout(tick, delay);
+          } else {
+            self.pause();
+          }
+        }
+
+        var initDelay = Math.max(40, Math.round(550 / this.speedMultiplier));
+        this.timerId = setTimeout(tick, initDelay);
+      },
+
+      pause: function () {
+        this.isPlaying = false;
+        if (this.timerId !== null) {
+          clearTimeout(this.timerId);
+          this.timerId = null;
+        }
+        if (this.btnPlay) {
+          this.btnPlay.textContent = '▶';
+          this.btnPlay.setAttribute('title', 'Executar (▶)');
+        }
+      }
+    };
+
+    // Inicialização ao carregar o DOM
+    document.addEventListener('DOMContentLoaded', function () {
+      RodCuttingVisualizer.init();
+    });
+
+  })();
+  </script>
 </body>
 </html>

@@ -3,39 +3,1017 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tabela Interativa do LCS | Programação Dinâmica</title>
+  <title>02. LCS — Subsequência Comum Mais Longa — PD LAB</title>
+  <meta name="description" content="Simulador interativo de LCS com preenchimento animado da tabela de programação dinâmica e reconstrução ótima via traceback.">
+  
+  <!-- Prevenção de FOUC de tema: restauração instantânea antes do render -->
+  <script>
+    (function() {
+      try {
+        var saved = localStorage.getItem('pdlab_theme');
+        if (saved) {
+          var theme = JSON.parse(saved);
+          if (theme === 'dark' || theme === 'light') {
+            document.documentElement.setAttribute('data-theme', theme);
+          }
+        } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+      } catch (e) {}
+    })();
+  </script>
+
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <header class="navbar">
-    <a href="index.html" class="nav-brand">
-      <span>⚡</span> Programação Dinâmica
-    </a>
-    <div class="nav-actions">
-      <button class="theme-toggle-btn" onclick="toggleTheme()" aria-label="Alternar tema">
-        🌓 Tema
-      </button>
+
+  <!-- CABEÇALHO GLOBAL -->
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="index.html" class="logo-area" aria-label="PD LAB - Início">
+        <span class="logo-mark">PD</span>
+        <span class="logo-title">PD LAB</span>
+        <span class="logo-subtitle">Laboratório de Algoritmos</span>
+      </a>
+
+      <!-- Navegação Global -->
+      <nav class="site-nav" aria-label="Navegação principal">
+        <ul class="nav-list">
+          <li>
+            <a href="index.html" class="nav-link">Início</a>
+          </li>
+          
+          <!-- Dropdown Experimentos -->
+          <li class="nav-dropdown">
+            <button type="button" class="nav-link nav-dropdown-toggle active" aria-expanded="false" aria-haspopup="true">
+              Experimentos
+            </button>
+            <ul class="nav-dropdown-menu" role="menu">
+              <li class="dropdown-item" role="none">
+                <a href="fib-tree.html" role="menuitem">
+                  <span>01. Fibonacci</span>
+                  <span class="dropdown-code">Árvore / Memo</span>
+                </a>
+              </li>
+              <li class="dropdown-item" role="none">
+                <a href="lcs-table.html" class="active" role="menuitem">
+                  <span>02. LCS</span>
+                  <span class="dropdown-code">Tabela 2D</span>
+                </a>
+              </li>
+              <li class="dropdown-item" role="none">
+                <a href="rod-cutting-duel.html" role="menuitem">
+                  <span>03. Rod Cutting</span>
+                  <span class="dropdown-code">PD vs Guloso</span>
+                </a>
+              </li>
+              <li class="dropdown-item" role="none">
+                <a href="matrix-chain.html" role="menuitem">
+                  <span>04. Matrix Chain</span>
+                  <span class="dropdown-code">Parentização</span>
+                </a>
+              </li>
+            </ul>
+          </li>
+
+          <li>
+            <a href="benchmarks.html" class="nav-link">Benchmarks</a>
+          </li>
+          <li>
+            <a href="quiz.html" class="nav-link">Quiz</a>
+          </li>
+        </ul>
+      </nav>
+
+      <!-- Ações do Header -->
+      <div class="header-actions">
+        <button type="button" class="theme-toggle-btn" data-action="toggle-theme" aria-label="Alternar tema claro/escuro" title="Alternar tema">
+          ☾
+        </button>
+        <button type="button" class="mobile-nav-toggle" aria-label="Abrir menu de navegação" aria-expanded="false">
+          ☰
+        </button>
+      </div>
     </div>
   </header>
 
-  <main class="container">
-    <div class="construction-banner">
-      <span class="construction-badge">Em construção (responsável: P5)</span>
-      <h1 class="construction-title">Tabela do LCS e Traceback Animado</h1>
-      <p class="construction-text">
-        Esta página permitirá inserir duas sequências de texto arbitrárias e visualizar o preenchimento
-        célula a célula da matriz de programação dinâmica, com setas direcionais ('↖', '↑', '←') e controles
-        de execução (Play, Pausa, Passo a Passo, Reiniciar), finalizando com o caminho de traceback destacado.
-      </p>
-      <!-- TODO(P5): ver docs/tarefas/P5_cheatsheet_slides_e_web.md para controles de playback e matriz HTML/SVG -->
-      <a href="index.html" class="btn-back">&larr; Voltar ao Menu Principal</a>
+  <!-- CONTEÚDO PRINCIPAL (SIMULADOR DE LCS) -->
+  <main class="main-container">
+    
+    <!-- Cabeçalho do Experimento -->
+    <div class="lab-card" style="margin-bottom: 1.25rem;">
+      <div class="lab-card-header">
+        <div class="lab-card-title">
+          <span>MÓDULO 02</span>
+          <span class="badge badge-accent">Tabela Bidimensional & Traceback</span>
+        </div>
+        <div style="display: flex; gap: 0.5rem; align-items: center;">
+          <span class="badge badge-primary">Tabulação Bottom-Up</span>
+          <span class="badge">Complexidade: O(m × n)</span>
+        </div>
+      </div>
+      
+      <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 0.75rem;">
+        <div>
+          <h2>Subsequência Comum Mais Longa (LCS)</h2>
+          <p style="margin: 0; font-size: 0.95rem;">
+            Acompanhe o cálculo da tabela <code>dp[i][j]</code> célula por célula com verificação de dependências locais e reconstrua a subsequência ótima através do traceback.
+          </p>
+        </div>
+      </div>
     </div>
+
+    <!-- Barra de Entradas de Strings -->
+    <div class="lcs-inputs-bar">
+      <div class="lcs-input-group">
+        <label for="input-x">String X (Linhas):</label>
+        <input type="text" id="input-x" value="ABCBDAB" maxlength="14" spellcheck="false" autocomplete="off" aria-label="String X">
+      </div>
+
+      <div class="lcs-input-group">
+        <label for="input-y">String Y (Colunas):</label>
+        <input type="text" id="input-y" value="BDCABA" maxlength="14" spellcheck="false" autocomplete="off" aria-label="String Y">
+      </div>
+
+      <button type="button" class="btn btn-primary" id="btn-generate-table">
+        Gerar tabela
+      </button>
+
+      <!-- Atalhos de Casos de Teste -->
+      <div style="display: flex; align-items: center; gap: 0.35rem; margin-left: auto; flex-wrap: wrap;">
+        <span style="font-size: 0.75rem; font-family: var(--font-mono); color: var(--text-muted);">Exemplos:</span>
+        <button type="button" class="btn btn-outline btn-sm btn-sample" data-x="ABCBDAB" data-y="BDCABA">Clássico</button>
+        <button type="button" class="btn btn-outline btn-sm btn-sample" data-x="ABC" data-y="ABC">Idênticas</button>
+        <button type="button" class="btn btn-outline btn-sm btn-sample" data-x="ABC" data-y="DEF">Disjuntas</button>
+        <button type="button" class="btn btn-outline btn-sm btn-sample" data-x="" data-y="ABC">Vazia</button>
+      </div>
+    </div>
+
+    <!-- Barra de Controles de Execução e Velocidade -->
+    <div class="sim-controls-bar" style="margin-bottom: 1.25rem;">
+      <div class="control-group">
+        <button type="button" class="btn btn-icon" id="btn-prev" title="Passo anterior (⏮)" aria-label="Passo anterior">⏮</button>
+        <button type="button" class="btn btn-primary btn-icon" id="btn-play" title="Executar / Pausar (▶)" aria-label="Executar ou Pausar">▶</button>
+        <button type="button" class="btn btn-icon" id="btn-next" title="Próximo passo (⏭)" aria-label="Próximo passo">⏭</button>
+        <button type="button" class="btn btn-icon" id="btn-reset" title="Reiniciar (↻)" aria-label="Reiniciar simulação">↻</button>
+        <button type="button" class="btn btn-outline btn-sm" id="btn-fill-all" title="Completar preenchimento da tabela">
+          Preencher tabela
+        </button>
+        <button type="button" class="btn btn-secondary btn-sm" id="btn-traceback" title="Iniciar traceback da solução" disabled>
+          Mostrar traceback
+        </button>
+      </div>
+
+      <div class="control-separator"></div>
+
+      <div class="control-group">
+        <label class="control-label" for="slider-speed">
+          Velocidade:
+          <span id="label-speed-val" style="color: var(--text-primary); font-weight: 600;">1.0x</span>
+        </label>
+        <input type="range" id="slider-speed" min="0.2" max="3.0" step="0.2" value="1.0" style="width: 90px;" aria-label="Velocidade da animação">
+      </div>
+    </div>
+
+    <!-- Indicador de Fases do Algoritmo -->
+    <div class="phase-stepper">
+      <span class="phase-step is-current" id="step-phase-1">
+        <span>01</span> Preenchimento da Tabela
+      </span>
+      <span class="phase-arrow">⟶</span>
+      <span class="phase-step" id="step-phase-2">
+        <span>02</span> Rastreamento (Traceback)
+      </span>
+      <span class="phase-arrow">⟶</span>
+      <span class="phase-step" id="step-phase-3">
+        <span>03</span> Subsequência Encontrada
+      </span>
+    </div>
+
+    <!-- Layout do Simulador: Tabela à esquerda, Diagnóstico à direita -->
+    <div class="sim-layout">
+      
+      <!-- Coluna Principal (Tabela 2D e Fitas de Letras) -->
+      <section style="display: flex; flex-direction: column; gap: 1rem;">
+        
+        <!-- Fita de Correspondência de Caracteres -->
+        <div class="lcs-strings-view">
+          <div class="string-row">
+            <span class="string-label">String X:</span>
+            <div class="string-letters-tape" id="tape-x"></div>
+          </div>
+          <div class="string-row">
+            <span class="string-label">String Y:</span>
+            <div class="string-letters-tape" id="tape-y"></div>
+          </div>
+        </div>
+
+        <!-- Tabela Bidimensional DP -->
+        <div class="lcs-table-wrapper">
+          <div class="lcs-table-header">
+            <span>MATRIZ DE PROGRAMAÇÃO DINÂMICA (dp[i][j])</span>
+            <div style="display: flex; gap: 0.75rem; align-items: center;">
+              <span id="matrix-dim-text">Dimensões: 0 × 0</span>
+              <span class="badge" id="matrix-status-badge">Preenchendo</span>
+            </div>
+          </div>
+
+          <div class="lcs-scroll-viewport" id="lcs-viewport">
+            <table class="lcs-matrix" id="lcs-table" aria-label="Tabela de programação dinâmica para LCS">
+              <!-- Renderizado dinamicamente pelo algoritmo -->
+            </table>
+          </div>
+
+          <!-- Legenda das Setas e Estados da Tabela -->
+          <div class="sim-tree-legend">
+            <span style="font-weight: 700; color: var(--text-primary);">Legenda:</span>
+            <div class="legend-item">
+              <span style="font-weight: 700; color: var(--color-primary);">↖</span>
+              <span>Caractere igual (dp[i-1][j-1] + 1)</span>
+            </div>
+            <div class="legend-item">
+              <span style="font-weight: 700; color: var(--text-secondary);">↑</span>
+              <span>Ignora X[i] (herda de cima)</span>
+            </div>
+            <div class="legend-item">
+              <span style="font-weight: 700; color: var(--text-secondary);">←</span>
+              <span>Ignora Y[j] (herda da esquerda)</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-dot" style="background: var(--color-success-subtle); border-color: var(--color-success);"></span>
+              <span>Célula no Traceback (LCS)</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Coluna Lateral (Explicação, Regra, Traceback e Resultado) -->
+      <aside class="sim-sidebar">
+        
+        <!-- 1. Painel "O que está acontecendo?" -->
+        <div class="explanation-card">
+          <div class="explanation-title">
+            <span>O que está acontecendo?</span>
+            <span class="badge badge-accent" id="step-badge">Passo 0 / 0</span>
+          </div>
+          <div class="explanation-body" id="explanation-text">
+            Pressione <strong>[▶ Play]</strong> ou <strong>[⏭ Próximo]</strong> para iniciar o preenchimento da tabela.
+          </div>
+          <div class="explanation-details" id="explanation-formula">
+            Fórmula: dp[i][j] = ?
+          </div>
+        </div>
+
+        <!-- 2. Painel de Resultado do Traceback -->
+        <div class="lcs-result-card" id="lcs-result-box">
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <span style="font-size: 0.85rem; font-weight: 700; color: var(--text-primary);">Resultado da LCS</span>
+            <span class="badge badge-success" id="result-status-badge">Pendente</span>
+          </div>
+          <div style="margin-top: 0.5rem;">
+            <span style="font-size: 0.75rem; color: var(--text-muted); font-family: var(--font-mono);">Subsequência Ótima:</span>
+            <div class="lcs-result-val" id="result-lcs-string">—</div>
+          </div>
+          <div style="display: flex; justify-content: space-between; border-top: 1px solid var(--border-subtle); padding-top: 0.5rem; font-family: var(--font-mono); font-size: 0.8rem;">
+            <span>Comprimento:</span>
+            <strong id="result-lcs-length" style="color: var(--color-primary); font-size: 1rem;">0</strong>
+          </div>
+        </div>
+
+        <!-- 3. Relação de Recorrência Formal -->
+        <div class="lab-card" style="margin: 0; padding: 0.85rem 1rem;">
+          <div style="font-family: var(--font-mono); font-size: 0.775rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.4rem;">
+            RELAÇÃO DE RECORRÊNCIA (LCS)
+          </div>
+          <div style="font-family: var(--font-mono); font-size: 0.775rem; color: var(--text-secondary); line-height: 1.55; background: var(--bg-surface-alt); padding: 0.5rem; border-radius: var(--radius-xs);">
+            se X[i] == Y[j]:<br>
+            &nbsp;&nbsp;dp[i][j] = dp[i-1][j-1] + 1 (↖)<br>
+            senão:<br>
+            &nbsp;&nbsp;dp[i][j] = max(dp[i-1][j], dp[i][j-1]) (↑ ou ←)
+          </div>
+        </div>
+
+      </aside>
+
+    </div>
+
   </main>
 
-  <footer>
-    <p>CEFET-MG • AEDS-II • Prof. Michel Pires da Silva</p>
+  <!-- RODAPÉ GLOBAL -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div>
+        <strong>PD LAB</strong> — Laboratório Interativo de Programação Dinâmica
+      </div>
+      <div class="footer-meta">
+        <a href="fib-tree.html">← Anterior: Fibonacci</a> • <a href="rod-cutting-duel.html">Próximo: Rod Cutting →</a>
+      </div>
+    </div>
   </footer>
 
   <script src="js/shared.js"></script>
+
+  <!-- LÓGICA ESPECÍFICA DO SIMULADOR LCS (LCSVisualizer) -->
+  <script>
+  (function () {
+    'use strict';
+
+    /* -------------------------------------------------------------------------
+     * MOTOR DO ALGORITMO LCS: Cálculo estrito e gravação de passos
+     * ------------------------------------------------------------------------- */
+    var LCSEngine = {
+      compute: function (X, Y) {
+        var m = X.length;
+        var n = Y.length;
+
+        // Cria matriz dp (m+1) x (n+1) e matriz de setas
+        var dp = [];
+        var arrows = [];
+        for (var i = 0; i <= m; i++) {
+          dp[i] = new Array(n + 1).fill(0);
+          arrows[i] = new Array(n + 1).fill('');
+        }
+
+        var fillSteps = [];
+
+        // Passo 0: Inicialização dos casos base
+        fillSteps.push({
+          type: 'INIT_BASE',
+          i: 0,
+          j: 0,
+          explanation: 'Inicialização dos casos-base: a linha 0 e a coluna 0 representam a string vazia ("") e são preenchidas com 0.',
+          formula: 'dp[0][j] = 0 e dp[i][0] = 0 para todo i, j'
+        });
+
+        // Preenchimento iterativo da tabela
+        for (var r = 1; r <= m; r++) {
+          for (var c = 1; c <= n; c++) {
+            var charX = X[r - 1];
+            var charY = Y[c - 1];
+
+            if (charX === charY) {
+              var val = dp[r - 1][c - 1] + 1;
+              dp[r][c] = val;
+              arrows[r][c] = 'diag'; // ↖
+
+              fillSteps.push({
+                type: 'FILL_CELL',
+                i: r,
+                j: c,
+                charX: charX,
+                charY: charY,
+                isMatch: true,
+                value: val,
+                arrow: '↖',
+                arrowType: 'diag',
+                depDiag: { r: r - 1, c: c - 1, val: dp[r - 1][c - 1] },
+                explanation: 'Estamos calculando dp[' + r + '][' + c + ']. X[' + r + '] = "' + charX + '" e Y[' + c + '] = "' + charY + '" são IGUAIS.',
+                formula: 'dp[' + r + '][' + c + '] = dp[' + (r - 1) + '][' + (c - 1) + '] + 1 = ' + dp[r - 1][c - 1] + ' + 1 = ' + val + ' (↖)'
+              });
+            } else {
+              var fromUp = dp[r - 1][c];
+              var fromLeft = dp[r][c - 1];
+
+              if (fromUp >= fromLeft) {
+                dp[r][c] = fromUp;
+                arrows[r][c] = 'up'; // ↑
+                fillSteps.push({
+                  type: 'FILL_CELL',
+                  i: r,
+                  j: c,
+                  charX: charX,
+                  charY: charY,
+                  isMatch: false,
+                  value: fromUp,
+                  arrow: '↑',
+                  arrowType: 'up',
+                  depUp: { r: r - 1, c: c, val: fromUp },
+                  depLeft: { r: r, c: c - 1, val: fromLeft },
+                  explanation: 'Estamos calculando dp[' + r + '][' + c + ']. X[' + r + '] = "' + charX + '" e Y[' + c + '] = "' + charY + '" são DIFERENTES.',
+                  formula: 'dp[' + r + '][' + c + '] = max(dp[' + (r - 1) + '][' + c + '], dp[' + r + '][' + (c - 1) + ']) = max(' + fromUp + ', ' + fromLeft + ') = ' + fromUp + ' (↑ ignora X[' + r + '])'
+                });
+              } else {
+                dp[r][c] = fromLeft;
+                arrows[r][c] = 'left'; // ←
+                fillSteps.push({
+                  type: 'FILL_CELL',
+                  i: r,
+                  j: c,
+                  charX: charX,
+                  charY: charY,
+                  isMatch: false,
+                  value: fromLeft,
+                  arrow: '←',
+                  arrowType: 'left',
+                  depUp: { r: r - 1, c: c, val: fromUp },
+                  depLeft: { r: r, c: c - 1, val: fromLeft },
+                  explanation: 'Estamos calculando dp[' + r + '][' + c + ']. X[' + r + '] = "' + charX + '" e Y[' + c + '] = "' + charY + '" são DIFERENTES.',
+                  formula: 'dp[' + r + '][' + c + '] = max(dp[' + (r - 1) + '][' + c + '], dp[' + r + '][' + (c - 1) + ']) = max(' + fromUp + ', ' + fromLeft + ') = ' + fromLeft + ' (← ignora Y[' + c + '])'
+                });
+              }
+            }
+          }
+        }
+
+        // Traceback real a partir de dp[m][n]
+        var tracebackSteps = [];
+        var currI = m;
+        var currJ = n;
+        var lcsCharsReversed = [];
+        var matchedIndicesX = [];
+        var matchedIndicesY = [];
+
+        tracebackSteps.push({
+          type: 'TRACE_START',
+          i: currI,
+          j: currJ,
+          explanation: 'Iniciando traceback ótimo a partir da célula final dp[' + currI + '][' + currJ + '] = ' + dp[currI][currJ] + '.',
+          formula: 'Seguindo as setas para reconstruir a subsequência ótima'
+        });
+
+        while (currI > 0 && currJ > 0) {
+          var stepArrow = arrows[currI][currJ];
+          if (stepArrow === 'diag') {
+            var matchedChar = X[currI - 1];
+            lcsCharsReversed.push(matchedChar);
+            matchedIndicesX.push(currI - 1);
+            matchedIndicesY.push(currJ - 1);
+
+            tracebackSteps.push({
+              type: 'TRACE_MATCH',
+              i: currI,
+              j: currJ,
+              nextI: currI - 1,
+              nextJ: currJ - 1,
+              char: matchedChar,
+              charIndexX: currI - 1,
+              charIndexY: currJ - 1,
+              explanation: '↖ Seta diagonal em dp[' + currI + '][' + currJ + ']: caractere "' + matchedChar + '" pertence à LCS! Movendo para dp[' + (currI - 1) + '][' + (currJ - 1) + '].',
+              formula: 'Caractere "' + matchedChar + '" adicionado à solução ótima'
+            });
+
+            currI--;
+            currJ--;
+          } else if (stepArrow === 'up') {
+            tracebackSteps.push({
+              type: 'TRACE_SKIP_UP',
+              i: currI,
+              j: currJ,
+              nextI: currI - 1,
+              nextJ: currJ,
+              explanation: '↑ Seta para cima em dp[' + currI + '][' + currJ + ']: herança de X[' + currI + ']. Movendo para dp[' + (currI - 1) + '][' + currJ + '].',
+              formula: 'Ignorando caractere de X[' + currI + ']'
+            });
+            currI--;
+          } else if (stepArrow === 'left') {
+            tracebackSteps.push({
+              type: 'TRACE_SKIP_LEFT',
+              i: currI,
+              j: currJ,
+              nextI: currI,
+              nextJ: currJ - 1,
+              explanation: '← Seta para a esquerda em dp[' + currI + '][' + currJ + ']: herança de Y[' + currJ + ']. Movendo para dp[' + currI + '][' + (currJ - 1) + '].',
+              formula: 'Ignorando caractere de Y[' + currJ + ']'
+            });
+            currJ--;
+          } else {
+            break;
+          }
+        }
+
+        var lcsResult = lcsCharsReversed.reverse().join('');
+
+        tracebackSteps.push({
+          type: 'TRACE_END',
+          lcs: lcsResult,
+          length: lcsResult.length,
+          explanation: 'Traceback concluído com sucesso! Chegamos à base da tabela.',
+          formula: 'LCS encontrada: "' + lcsResult + '" com comprimento ' + lcsResult.length
+        });
+
+        return {
+          X: X,
+          Y: Y,
+          m: m,
+          n: n,
+          dp: dp,
+          arrows: arrows,
+          fillSteps: fillSteps,
+          tracebackSteps: tracebackSteps,
+          lcs: lcsResult,
+          length: lcsResult.length,
+          matchedIndicesX: matchedIndicesX,
+          matchedIndicesY: matchedIndicesY
+        };
+      }
+    };
+
+    /* -------------------------------------------------------------------------
+     * CONTROLADOR DE INTERFACE & ANIMAÇÃO
+     * ------------------------------------------------------------------------- */
+    var LCSVisualizer = {
+      data: null,
+      phase: 1, // 1: Preenchimento, 2: Traceback, 3: Completo
+      fillStepIdx: 0,
+      traceStepIdx: 0,
+      isPlaying: false,
+      timerId: null,
+      speedMultiplier: 1.0,
+
+      init: function () {
+        this.cacheDOM();
+        this.bindEvents();
+        this.generateSimulation();
+      },
+
+      cacheDOM: function () {
+        this.inputX = document.getElementById('input-x');
+        this.inputY = document.getElementById('input-y');
+        this.btnGenerate = document.getElementById('btn-generate-table');
+
+        this.btnPrev = document.getElementById('btn-prev');
+        this.btnPlay = document.getElementById('btn-play');
+        this.btnNext = document.getElementById('btn-next');
+        this.btnReset = document.getElementById('btn-reset');
+        this.btnFillAll = document.getElementById('btn-fill-all');
+        this.btnTraceback = document.getElementById('btn-traceback');
+
+        this.sliderSpeed = document.getElementById('slider-speed');
+        this.labelSpeed = document.getElementById('label-speed-val');
+
+        this.stepPhase1 = document.getElementById('step-phase-1');
+        this.stepPhase2 = document.getElementById('step-phase-2');
+        this.stepPhase3 = document.getElementById('step-phase-3');
+
+        this.tapeX = document.getElementById('tape-x');
+        this.tapeY = document.getElementById('tape-y');
+
+        this.tableEl = document.getElementById('lcs-table');
+        this.matrixDimText = document.getElementById('matrix-dim-text');
+        this.matrixStatusBadge = document.getElementById('matrix-status-badge');
+
+        this.explanationText = document.getElementById('explanation-text');
+        this.explanationFormula = document.getElementById('explanation-formula');
+        this.stepBadge = document.getElementById('step-badge');
+
+        this.resultStatusBadge = document.getElementById('result-status-badge');
+        this.resultLcsString = document.getElementById('result-lcs-string');
+        this.resultLcsLength = document.getElementById('result-lcs-length');
+      },
+
+      bindEvents: function () {
+        var self = this;
+
+        // Gerar nova tabela ao clicar no botão ou pressionar Enter
+        this.btnGenerate.addEventListener('click', function () {
+          self.generateSimulation();
+        });
+
+        this.inputX.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter') self.generateSimulation();
+        });
+
+        this.inputY.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter') self.generateSimulation();
+        });
+
+        // Botões de amostra
+        document.querySelectorAll('.btn-sample').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            self.inputX.value = this.dataset.x;
+            self.inputY.value = this.dataset.y;
+            self.generateSimulation();
+          });
+        });
+
+        // Slider de velocidade
+        this.sliderSpeed.addEventListener('input', function () {
+          self.speedMultiplier = parseFloat(this.value);
+          self.labelSpeed.textContent = self.speedMultiplier.toFixed(1) + 'x';
+        });
+
+        // Controles de Simulação
+        this.btnNext.addEventListener('click', function () { self.stepForward(); });
+        this.btnPrev.addEventListener('click', function () { self.stepBackward(); });
+        this.btnPlay.addEventListener('click', function () { self.togglePlay(); });
+        this.btnReset.addEventListener('click', function () { self.reset(); });
+        this.btnFillAll.addEventListener('click', function () { self.fillAllTable(); });
+        this.btnTraceback.addEventListener('click', function () { self.startTraceback(); });
+      },
+
+      generateSimulation: function () {
+        this.pause();
+
+        var X = (this.inputX.value || '').trim().toUpperCase();
+        var Y = (this.inputY.value || '').trim().toUpperCase();
+
+        this.inputX.value = X;
+        this.inputY.value = Y;
+
+        // Execução real do algoritmo
+        this.data = LCSEngine.compute(X, Y);
+
+        this.phase = 1;
+        this.fillStepIdx = 0;
+        this.traceStepIdx = 0;
+
+        this.matrixDimText.textContent = 'Dimensões: ' + (this.data.m + 1) + ' × ' + (this.data.n + 1);
+        this.matrixStatusBadge.textContent = 'Fase 1: Preenchimento';
+        this.matrixStatusBadge.className = 'badge badge-primary';
+
+        this.resultStatusBadge.textContent = 'Aguardando';
+        this.resultStatusBadge.className = 'badge';
+        this.resultLcsString.textContent = '—';
+        this.resultLcsLength.textContent = '0';
+
+        this.btnTraceback.disabled = true;
+
+        this.renderInitialDOM();
+        this.updateView();
+      },
+
+      renderInitialDOM: function () {
+        var m = this.data.m;
+        var n = this.data.n;
+        var X = this.data.X;
+        var Y = this.data.Y;
+
+        // 1. Renderiza Fitas de Caracteres
+        this.tapeX.innerHTML = '';
+        for (var ix = 0; ix < m; ix++) {
+          var bx = document.createElement('div');
+          bx.className = 'letter-box';
+          bx.id = 'tape-char-x-' + ix;
+          bx.textContent = X[ix];
+          this.tapeX.appendChild(bx);
+        }
+        if (m === 0) {
+          this.tapeX.innerHTML = '<span style="font-size: 0.8rem; color: var(--text-muted); font-style: italic;">[string vazia]</span>';
+        }
+
+        this.tapeY.innerHTML = '';
+        for (var iy = 0; iy < n; iy++) {
+          var by = document.createElement('div');
+          by.className = 'letter-box';
+          by.id = 'tape-char-y-' + iy;
+          by.textContent = Y[iy];
+          this.tapeY.appendChild(by);
+        }
+        if (n === 0) {
+          this.tapeY.innerHTML = '<span style="font-size: 0.8rem; color: var(--text-muted); font-style: italic;">[string vazia]</span>';
+        }
+
+        // 2. Renderiza Matriz HTML
+        var html = '';
+
+        // Linha 0 de Cabeçalho: letras de Y
+        html += '<thead><tr>';
+        html += '<th scope="col" style="background-color: var(--bg-surface-alt);">i \\ j</th>';
+        html += '<th scope="col">0 (Ø)</th>';
+        for (var col = 1; col <= n; col++) {
+          html += '<th scope="col" class="th-char" id="th-col-' + col + '">' + col + ' (' + Y[col - 1] + ')</th>';
+        }
+        html += '</tr></thead>';
+
+        // Linhas de Dados
+        html += '<tbody>';
+        for (var row = 0; row <= m; row++) {
+          html += '<tr>';
+          if (row === 0) {
+            html += '<th scope="row">0 (Ø)</th>';
+          } else {
+            html += '<th scope="row" class="th-char" id="th-row-' + row + '">' + row + ' (' + X[row - 1] + ')</th>';
+          }
+
+          for (var c = 0; c <= n; c++) {
+            html += '<td id="cell-' + row + '-' + c + '">';
+            html += '<div class="lcs-cell-content">';
+            html += '<span class="lcs-cell-val" id="val-' + row + '-' + c + '">·</span>';
+            html += '<span class="lcs-cell-arrow" id="arrow-' + row + '-' + c + '"></span>';
+            html += '</div>';
+            html += '</td>';
+          }
+          html += '</tr>';
+        }
+        html += '</tbody>';
+
+        this.tableEl.innerHTML = html;
+      },
+
+      updateView: function () {
+        var m = this.data.m;
+        var n = this.data.n;
+
+        // Limpa destaques temporários em todas as células
+        for (var r = 0; r <= m; r++) {
+          for (var c = 0; c <= n; c++) {
+            var cell = document.getElementById('cell-' + r + '-' + c);
+            var valEl = document.getElementById('val-' + r + '-' + c);
+            var arrowEl = document.getElementById('arrow-' + r + '-' + c);
+            if (cell) {
+              cell.className = '';
+              valEl.textContent = '·';
+              arrowEl.textContent = '';
+            }
+          }
+        }
+
+        // Limpa destaques nas fitas de caracteres
+        document.querySelectorAll('.letter-box').forEach(function (box) {
+          box.className = 'letter-box';
+        });
+
+        // Limpa destaques dos th
+        document.querySelectorAll('.th-char').forEach(function (th) {
+          th.classList.remove('th-highlight');
+        });
+
+        // Atualiza Stepper de Fases
+        this.stepPhase1.className = 'phase-step' + (this.phase === 1 ? ' is-current' : ' is-done');
+        this.stepPhase2.className = 'phase-step' + (this.phase === 2 ? ' is-current' : (this.phase === 3 ? ' is-done' : ''));
+        this.stepPhase3.className = 'phase-step' + (this.phase === 3 ? ' is-done is-current' : '');
+
+        /* ======================== FASE 1: PREENCHIMENTO ======================== */
+        if (this.phase === 1) {
+          var totalFillSteps = this.data.fillSteps.length;
+          this.stepBadge.textContent = 'Passo ' + this.fillStepIdx + ' / ' + totalFillSteps;
+
+          this.btnPrev.disabled = this.fillStepIdx === 0;
+          this.btnNext.disabled = this.fillStepIdx >= totalFillSteps;
+          this.btnTraceback.disabled = this.fillStepIdx < totalFillSteps;
+
+          // Preenche os casos-base (linha 0 e coluna 0)
+          for (var c0 = 0; c0 <= n; c0++) {
+            var v0 = document.getElementById('val-0-' + c0);
+            if (v0) v0.textContent = '0';
+          }
+          for (var r0 = 0; r0 <= m; r0++) {
+            var vr = document.getElementById('val-' + r0 + '-0');
+            if (vr) vr.textContent = '0';
+          }
+
+          // Preenche células calculadas até fillStepIdx
+          for (var s = 1; s < this.fillStepIdx; s++) {
+            var st = this.data.fillSteps[s];
+            if (st.type === 'FILL_CELL') {
+              var fVal = document.getElementById('val-' + st.i + '-' + st.j);
+              var fArr = document.getElementById('arrow-' + st.i + '-' + st.j);
+              var fCell = document.getElementById('cell-' + st.i + '-' + st.j);
+              if (fVal) fVal.textContent = st.value;
+              if (fArr) fArr.textContent = st.arrow;
+              if (fCell) fCell.className = 'cell-computed';
+            }
+          }
+
+          // Destaca a célula ativa atual e suas dependências
+          if (this.fillStepIdx === 0) {
+            this.explanationText.textContent = 'Início da simulação. Pressione [▶ Play] para assistir ao preenchimento da tabela ou [⏭ Próximo] para avançar passo a passo.';
+            this.explanationFormula.textContent = 'Status: Tabela inicializada';
+          } else {
+            var curStep = this.data.fillSteps[this.fillStepIdx - 1];
+            this.explanationText.textContent = curStep.explanation;
+            this.explanationFormula.textContent = curStep.formula;
+
+            if (curStep.type === 'FILL_CELL') {
+              var activeCell = document.getElementById('cell-' + curStep.i + '-' + curStep.j);
+              var activeVal = document.getElementById('val-' + curStep.i + '-' + curStep.j);
+              var activeArr = document.getElementById('arrow-' + curStep.i + '-' + curStep.j);
+
+              if (activeCell) activeCell.className = 'cell-active';
+              if (activeVal) activeVal.textContent = curStep.value;
+              if (activeArr) activeArr.textContent = curStep.arrow;
+
+              // Destaca dependências
+              if (curStep.isMatch && curStep.depDiag) {
+                var diagCell = document.getElementById('cell-' + curStep.depDiag.r + '-' + curStep.depDiag.c);
+                if (diagCell) diagCell.className = 'cell-dep-diag';
+              } else {
+                if (curStep.depUp) {
+                  var upCell = document.getElementById('cell-' + curStep.depUp.r + '-' + curStep.depUp.c);
+                  if (upCell) upCell.className = 'cell-dep-max';
+                }
+                if (curStep.depLeft) {
+                  var leftCell = document.getElementById('cell-' + curStep.depLeft.r + '-' + curStep.depLeft.c);
+                  if (leftCell) leftCell.className = 'cell-dep-max';
+                }
+              }
+
+              // Destaca caracteres correspondentes nas fitas
+              var thRow = document.getElementById('th-row-' + curStep.i);
+              var thCol = document.getElementById('th-col-' + curStep.j);
+              if (thRow) thRow.classList.add('th-highlight');
+              if (thCol) thCol.classList.add('th-highlight');
+
+              var charBoxX = document.getElementById('tape-char-x-' + (curStep.i - 1));
+              var charBoxY = document.getElementById('tape-char-y-' + (curStep.j - 1));
+              if (charBoxX) charBoxX.classList.add('letter-active');
+              if (charBoxY) charBoxY.classList.add('letter-active');
+            }
+          }
+
+          if (this.fillStepIdx >= totalFillSteps) {
+            this.pause();
+            this.matrixStatusBadge.textContent = 'Tabela Completa';
+            this.matrixStatusBadge.className = 'badge badge-success';
+            this.btnTraceback.disabled = false;
+          }
+        }
+
+        /* ======================== FASE 2 & 3: TRACEBACK ======================== */
+        else if (this.phase === 2 || this.phase === 3) {
+          // Preenche TODAS as células da tabela com valores e setas
+          for (var rA = 0; rA <= m; rA++) {
+            for (var cA = 0; cA <= n; cA++) {
+              var vA = document.getElementById('val-' + rA + '-' + cA);
+              var aA = document.getElementById('arrow-' + rA + '-' + cA);
+              if (vA) vA.textContent = this.data.dp[rA][cA];
+              if (aA) aA.textContent = this.data.arrows[rA][cA] === 'diag' ? '↖' :
+                                       (this.data.arrows[rA][cA] === 'up' ? '↑' :
+                                       (this.data.arrows[rA][cA] === 'left' ? '←' : ''));
+            }
+          }
+
+          var totalTraceSteps = this.data.tracebackSteps.length;
+          this.stepBadge.textContent = 'Traceback ' + this.traceStepIdx + ' / ' + totalTraceSteps;
+
+          this.btnPrev.disabled = this.traceStepIdx === 0;
+          this.btnNext.disabled = this.traceStepIdx >= totalTraceSteps;
+
+          // Aplica destaques do traceback até traceStepIdx
+          var collectedLCS = [];
+          for (var t = 0; t < this.traceStepIdx; t++) {
+            var trStep = this.data.tracebackSteps[t];
+            var trCell = document.getElementById('cell-' + trStep.i + '-' + trStep.j);
+
+            if (trStep.type === 'TRACE_MATCH') {
+              if (trCell) trCell.className = 'cell-trace-match';
+              collectedLCS.push(trStep.char);
+
+              var bxM = document.getElementById('tape-char-x-' + trStep.charIndexX);
+              var byM = document.getElementById('tape-char-y-' + trStep.charIndexY);
+              if (bxM) bxM.className = 'letter-box letter-matched';
+              if (byM) byM.className = 'letter-box letter-matched';
+            } else if (trStep.type === 'TRACE_SKIP_UP' || trStep.type === 'TRACE_SKIP_LEFT' || trStep.type === 'TRACE_START') {
+              if (trCell) trCell.className = 'cell-trace-skip';
+            }
+          }
+
+          // Atualiza explicação do passo de traceback
+          if (this.traceStepIdx > 0) {
+            var lastTrStep = this.data.tracebackSteps[this.traceStepIdx - 1];
+            this.explanationText.textContent = lastTrStep.explanation;
+            this.explanationFormula.textContent = lastTrStep.formula;
+          }
+
+          // Atualiza painel de resultado
+          var currentLcsStr = collectedLCS.slice().reverse().join('');
+          this.resultLcsString.textContent = currentLcsStr || '—';
+          this.resultLcsLength.textContent = currentLcsStr.length;
+
+          if (this.traceStepIdx >= totalTraceSteps) {
+            this.pause();
+            this.phase = 3;
+            this.stepPhase3.className = 'phase-step is-done is-current';
+            this.resultStatusBadge.textContent = 'Concluído';
+            this.resultStatusBadge.className = 'badge badge-success';
+            this.resultLcsString.textContent = this.data.lcs || '(nenhuma subsequência comum)';
+            this.resultLcsLength.textContent = this.data.length;
+          }
+        }
+      },
+
+      stepForward: function () {
+        if (!this.data) return;
+
+        if (this.phase === 1) {
+          if (this.fillStepIdx < this.data.fillSteps.length) {
+            this.fillStepIdx++;
+            this.updateView();
+          } else {
+            this.startTraceback();
+          }
+        } else if (this.phase === 2) {
+          if (this.traceStepIdx < this.data.tracebackSteps.length) {
+            this.traceStepIdx++;
+            this.updateView();
+          }
+        }
+      },
+
+      stepBackward: function () {
+        if (!this.data) return;
+
+        if (this.phase === 2 || this.phase === 3) {
+          if (this.traceStepIdx > 0) {
+            this.traceStepIdx--;
+            this.phase = 2;
+            this.updateView();
+          } else {
+            this.phase = 1;
+            this.fillStepIdx = this.data.fillSteps.length;
+            this.updateView();
+          }
+        } else if (this.phase === 1) {
+          if (this.fillStepIdx > 0) {
+            this.fillStepIdx--;
+            this.updateView();
+          }
+        }
+      },
+
+      fillAllTable: function () {
+        if (!this.data) return;
+        this.pause();
+        this.phase = 1;
+        this.fillStepIdx = this.data.fillSteps.length;
+        this.updateView();
+      },
+
+      startTraceback: function () {
+        if (!this.data) return;
+        this.pause();
+        this.phase = 2;
+        this.traceStepIdx = 1; // Inicia na primeira célula de traceback
+        this.updateView();
+      },
+
+      reset: function () {
+        this.pause();
+        this.phase = 1;
+        this.fillStepIdx = 0;
+        this.traceStepIdx = 0;
+        this.updateView();
+      },
+
+      togglePlay: function () {
+        if (this.isPlaying) this.pause();
+        else this.play();
+      },
+
+      play: function () {
+        var self = this;
+        if (!this.data) return;
+
+        // Se estiver no final de tudo, reinicia
+        if (this.phase === 3 || (this.phase === 2 && this.traceStepIdx >= this.data.tracebackSteps.length)) {
+          this.reset();
+        }
+
+        this.isPlaying = true;
+        this.btnPlay.textContent = '⏸';
+        this.btnPlay.setAttribute('title', 'Pausar (⏸)');
+
+        function tick() {
+          if (!self.isPlaying) return;
+
+          if (self.phase === 1) {
+            if (self.fillStepIdx < self.data.fillSteps.length) {
+              self.stepForward();
+              var delay = Math.max(30, Math.round(350 / self.speedMultiplier));
+              self.timerId = setTimeout(tick, delay);
+            } else {
+              // Concluiu preenchimento: pausa breve e inicia traceback automaticamente
+              self.timerId = setTimeout(function () {
+                if (self.isPlaying) {
+                  self.startTraceback();
+                  self.timerId = setTimeout(tick, Math.max(40, Math.round(450 / self.speedMultiplier)));
+                }
+              }, 400);
+            }
+          } else if (self.phase === 2) {
+            if (self.traceStepIdx < self.data.tracebackSteps.length) {
+              self.stepForward();
+              var delayTr = Math.max(40, Math.round(450 / self.speedMultiplier));
+              self.timerId = setTimeout(tick, delayTr);
+            } else {
+              self.pause();
+            }
+          }
+        }
+
+        var initDelay = Math.max(30, Math.round(350 / this.speedMultiplier));
+        this.timerId = setTimeout(tick, initDelay);
+      },
+
+      pause: function () {
+        this.isPlaying = false;
+        if (this.timerId !== null) {
+          clearTimeout(this.timerId);
+          this.timerId = null;
+        }
+        if (this.btnPlay) {
+          this.btnPlay.textContent = '▶';
+          this.btnPlay.setAttribute('title', 'Executar (▶)');
+        }
+      }
+    };
+
+    // Inicialização ao carregar a página
+    document.addEventListener('DOMContentLoaded', function () {
+      LCSVisualizer.init();
+    });
+
+  })();
+  </script>
 </body>
 </html>

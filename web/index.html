@@ -3,122 +3,521 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Programação Dinâmica - Visualizador Interativo | AEDS-II CEFET-MG</title>
+  <title>PD LAB — Laboratório Interativo de Programação Dinâmica</title>
+  <meta name="description" content="Laboratório educacional interativo para aprendizado visual e conceitual de Programação Dinâmica.">
+  
+  <!-- Prevenção de FOUC de tema: restauração instantânea antes do render -->
+  <script>
+    (function() {
+      try {
+        var saved = localStorage.getItem('pdlab_theme');
+        if (saved) {
+          var theme = JSON.parse(saved);
+          if (theme === 'dark' || theme === 'light') {
+            document.documentElement.setAttribute('data-theme', theme);
+          }
+        } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+      } catch (e) {}
+    })();
+  </script>
+
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <header class="navbar">
-    <a href="index.html" class="nav-brand">
-      <span>⚡</span> Programação Dinâmica
-    </a>
-    <div class="nav-actions">
-      <button class="theme-toggle-btn" onclick="toggleTheme()" aria-label="Alternar tema">
-        🌓 Tema
-      </button>
+
+  <!-- CABEÇALHO GLOBAL -->
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="index.html" class="logo-area" aria-label="PD LAB - Início">
+        <span class="logo-mark">PD</span>
+        <span class="logo-title">PD LAB</span>
+        <span class="logo-subtitle">Laboratório de Algoritmos</span>
+      </a>
+
+      <!-- Navegação Global -->
+      <nav class="site-nav" aria-label="Navegação principal">
+        <ul class="nav-list">
+          <li>
+            <a href="index.html" class="nav-link active" aria-current="page">Início</a>
+          </li>
+          
+          <!-- Dropdown Experimentos -->
+          <li class="nav-dropdown">
+            <button type="button" class="nav-link nav-dropdown-toggle" aria-expanded="false" aria-haspopup="true">
+              Experimentos
+            </button>
+            <ul class="nav-dropdown-menu" role="menu">
+              <li class="dropdown-item" role="none">
+                <a href="fib-tree.html" role="menuitem">
+                  <span>01. Fibonacci</span>
+                  <span class="dropdown-code">Árvore / Memo</span>
+                </a>
+              </li>
+              <li class="dropdown-item" role="none">
+                <a href="lcs-table.html" role="menuitem">
+                  <span>02. LCS</span>
+                  <span class="dropdown-code">Tabela 2D</span>
+                </a>
+              </li>
+              <li class="dropdown-item" role="none">
+                <a href="rod-cutting-duel.html" role="menuitem">
+                  <span>03. Rod Cutting</span>
+                  <span class="dropdown-code">PD vs Guloso</span>
+                </a>
+              </li>
+              <li class="dropdown-item" role="none">
+                <a href="matrix-chain.html" role="menuitem">
+                  <span>04. Matrix Chain</span>
+                  <span class="dropdown-code">Parentização</span>
+                </a>
+              </li>
+            </ul>
+          </li>
+
+          <li>
+            <a href="benchmarks.html" class="nav-link">Benchmarks</a>
+          </li>
+          <li>
+            <a href="quiz.html" class="nav-link">Quiz</a>
+          </li>
+        </ul>
+      </nav>
+
+      <!-- Ações do Header -->
+      <div class="header-actions">
+        <button type="button" class="theme-toggle-btn" data-action="toggle-theme" aria-label="Alternar tema claro/escuro" title="Alternar tema">
+          ☾
+        </button>
+        <button type="button" class="mobile-nav-toggle" aria-label="Abrir menu de navegação" aria-expanded="false">
+          ☰
+        </button>
+      </div>
     </div>
   </header>
 
-  <main class="container">
-    <section class="hero">
-      <div class="hero-badge">Algoritmos e Estruturas de Dados II • CEFET-MG</div>
-      <h1>Laboratório Visual de Programação Dinâmica</h1>
+  <!-- CONTEÚDO PRINCIPAL (MAPA VISUAL DE APRENDIZAGEM) -->
+  <main class="main-container">
+    
+    <!-- 1. HERO ACADÊMICO -->
+    <section class="home-hero" aria-labelledby="hero-heading">
+      <div class="hero-title-group">
+        <div class="hero-meta-tag">
+          <span>Laboratório Interativo de Programação Dinâmica</span>
+        </div>
+        <h1 id="hero-heading" class="hero-title">
+          Aprenda programação dinâmica observando os algoritmos construírem suas soluções.
+        </h1>
+        <p class="hero-lead">
+          Um ambiente de experimentação rigoroso onde a memória, as tabelas de estado e as árvores de recursão são calculadas e reveladas em tempo real.
+        </p>
+      </div>
+
+      <div class="hero-actions">
+        <a href="#experimentos" class="btn btn-primary btn-lg">
+          Começar a explorar ↓
+        </a>
+        <a href="#como-estudar" class="btn btn-outline btn-lg">
+          Metodologia de estudo
+        </a>
+      </div>
+
+      <!-- Pequena Visualização Algorítmica no Hero (Fita de Subproblemas Reais) -->
+      <div class="hero-viz-container" aria-label="Visualização algorítmica de subproblemas da sequência de Fibonacci">
+        <div class="hero-viz-label">
+          <span>RECONHECIMENTO DE SUBPROBLEMAS • SEQUÊNCIA DE ESTADOS</span>
+          <span style="color: var(--color-primary); font-weight: 600;">Clique em uma célula para inspecionar</span>
+        </div>
+
+        <div class="hero-tape-wrapper">
+          <div class="hero-cells-tape" id="hero-tape">
+            <!-- Células geradas com valores reais da sequência -->
+            <div class="tape-cell" data-index="0" data-val="0" title="Caso base dp[0]">
+              <div class="tape-cell-box">0</div>
+              <span class="tape-cell-index">dp[0]</span>
+            </div>
+            <div class="tape-cell" data-index="1" data-val="1" title="Caso base dp[1]">
+              <div class="tape-cell-box">1</div>
+              <span class="tape-cell-index">dp[1]</span>
+            </div>
+            <div class="tape-cell" data-index="2" data-val="1" title="dp[2] = dp[1] + dp[0]">
+              <div class="tape-cell-box">1</div>
+              <span class="tape-cell-index">dp[2]</span>
+            </div>
+            <div class="tape-cell" data-index="3" data-val="2" title="dp[3] = dp[2] + dp[1]">
+              <div class="tape-cell-box">2</div>
+              <span class="tape-cell-index">dp[3]</span>
+            </div>
+            <div class="tape-cell is-dep" data-index="4" data-val="3" id="hero-cell-dep1" title="Subproblema dp[4] = 3">
+              <div class="tape-cell-box">3</div>
+              <span class="tape-cell-index">dp[4]</span>
+            </div>
+            <div class="tape-cell is-dep" data-index="5" data-val="5" id="hero-cell-dep2" title="Subproblema dp[5] = 5">
+              <div class="tape-cell-box">5</div>
+              <span class="tape-cell-index">dp[5]</span>
+            </div>
+            <div class="tape-cell is-active" data-index="6" data-val="8" id="hero-cell-target" title="Estado atual dp[6] = 8">
+              <div class="tape-cell-box">8</div>
+              <span class="tape-cell-index">dp[6]</span>
+            </div>
+            <div class="tape-cell" data-index="7" data-val="13" title="Estado futuro dp[7] = 13">
+              <div class="tape-cell-box">13</div>
+              <span class="tape-cell-index">dp[7]</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-viz-equation" id="hero-equation">
+          <div>
+            <span>Relação de Recorrência:</span>
+            <code id="hero-equation-text">dp[6] = dp[5] + dp[4] = 5 + 3 = 8</code>
+          </div>
+          <div style="font-size: 0.75rem; color: var(--text-muted);">
+            <span>Subestrutura Ótima & Memoização</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. MAPA DOS EXPERIMENTOS -->
+    <section id="experimentos" class="section-header" style="margin-top: 1rem;">
+      <span class="section-tag">Laboratório Prático</span>
+      <h2>EXPERIMENTOS</h2>
       <p>
-        Simuladores interativos, árvores de recursão, preenchimento de tabelas e experimentos
-        empíricos baseados no Capítulo 15 do livro <em>Algoritmos: Teoria e Prática</em> (Cormen et al.).
+        Seis módulos construídos para expor a mecânica interna de cada algoritmo. Escolha um experimento para iniciar:
       </p>
     </section>
 
-    <div class="grid">
-      <!-- 1. Árvore de Fibonacci -->
-      <a href="fib-tree.html" class="card">
-        <span class="card-tag tag-naive">Aquecimento</span>
-        <h2 class="card-title">Árvore de Fibonacci</h2>
-        <p class="card-desc">
-          Compare a explosão combinatória da recursão pura contra o reaproveitamento linear da memoização,
-          destacando subproblemas repetidos em tempo real.
-        </p>
-        <div class="card-footer">
-          <span>Abrir simulador</span>
-          <span>&rarr;</span>
+    <!-- Composição Editorial dos Módulos (Variação de Layouts) -->
+    <div class="editorial-grid">
+      
+      <!-- 01 FIBONACCI (Destaque Amplo col-6) -->
+      <a href="fib-tree.html" class="editorial-card col-6">
+        <div>
+          <div class="editorial-card-top">
+            <span class="editorial-card-num">MÓDULO 01</span>
+            <span class="badge badge-accent">O(2ⁿ) → O(n)</span>
+          </div>
+          <h3 class="editorial-card-title">FIBONACCI</h3>
+          <p class="editorial-card-desc">
+            Recursão e subproblemas redundantes. Observe a árvore de decisão expandir exponencialmente e veja como a memoização elimina o retrabalho podando ramos repetidos.
+          </p>
+          
+          <!-- Mini visualização técnica -->
+          <div class="mini-viz-preview">
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 2px;">
+              <span>fib(5)</span>
+              <span style="color: var(--text-muted); font-size: 0.7rem;">↙ &nbsp; ↘</span>
+              <div style="display: flex; gap: 14px;">
+                <span style="color: var(--color-primary); font-weight: 600;">fib(4)</span>
+                <span style="color: var(--color-accent); font-weight: 600;">fib(3) [poda]</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="editorial-card-footer">
+          <span style="color: var(--text-secondary);">Árvore de Recursão & Memo</span>
+          <span class="editorial-card-action">Explorar →</span>
         </div>
       </a>
 
-      <!-- 2. Corte de Hastes: Duelo -->
-      <a href="rod-cutting-duel.html" class="card">
-        <span class="card-tag tag-bottom-up">Cormen 15.1</span>
-        <h2 class="card-title">Duelo Guloso x PD</h2>
-        <p class="card-desc">
-          Demonstração lado a lado onde a heurística gulosa de densidade (preço/tamanho) falha perante
-          a subestrutura ótima da Programação Dinâmica.
-        </p>
-        <div class="card-footer">
-          <span>Abrir simulador</span>
-          <span>&rarr;</span>
+      <!-- 02 LCS (Destaque Amplo col-6) -->
+      <a href="lcs-table.html" class="editorial-card col-6">
+        <div>
+          <div class="editorial-card-top">
+            <span class="editorial-card-num">MÓDULO 02</span>
+            <span class="badge badge-accent">O(m × n)</span>
+          </div>
+          <h3 class="editorial-card-title">LCS (Subsequência Comum)</h3>
+          <p class="editorial-card-desc">
+            Construindo uma solução através de uma tabela. Acompanhe o preenchimento bidimensional entre duas sequências e a reconstrução exata da subsequência ótima via traceback.
+          </p>
+          
+          <!-- Mini visualização técnica -->
+          <div class="mini-viz-preview">
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <span style="border: 1px solid var(--border-color); padding: 2px 6px;">L[i-1,j-1] ↖</span>
+              <span style="color: var(--color-primary); font-weight: 700;">+ 1</span>
+              <span>⟶</span>
+              <span style="background: var(--color-primary-subtle); border: 1px solid var(--color-primary); padding: 2px 6px; font-weight: 700;">L[i,j]</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="editorial-card-footer">
+          <span style="color: var(--text-secondary);">Tabela 2D & Rastreamento</span>
+          <span class="editorial-card-action">Explorar →</span>
         </div>
       </a>
 
-      <!-- 3. Cadeia de Matrizes -->
-      <a href="matrix-chain.html" class="card">
-        <span class="card-tag tag-memo">Cormen 15.2</span>
-        <h2 class="card-title">Cadeia de Matrizes</h2>
-        <p class="card-desc">
-          Visualização passo a passo das tabelas m e s preenchidas por diagonais crescentes e a reconstrução
-          da parentização ótima para evitar o custo exponencial dos números de Catalan.
-        </p>
-        <div class="card-footer">
-          <span>Abrir simulador</span>
-          <span>&rarr;</span>
+      <!-- 03 ROD CUTTING (col-4) -->
+      <a href="rod-cutting-duel.html" class="editorial-card col-4">
+        <div>
+          <div class="editorial-card-top">
+            <span class="editorial-card-num">MÓDULO 03</span>
+            <span class="badge badge-secondary">Duelo</span>
+          </div>
+          <h3 class="editorial-card-title">ROD CUTTING</h3>
+          <p class="editorial-card-desc">
+            Guloso × Programação Dinâmica. Entenda na prática por que a escolha gulosa falha e como a PD garante o corte de valor máximo global.
+          </p>
+
+          <div class="mini-viz-preview">
+            <div style="display: flex; gap: 8px; font-size: 0.75rem;">
+              <span style="color: var(--color-error); font-weight: 600;">Guloso: $24</span>
+              <span>vs</span>
+              <span style="color: var(--color-success); font-weight: 700;">PD: $30 ★</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="editorial-card-footer">
+          <span style="color: var(--text-secondary);">Corte de Hastes</span>
+          <span class="editorial-card-action">Explorar →</span>
         </div>
       </a>
 
-      <!-- 4. Tabela do LCS -->
-      <a href="lcs-table.html" class="card">
-        <span class="card-tag tag-two-rows">Cormen 15.4</span>
-        <h2 class="card-title">Tabela do LCS</h2>
-        <p class="card-desc">
-          Preenchimento animado da matriz com direções e setas de traceback passo a passo para encontrar a
-          Subsequência Comum Máxima de duas palavras quaisquer.
-        </p>
-        <div class="card-footer">
-          <span>Abrir simulador</span>
-          <span>&rarr;</span>
+      <!-- 04 MATRIX CHAIN (col-4) -->
+      <a href="matrix-chain.html" class="editorial-card col-4">
+        <div>
+          <div class="editorial-card-top">
+            <span class="editorial-card-num">MÓDULO 04</span>
+            <span class="badge badge-accent">O(n³)</span>
+          </div>
+          <h3 class="editorial-card-title">MATRIX CHAIN</h3>
+          <p class="editorial-card-desc">
+            Encontrando a melhor ordem de multiplicação. Visualize o preenchimento por diagonais e a parentização ótima de cadeias de matrizes.
+          </p>
+
+          <div class="mini-viz-preview">
+            <div style="font-size: 0.8rem; color: var(--text-primary);">
+              <code>((A₁ × A₂) × (A₃ × A₄))</code>
+            </div>
+          </div>
+        </div>
+
+        <div class="editorial-card-footer">
+          <span style="color: var(--text-secondary);">Preenchimento Diagonal</span>
+          <span class="editorial-card-action">Explorar →</span>
         </div>
       </a>
 
-      <!-- 5. Painel de Benchmarks -->
-      <a href="benchmarks.html" class="card">
-        <span class="card-tag tag-greedy">Experimentos E1–E8</span>
-        <h2 class="card-title">Painel de Benchmarks</h2>
-        <p class="card-desc">
-          Gráficos interativos de tempo de execução, contagem de chamadas recursivas, consumo de memória
-          (tracemalloc) e comparação com implementação em C++17.
-        </p>
-        <div class="card-footer">
-          <span>Ver gráficos</span>
-          <span>&rarr;</span>
+      <!-- 05 BENCHMARKS (col-4) -->
+      <a href="benchmarks.html" class="editorial-card col-4">
+        <div>
+          <div class="editorial-card-top">
+            <span class="editorial-card-num">MÓDULO 05</span>
+            <span class="badge">Análise</span>
+          </div>
+          <h3 class="editorial-card-title">BENCHMARKS</h3>
+          <p class="editorial-card-desc">
+            Comparando algoritmos através de dados. Meça o tempo de CPU, consumo de espaço e operações computadas sob diferentes tamanhos de entrada.
+          </p>
+
+          <div class="mini-viz-preview">
+            <div style="display: flex; align-items: flex-end; gap: 6px; height: 32px;">
+              <div style="width: 12px; height: 32px; background: var(--color-error);" title="Sem PD: 1000ms"></div>
+              <div style="width: 12px; height: 16px; background: var(--color-accent);" title="Com Memo: 2ms"></div>
+              <div style="width: 12px; height: 6px; background: var(--color-success);" title="Iterativo: 0.1ms"></div>
+              <span style="font-size: 0.7rem; color: var(--text-muted); margin-left: 4px;">tempo CPU</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="editorial-card-footer">
+          <span style="color: var(--text-secondary);">Dados Empíricos</span>
+          <span class="editorial-card-action">Explorar →</span>
         </div>
       </a>
 
-      <!-- 6. Quiz Interativo -->
-      <a href="quiz.html" class="card">
-        <span class="card-tag tag-bottom-up">Autoavaliação</span>
-        <h2 class="card-title">Quiz de Conceitos</h2>
-        <p class="card-desc">
-          Desafios e perguntas conceituais de múltipla escolha com pontuação e feedback imediato para fixação
-          dos tópicos de prova e do seminário.
-        </p>
-        <div class="card-footer">
-          <span>Iniciar teste</span>
-          <span>&rarr;</span>
+      <!-- 06 QUIZ (Destaque Amplo col-12) -->
+      <a href="quiz.html" class="editorial-card" style="grid-column: span 12;">
+        <div style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1.5rem; align-items: center;">
+          <div style="max-width: 650px;">
+            <div class="editorial-card-top">
+              <span class="editorial-card-num">MÓDULO 06</span>
+              <span class="badge badge-success">Autoavaliação Conceitual</span>
+            </div>
+            <h3 class="editorial-card-title">QUIZ: TESTANDO O QUE VOCÊ APRENDEU</h3>
+            <p class="editorial-card-desc" style="margin-bottom: 0;">
+              Consolide a teoria respondendo a 8 questões cuidadosamente elaboradas sobre subestrutura ótima, overlapping subproblems, memoização e tabulação, com explicações detalhadas para cada alternativa.
+            </p>
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 1.5rem;">
+            <div class="mini-viz-preview" style="margin: 0; min-height: auto; padding: 0.65rem 1rem;">
+              <span style="color: var(--color-success); font-weight: 700;">8 Questões</span>
+              <span style="color: var(--text-muted); margin: 0 0.5rem;">•</span>
+              <span>Feedback Imediato</span>
+            </div>
+            <span class="editorial-card-action btn btn-secondary btn-sm" style="color: #FFFDF7;">
+              Iniciar Quiz →
+            </span>
+          </div>
         </div>
       </a>
+
     </div>
+
+    <!-- 3. SEÇÃO COMO ESTUDAR -->
+    <section id="como-estudar" class="study-flow-section" aria-labelledby="flow-heading">
+      <div class="section-header" style="margin-bottom: 1.25rem;">
+        <span class="section-tag">Metodologia</span>
+        <h2 id="flow-heading">COMO ESTUDAR</h2>
+        <p>Um método baseado em experimentação direta com os estados da memória.</p>
+      </div>
+
+      <div class="study-flow-quote">
+        <blockquote>
+          “Não memorize apenas a fórmula. Veja o problema sendo construído.”
+        </blockquote>
+      </div>
+
+      <div class="flow-steps">
+        <!-- 01 Observe -->
+        <div class="flow-step-item">
+          <span class="flow-step-num">ETAPA 01</span>
+          <h4 class="flow-step-title">Observe</h4>
+          <p class="flow-step-desc">
+            Identifique a decisão local e examine como o problema original se decompõe em subproblemas menores.
+          </p>
+        </div>
+
+        <!-- 02 Execute -->
+        <div class="flow-step-item">
+          <span class="flow-step-num">ETAPA 02</span>
+          <h4 class="flow-step-title">Execute</h4>
+          <p class="flow-step-desc">
+            Avance o simulador passo a passo e note a exata transição de dependência entre células ou nós da árvore.
+          </p>
+        </div>
+
+        <!-- 03 Altere a entrada -->
+        <div class="flow-step-item">
+          <span class="flow-step-num">ETAPA 03</span>
+          <h4 class="flow-step-title">Altere a entrada</h4>
+          <p class="flow-step-desc">
+            Mude parâmetros, comprimentos ou caracteres. Verifique se sua intuição teórica se confirma na prática.
+          </p>
+        </div>
+
+        <!-- 04 Investigue -->
+        <div class="flow-step-item">
+          <span class="flow-step-num">ETAPA 04</span>
+          <h4 class="flow-step-title">Investigue</h4>
+          <p class="flow-step-desc">
+            Analise subproblemas redundantes e confronte o algoritmo com alternativas gulosas ou de força bruta.
+          </p>
+        </div>
+
+        <!-- 05 Teste -->
+        <div class="flow-step-item">
+          <span class="flow-step-num">ETAPA 05</span>
+          <h4 class="flow-step-title">Teste</h4>
+          <p class="flow-step-desc">
+            Responda ao Quiz formativo para consolidar o entendimento formal e diagnosticar pontos para revisão.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. SEÇÃO CONCEITOS FUNDAMENTAIS -->
+    <section class="concepts-section" aria-labelledby="concepts-heading">
+      <div class="section-header">
+        <span class="section-tag">Bases Teóricas</span>
+        <h2 id="concepts-heading">OS QUATRO PILARES DA PROGRAMAÇÃO DINÂMICA</h2>
+        <p>Os conceitos essenciais que diferenciam a Programação Dinâmica de outros paradigmas algorítmicos:</p>
+      </div>
+
+      <div class="concepts-grid">
+        <!-- Pilar 1 -->
+        <div class="concept-pillar-card pillar-primary">
+          <span class="concept-title">SUBESTRUTURA ÓTIMA</span>
+          <p class="concept-desc">
+            Uma solução ótima para o problema global é construída a partir das soluções ótimas de seus subproblemas componentes. Sem subestrutura ótima, a PD não se aplica.
+          </p>
+        </div>
+
+        <!-- Pilar 2 -->
+        <div class="concept-pillar-card pillar-accent">
+          <span class="concept-title">SUBPROBLEMAS SOBREPOSTOS</span>
+          <p class="concept-desc">
+            O espaço de subproblemas é pequeno: o mesmo subproblema precisa ser resolvido repetidamente no grafo de chamadas recursivas, justificando o custo de armazenamento.
+          </p>
+        </div>
+
+        <!-- Pilar 3 -->
+        <div class="concept-pillar-card">
+          <span class="concept-title">MEMOIZAÇÃO (TOP-DOWN)</span>
+          <p class="concept-desc">
+            Mantém a estrutura recursiva natural do problema, mas armazena cada resultado resolvido em uma tabela hash ou vetor. Subproblemas já visitados são respondidos em $O(1)$.
+          </p>
+        </div>
+
+        <!-- Pilar 4 -->
+        <div class="concept-pillar-card pillar-success">
+          <span class="concept-title">TABELAÇÃO (BOTTOM-UP)</span>
+          <p class="concept-desc">
+            Elimina a pilha de recursão. Preenche iterativamente uma tabela partindo dos casos-base mais simples em direção à solução final, seguindo a ordem topológica de dependência.
+          </p>
+        </div>
+      </div>
+    </section>
+
   </main>
 
-  <footer>
-    <p>CEFET-MG Divinópolis • Prof. Michel Pires da Silva • Disciplina: Algoritmos e Estruturas de Dados II</p>
+  <!-- 8. FOOTER GLOBAL -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div>
+        <strong>PD LAB</strong> — Laboratório Interativo de Programação Dinâmica
+      </div>
+      <div class="footer-meta">
+        <a href="#experimentos">Experimentos</a> • <a href="benchmarks.html">Benchmarks</a> • <a href="quiz.html">Quiz</a>
+      </div>
+    </div>
   </footer>
 
   <script src="js/shared.js"></script>
+  <script>
+    // Lógica da Pequena Visualização Algorítmica do Hero
+    document.addEventListener('DOMContentLoaded', function() {
+      var tape = document.getElementById('hero-tape');
+      var equationText = document.getElementById('hero-equation-text');
+      if (!tape || !equationText) return;
+
+      var cells = tape.querySelectorAll('.tape-cell');
+      
+      cells.forEach(function(cell) {
+        cell.addEventListener('click', function() {
+          var idx = parseInt(cell.getAttribute('data-index'), 10);
+          
+          // Limpa estados ativos anteriores
+          cells.forEach(function(c) {
+            c.classList.remove('is-active', 'is-dep');
+          });
+
+          cell.classList.add('is-active');
+
+          if (idx >= 2) {
+            var dep1 = tape.querySelector('.tape-cell[data-index="' + (idx - 1) + '"]');
+            var dep2 = tape.querySelector('.tape-cell[data-index="' + (idx - 2) + '"]');
+            if (dep1) dep1.classList.add('is-dep');
+            if (dep2) dep2.classList.add('is-dep');
+
+            var valDep1 = dep1 ? dep1.getAttribute('data-val') : '?';
+            var valDep2 = dep2 ? dep2.getAttribute('data-val') : '?';
+            var valTarget = cell.getAttribute('data-val');
+
+            equationText.textContent = 'dp[' + idx + '] = dp[' + (idx - 1) + '] + dp[' + (idx - 2) + '] = ' + valDep1 + ' + ' + valDep2 + ' = ' + valTarget;
+          } else {
+            equationText.textContent = 'dp[' + idx + '] = ' + cell.getAttribute('data-val') + ' (Caso Base Inicial)';
+          }
+        });
+      });
+    });
+  </script>
 </body>
 </html>

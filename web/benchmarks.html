@@ -3,39 +3,1239 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Resultados de Benchmarks | Programação Dinâmica</title>
+  <title>Benchmarks Empíricos — PD LAB</title>
+  <meta name="description" content="Painel de benchmarks empíricos do PD Lab. Comparação de tempo de execução, operações e consumo de memória entre algoritmos de Programação Dinâmica, Recursão e Gulosos.">
+  <script>
+    (function() {
+      try {
+        var saved = localStorage.getItem('pdlab_theme');
+        if (saved) {
+          var theme = JSON.parse(saved);
+          if (theme === 'dark' || theme === 'light') {
+            document.documentElement.setAttribute('data-theme', theme);
+          }
+        } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+      } catch (e) {}
+    })();
+  </script>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <header class="navbar">
-    <a href="index.html" class="nav-brand">
-      <span>⚡</span> Programação Dinâmica
-    </a>
-    <div class="nav-actions">
-      <button class="theme-toggle-btn" onclick="toggleTheme()" aria-label="Alternar tema">
-        🌓 Tema
-      </button>
+
+  <!-- CABEÇALHO GLOBAL -->
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="index.html" class="logo-area" aria-label="PD LAB - Início">
+        <span class="logo-mark">PD</span>
+        <span class="logo-title">PD LAB</span>
+        <span class="logo-subtitle">Laboratório de Algoritmos</span>
+      </a>
+
+      <nav class="site-nav" aria-label="Navegação principal">
+        <ul class="nav-list">
+          <li>
+            <a href="index.html" class="nav-link">Início</a>
+          </li>
+          <li class="nav-dropdown">
+            <button type="button" class="nav-link nav-dropdown-toggle" aria-expanded="false" aria-haspopup="true">
+              Experimentos
+            </button>
+            <ul class="nav-dropdown-menu" role="menu">
+              <li class="dropdown-item" role="none">
+                <a href="fib-tree.html" role="menuitem">
+                  <span>01. Fibonacci</span>
+                  <span class="dropdown-code">Árvore / Memo</span>
+                </a>
+              </li>
+              <li class="dropdown-item" role="none">
+                <a href="lcs-table.html" role="menuitem">
+                  <span>02. LCS</span>
+                  <span class="dropdown-code">Tabela 2D</span>
+                </a>
+              </li>
+              <li class="dropdown-item" role="none">
+                <a href="rod-cutting-duel.html" role="menuitem">
+                  <span>03. Rod Cutting</span>
+                  <span class="dropdown-code">PD vs Guloso</span>
+                </a>
+              </li>
+              <li class="dropdown-item" role="none">
+                <a href="matrix-chain.html" role="menuitem">
+                  <span>04. Matrix Chain</span>
+                  <span class="dropdown-code">Parentização</span>
+                </a>
+              </li>
+            </ul>
+          </li>
+          <li>
+            <a href="benchmarks.html" class="nav-link active" aria-current="page">Benchmarks</a>
+          </li>
+          <li>
+            <a href="quiz.html" class="nav-link">Quiz</a>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="header-actions">
+        <button type="button" class="theme-toggle-btn" data-action="toggle-theme" aria-label="Alternar tema claro/escuro" title="Alternar tema">
+          ☾
+        </button>
+        <button type="button" class="mobile-nav-toggle" aria-label="Abrir menu de navegação" aria-expanded="false">
+          ☰
+        </button>
+      </div>
     </div>
   </header>
 
-  <main class="container">
-    <div class="construction-banner">
-      <span class="construction-badge">Em construção (responsável: P5)</span>
-      <h1 class="construction-title">Visualizador de Resultados de Benchmarks</h1>
-      <p class="construction-text">
-        Esta página renderizará os gráficos interativos dos experimentos empíricos (E1 a E8) utilizando dados
-        gerados por P4 e salvos em <code>data/results.json</code>, exibindo curvas de tempo de execução, contagem
-        de chamadas, consumo de memória e comparações de linguagem.
-      </p>
-      <!-- TODO(P5): ver docs/tarefas/P5_cheatsheet_slides_e_web.md para integração com Chart.js via CDN cdnjs -->
-      <a href="index.html" class="btn-back">&larr; Voltar ao Menu Principal</a>
+  <main class="main-container">
+
+    <!-- Cabeçalho do Módulo -->
+    <div class="lab-card" style="margin-bottom: 1.25rem;">
+      <div class="lab-card-header">
+        <div class="lab-card-title">
+          <span>Módulo 05</span>
+          <span class="badge badge-accent">Análise Experimental</span>
+        </div>
+        <div style="display: flex; gap: 0.5rem; align-items: center;">
+          <span class="badge badge-secondary" id="badge-dataset-info">data/results.json</span>
+          <span class="badge" id="badge-total-records">0 medições</span>
+        </div>
+      </div>
+      
+      <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 0.75rem;">
+        <div>
+          <h2>Painel de Benchmarks Empíricos</h2>
+          <p style="margin: 0; font-size: 0.95rem;">
+            Analise e compare o comportamento experimental dos algoritmos sob diferentes tamanhos de entrada.
+            Os dados são carregados dinamicamente via <code>fetch()</code> a partir de medições reais de tempo de CPU, operações elementares e consumo de memória.
+          </p>
+        </div>
+      </div>
     </div>
+
+    <!-- ESTADO: CARREGAMENTO -->
+    <div class="bench-feedback-box" id="state-loading">
+      <div class="bench-spinner"></div>
+      <div class="bench-feedback-title">Carregando dados...</div>
+      <p class="bench-feedback-desc">
+        Acessando medições experimentais em <code>data/results.json</code>.
+      </p>
+    </div>
+
+    <!-- ESTADO: ERRO -->
+    <div class="bench-feedback-box" id="state-error" style="display: none;">
+      <div class="bench-feedback-icon" style="color: var(--color-danger);">⚠️</div>
+      <div class="bench-feedback-title">Não foi possível carregar os resultados.</div>
+      <p class="bench-feedback-desc" id="error-message-text">
+        Ocorreu uma falha ao tentar ler os dados de benchmark. Verifique se o arquivo <code>data/results.json</code> existe e é um JSON válido.
+      </p>
+      <button type="button" class="btn btn-primary btn-sm" id="btn-retry-fetch">
+        Tentar novamente
+      </button>
+    </div>
+
+    <!-- ESTADO: VAZIO -->
+    <div class="bench-feedback-box" id="state-empty" style="display: none;">
+      <div class="bench-feedback-icon" style="color: var(--color-accent);">📭</div>
+      <div class="bench-feedback-title">Nenhum resultado experimental encontrado.</div>
+      <p class="bench-feedback-desc">
+        O arquivo <code>data/results.json</code> foi carregado com sucesso, porém não contém medições de experimentos disponíveis.
+      </p>
+      <button type="button" class="btn btn-outline btn-sm" id="btn-reload-empty">
+        Recarregar
+      </button>
+    </div>
+
+    <!-- CONTEÚDO PRINCIPAL (Exibido após o carregamento com sucesso) -->
+    <div id="benchmarks-content" style="display: none;">
+
+      <!-- 1. Barra de Filtros e Controles -->
+      <div class="bench-filters-bar">
+        
+        <!-- Filtro: Algoritmo -->
+        <div class="bench-filter-group">
+          <label for="filter-algorithm">Algoritmo:</label>
+          <select id="filter-algorithm" aria-label="Filtrar por algoritmo">
+            <option value="all">Todos os Algoritmos</option>
+            <!-- Preenchido dinamicamente via JS -->
+          </select>
+        </div>
+
+        <!-- Filtro: Métrica -->
+        <div class="bench-filter-group">
+          <label for="filter-metric">Métrica:</label>
+          <select id="filter-metric" aria-label="Filtrar por métrica">
+            <option value="timeMs">Tempo de Execução (ms)</option>
+            <option value="operations">Operações / Chamadas</option>
+            <option value="memoryKb">Consumo de Memória (KB)</option>
+          </select>
+        </div>
+
+        <!-- Filtro: Tamanho de Entrada -->
+        <div class="bench-filter-group">
+          <label for="filter-size">Tamanho (N):</label>
+          <select id="filter-size" aria-label="Filtrar por tamanho de entrada">
+            <option value="all">Todos os Tamanhos</option>
+            <!-- Preenchido dinamicamente via JS -->
+          </select>
+        </div>
+
+        <!-- Filtro: Escala do Eixo Y -->
+        <div class="bench-filter-group">
+          <label for="filter-scale">Escala Y:</label>
+          <select id="filter-scale" aria-label="Escala do eixo vertical">
+            <option value="linear">Linear</option>
+            <option value="log">Logarítmica (log₁₀)</option>
+          </select>
+        </div>
+
+        <!-- Filtro: Tipo de Gráfico -->
+        <div class="bench-filter-group">
+          <label for="filter-chart-type">Visualização:</label>
+          <select id="filter-chart-type" aria-label="Tipo de visualização gráfica">
+            <option value="lines">Tempo × Tamanho (Linhas)</option>
+            <option value="bars">Comparação Direta (Barras)</option>
+          </select>
+        </div>
+
+        <!-- Botão: Limpar Filtros -->
+        <div style="margin-left: auto;">
+          <button type="button" class="btn btn-outline btn-sm" id="btn-reset-filters" title="Restaurar filtros padrões">
+            ↺ Restaurar filtros
+          </button>
+        </div>
+      </div>
+
+      <!-- 2. Grade de Estatísticas Rápidas -->
+      <div class="bench-stats-grid">
+        <div class="bench-stat-card">
+          <span class="bench-stat-title">Medições Visíveis</span>
+          <span class="bench-stat-value" id="stat-count">0</span>
+          <span class="bench-stat-sub">pontos de dados filtrados</span>
+        </div>
+
+        <div class="bench-stat-card">
+          <span class="bench-stat-title">Menor Valor</span>
+          <span class="bench-stat-value" id="stat-min-val" style="color: var(--color-success);">−</span>
+          <span class="bench-stat-sub" id="stat-min-sub">algoritmo mais veloz</span>
+        </div>
+
+        <div class="bench-stat-card">
+          <span class="bench-stat-title">Maior Valor</span>
+          <span class="bench-stat-value" id="stat-max-val" style="color: var(--color-danger);">−</span>
+          <span class="bench-stat-sub" id="stat-max-sub">custo mais alto</span>
+        </div>
+
+        <div class="bench-stat-card">
+          <span class="bench-stat-title">Média da Métrica</span>
+          <span class="bench-stat-value" id="stat-avg-val">−</span>
+          <span class="bench-stat-sub" id="stat-avg-sub">média ponderada</span>
+        </div>
+      </div>
+
+      <!-- 3. Container do Gráfico SVG Interativo -->
+      <div class="bench-chart-container">
+        <div class="bench-chart-header">
+          <div>
+            <span class="bench-chart-title" id="chart-main-title">
+              Curvas de Crescimento: Tempo (ms) × Tamanho da Entrada (N)
+            </span>
+            <div style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.2rem;" id="chart-sub-title">
+              Passe o cursor sobre os pontos para ver detalhes. Clique em um ponto para selecioná-lo na tabela.
+            </div>
+          </div>
+
+          <div class="bench-chart-tools">
+            <span class="badge badge-accent" id="badge-chart-mode">Linhas (Tempo × N)</span>
+            <span class="badge" id="badge-chart-scale">Escala Linear</span>
+          </div>
+        </div>
+
+        <!-- Wrapper com SVG e Tooltip Flutuante -->
+        <div class="bench-svg-wrapper" id="svg-wrapper">
+          <svg id="bench-svg" class="bench-svg" viewBox="0 0 900 460" preserveAspectRatio="xMidYMid meet" aria-label="Gráfico de benchmark empírico">
+            <!-- Renderizado dinamicamente via JS -->
+          </svg>
+
+          <!-- Tooltip dinâmico -->
+          <div class="bench-tooltip" id="bench-tooltip" role="tooltip" aria-hidden="true">
+            <div class="bench-tooltip-title" id="tooltip-title">Algoritmo</div>
+            <div class="bench-tooltip-line" id="tooltip-size">Tamanho N: 10</div>
+            <div class="bench-tooltip-line" id="tooltip-value">Métrica: 2.31 ms</div>
+            <div class="bench-tooltip-line" id="tooltip-comp">Complexidade: O(n)</div>
+          </div>
+        </div>
+
+        <!-- Legenda Interativa -->
+        <div class="bench-legend" id="bench-legend" aria-label="Legenda dos algoritmos">
+          <!-- Chips gerados dinamicamente com cores e toggle on/off -->
+        </div>
+      </div>
+
+      <!-- 4. Tabela de Dados Experimentais -->
+      <div class="bench-table-container">
+        <div class="bench-table-header">
+          <div>
+            <span style="font-weight: 700; font-family: var(--font-mono); font-size: 1rem; color: var(--text-primary);">
+              Tabela de Medições Empíricas
+            </span>
+            <span style="font-size: 0.8rem; color: var(--text-secondary); margin-left: 0.5rem;" id="table-record-count">
+              (0 registros)
+            </span>
+          </div>
+
+          <div style="display: flex; gap: 0.5rem; align-items: center;">
+            <input type="text" id="table-search" placeholder="Filtrar tabela..." style="font-family: var(--font-mono); font-size: 0.825rem; padding: 0.4rem 0.65rem; border: 1px solid var(--border-color); border-radius: var(--radius-xs); background-color: var(--bg-surface-alt); color: var(--text-primary); width: 180px;" aria-label="Buscar dados na tabela">
+          </div>
+        </div>
+
+        <div class="bench-table-wrapper">
+          <table class="bench-table" id="bench-table" aria-label="Tabela de resultados empíricos">
+            <thead>
+              <tr>
+                <th scope="col" data-col="algorithm">Algoritmo <span class="sort-indicator">↕</span></th>
+                <th scope="col" data-col="paradigm">Paradigma <span class="sort-indicator">↕</span></th>
+                <th scope="col" data-col="inputSize">Tamanho (N) <span class="sort-indicator">↕</span></th>
+                <th scope="col" data-col="timeMs">Tempo (ms) <span class="sort-indicator">↕</span></th>
+                <th scope="col" data-col="operations">Operações <span class="sort-indicator">↕</span></th>
+                <th scope="col" data-col="memoryKb">Memória (KB) <span class="sort-indicator">↕</span></th>
+                <th scope="col" data-col="complexity">Complexidade <span class="sort-indicator">↕</span></th>
+              </tr>
+            </thead>
+            <tbody id="bench-table-body">
+              <!-- Linhas geradas dinamicamente -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Fundamentos Teóricos da Análise Experimental -->
+    <div class="lab-card" style="margin-top: 1.5rem; margin-bottom: 2rem;">
+      <div class="lab-card-header">
+        <div class="lab-card-title">
+          <span>Fundamentos da Análise Empírica</span>
+          <span class="badge badge-secondary">Teoria vs Prática</span>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem;">
+        <div>
+          <h4 style="margin: 0 0 0.5rem; font-size: 0.95rem; color: var(--text-primary);">1. Por que Medir Empiricamente?</h4>
+          <p style="margin: 0; font-size: 0.875rem; color: var(--text-secondary); line-height: 1.55;">
+            A notação assintótica \(O(f(n))\) descreve o crescimento para valores infinitamente grandes, ocultando constantes multiplicativas e termos de menor ordem.
+            Na prática, o custo de alocação de tabelas, chamadas de função e cache da CPU afetam o tempo real em tamanhos moderados.
+          </p>
+        </div>
+
+        <div>
+          <h4 style="margin: 0 0 0.5rem; font-size: 0.95rem; color: var(--text-primary);">2. O Papel da Escala Logarítmica</h4>
+          <p style="margin: 0; font-size: 0.875rem; color: var(--text-secondary); line-height: 1.55;">
+            Quando comparamos um algoritmo exponencial como Fibonacci Recursivo \(O(2^n)\) com Fibonacci Memoizado \(O(n)\), a escala linear achata completamente a curva linear próxima de zero.
+            A escala logarítmica (\(\log_{10}\)) converte exponenciais em retas crescentes e permite examinar ambas as curvas com clareza.
+          </p>
+        </div>
+
+        <div>
+          <h4 style="margin: 0 0 0.5rem; font-size: 0.95rem; color: var(--text-primary);">3. Trade-off: Tempo vs Memória</h4>
+          <p style="margin: 0; font-size: 0.875rem; color: var(--text-secondary); line-height: 1.55;">
+            A essência da Programação Dinâmica é a memoização: trocar espaço em memória para poupar tempo de recomputação.
+            Observe na métrica de memória como tabelas 2D (LCS e Matrix Chain) crescem quadraticamente enquanto algoritmos gulosos mantêm uso mínimo de memória.
+          </p>
+        </div>
+      </div>
+    </div>
+
   </main>
 
-  <footer>
-    <p>CEFET-MG • AEDS-II • Prof. Michel Pires da Silva</p>
+  <!-- RODAPÉ GLOBAL -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div><strong>PD LAB</strong> — Laboratório Interativo de Programação Dinâmica</div>
+      <div class="footer-meta"><span>Módulo 05</span> • <span>Etapa 7</span></div>
+    </div>
   </footer>
 
+  <!-- SCRIPTS -->
   <script src="js/shared.js"></script>
+  <script>
+    (function() {
+      'use strict';
+
+      // =========================================================================
+      // PALETA DE CORES DOS ALGORITMOS (Conforme Design System do PD Lab)
+      // =========================================================================
+      var ALGO_COLORS = {
+        'fib_memo': '#4F8068',     // Verde Sucesso (Memoizado Ótimo)
+        'fib_rec': '#B94A48',      // Vermelho Perigo (Recursão Exponencial)
+        'lcs': '#D96C4F',          // Terracota Primário (LCS)
+        'rod_dp': '#3E6B63',       // Verde-azulado Secundário (Rod Cutting PD)
+        'rod_greedy': '#D9A441',   // Dourado Accent (Rod Cutting Guloso)
+        'matrix_chain': '#7E57C2', // Roxo Acadêmico (Matrix Chain)
+        'default': '#6B6B63'
+      };
+
+      // Estado Global da Aplicação de Benchmarks
+      var state = {
+        rawData: null,          // JSON carregado de results.json
+        experiments: [],        // Lista completa de experimentos
+        disabledAlgorithms: {}, // Algoritmos desativados via clique na legenda
+        selectedPointId: null,  // ID do ponto selecionado no gráfico/tabela
+        filters: {
+          algorithm: 'all',
+          metric: 'timeMs',
+          size: 'all',
+          scale: 'linear',
+          chartType: 'lines'
+        },
+        tableSort: {
+          column: 'inputSize',
+          asc: true
+        },
+        tableSearchQuery: ''
+      };
+
+      // Elementos do DOM
+      var dom = {
+        stateLoading: document.getElementById('state-loading'),
+        stateError: document.getElementById('state-error'),
+        stateEmpty: document.getElementById('state-empty'),
+        errorMessageText: document.getElementById('error-message-text'),
+        btnRetryFetch: document.getElementById('btn-retry-fetch'),
+        btnReloadEmpty: document.getElementById('btn-reload-empty'),
+        benchmarksContent: document.getElementById('benchmarks-content'),
+
+        badgeDatasetInfo: document.getElementById('badge-dataset-info'),
+        badgeTotalRecords: document.getElementById('badge-total-records'),
+
+        filterAlgorithm: document.getElementById('filter-algorithm'),
+        filterMetric: document.getElementById('filter-metric'),
+        filterSize: document.getElementById('filter-size'),
+        filterScale: document.getElementById('filter-scale'),
+        filterChartType: document.getElementById('filter-chart-type'),
+        btnResetFilters: document.getElementById('btn-reset-filters'),
+
+        statCount: document.getElementById('stat-count'),
+        statMinVal: document.getElementById('stat-min-val'),
+        statMinSub: document.getElementById('stat-min-sub'),
+        statMaxVal: document.getElementById('stat-max-val'),
+        statMaxSub: document.getElementById('stat-max-sub'),
+        statAvgVal: document.getElementById('stat-avg-val'),
+        statAvgSub: document.getElementById('stat-avg-sub'),
+
+        chartMainTitle: document.getElementById('chart-main-title'),
+        chartSubTitle: document.getElementById('chart-sub-title'),
+        badgeChartMode: document.getElementById('badge-chart-mode'),
+        badgeChartScale: document.getElementById('badge-chart-scale'),
+        svgWrapper: document.getElementById('svg-wrapper'),
+        benchSvg: document.getElementById('bench-svg'),
+        benchLegend: document.getElementById('bench-legend'),
+
+        tooltip: document.getElementById('bench-tooltip'),
+        tooltipTitle: document.getElementById('tooltip-title'),
+        tooltipSize: document.getElementById('tooltip-size'),
+        tooltipValue: document.getElementById('tooltip-value'),
+        tooltipComp: document.getElementById('tooltip-comp'),
+
+        tableSearch: document.getElementById('table-search'),
+        tableRecordCount: document.getElementById('table-record-count'),
+        benchTable: document.getElementById('bench-table'),
+        benchTableBody: document.getElementById('bench-table-body')
+      };
+
+      // =========================================================================
+      // 1. CARREGAMENTO DOS DADOS COM TRATAMENTO DE ERROS E ESTADOS
+      // =========================================================================
+      function loadBenchmarkData() {
+        showState('loading');
+
+        fetch('data/results.json')
+          .then(function(response) {
+            if (!response.ok) {
+              throw new Error('Falha na resposta do servidor: status HTTP ' + response.status);
+            }
+            return response.json();
+          })
+          .then(function(data) {
+            if (!data) {
+              throw new Error('O arquivo data/results.json retornou vazio ou nulo.');
+            }
+
+            // Normaliza a estrutura para garantir acesso aos experimentos
+            var list = [];
+            if (Array.isArray(data.experiments)) {
+              list = data.experiments;
+            } else if (Array.isArray(data.algorithms)) {
+              // Suporta formato alternativo aninhado
+              data.algorithms.forEach(function(algo) {
+                if (Array.isArray(algo.dataPoints)) {
+                  algo.dataPoints.forEach(function(pt, idx) {
+                    list.push({
+                      id: algo.id + '_' + (pt.inputSize || idx),
+                      algorithm: algo.name || algo.id,
+                      algorithmId: algo.id,
+                      inputSize: pt.inputSize || pt.n || 0,
+                      timeMs: pt.timeMs !== undefined ? pt.timeMs : pt.time || 0,
+                      operations: pt.operations || pt.ops || 0,
+                      memoryKb: pt.memoryKb || pt.mem || 0,
+                      complexity: pt.complexity || 'O(n)',
+                      paradigm: pt.paradigm || 'Programação Dinâmica'
+                    });
+                  });
+                }
+              });
+            }
+
+            if (list.length === 0) {
+              showState('empty');
+              return;
+            }
+
+            state.rawData = data;
+            state.experiments = list;
+            initFiltersOptions();
+            showState('content');
+            updateDashboard();
+          })
+          .catch(function(err) {
+            console.error('[PD Lab Benchmarks] Erro ao carregar dados:', err);
+            dom.errorMessageText.textContent = 'Erro ao processar dados de benchmark: ' + (err.message || 'Falha de rede.');
+            showState('error');
+          });
+      }
+
+      function showState(type) {
+        dom.stateLoading.style.display = (type === 'loading') ? 'flex' : 'none';
+        dom.stateError.style.display = (type === 'error') ? 'flex' : 'none';
+        dom.stateEmpty.style.display = (type === 'empty') ? 'flex' : 'none';
+        dom.benchmarksContent.style.display = (type === 'content') ? 'block' : 'none';
+      }
+
+      // =========================================================================
+      // 2. INICIALIZAÇÃO DE FILTROS A PARTIR DO DATASET CARREGADO
+      // =========================================================================
+      function initFiltersOptions() {
+        var exps = state.experiments;
+
+        // Extrai algoritmos únicos
+        var algoMap = {};
+        exps.forEach(function(e) {
+          if (!algoMap[e.algorithmId]) {
+            algoMap[e.algorithmId] = e.algorithm;
+          }
+        });
+
+        var algoHtml = '<option value="all">Todos os Algoritmos (' + Object.keys(algoMap).length + ')</option>';
+        Object.keys(algoMap).forEach(function(id) {
+          algoHtml += '<option value="' + id + '">' + escapeHtml(algoMap[id]) + '</option>';
+        });
+        dom.filterAlgorithm.innerHTML = algoHtml;
+
+        // Extrai tamanhos únicos (ordenados crescentemente)
+        var sizesSet = new Set();
+        exps.forEach(function(e) { sizesSet.add(e.inputSize); });
+        var sortedSizes = Array.from(sizesSet).sort(function(a, b) { return a - b; });
+
+        var sizeHtml = '<option value="all">Todos os Tamanhos (' + sortedSizes.length + ')</option>';
+        sortedSizes.forEach(function(s) {
+          sizeHtml += '<option value="' + s + '">N = ' + s + '</option>';
+        });
+        dom.filterSize.innerHTML = sizeHtml;
+
+        dom.badgeTotalRecords.textContent = exps.length + ' medições';
+      }
+
+      // =========================================================================
+      // 3. FILTRAGEM E SELEÇÃO DE DADOS
+      // =========================================================================
+      function getFilteredExperiments() {
+        var f = state.filters;
+        return state.experiments.filter(function(e) {
+          // Filtro de algoritmo
+          if (f.algorithm !== 'all' && e.algorithmId !== f.algorithm) {
+            return false;
+          }
+          // Filtro de desativação individual pela legenda
+          if (state.disabledAlgorithms[e.algorithmId]) {
+            return false;
+          }
+          // Filtro de tamanho
+          if (f.size !== 'all' && e.inputSize !== parseInt(f.size, 10)) {
+            return false;
+          }
+          return true;
+        });
+      }
+
+      function getMetricInfo(metricKey) {
+        var meta = {
+          timeMs: { label: 'Tempo de Execução', unit: 'ms', decimals: 3 },
+          operations: { label: 'Operações / Chamadas', unit: 'ops', decimals: 0 },
+          memoryKb: { label: 'Consumo de Memória', unit: 'KB', decimals: 2 }
+        };
+        return meta[metricKey] || meta.timeMs;
+      }
+
+      function getMetricValue(item, metricKey) {
+        var val = item[metricKey];
+        return (val !== undefined && val !== null && !isNaN(val)) ? Number(val) : 0;
+      }
+
+      // =========================================================================
+      // 4. ATUALIZAÇÃO GERAL DO PAINEL (ESTATÍSTICAS + GRÁFICO + TABELA)
+      // =========================================================================
+      function updateDashboard() {
+        var filtered = getFilteredExperiments();
+        updateSummaryStats(filtered);
+        renderChart(filtered);
+        renderLegend();
+        renderTable(filtered);
+      }
+
+      function updateSummaryStats(filtered) {
+        var mKey = state.filters.metric;
+        var mInfo = getMetricInfo(mKey);
+
+        dom.statCount.textContent = filtered.length;
+
+        if (filtered.length === 0) {
+          dom.statMinVal.textContent = '−';
+          dom.statMinSub.textContent = 'sem medições';
+          dom.statMaxVal.textContent = '−';
+          dom.statMaxSub.textContent = 'sem medições';
+          dom.statAvgVal.textContent = '−';
+          dom.statAvgSub.textContent = 'sem medições';
+          return;
+        }
+
+        var minItem = filtered[0];
+        var maxItem = filtered[0];
+        var sum = 0;
+
+        filtered.forEach(function(item) {
+          var val = getMetricValue(item, mKey);
+          sum += val;
+          if (val < getMetricValue(minItem, mKey)) minItem = item;
+          if (val > getMetricValue(maxItem, mKey)) maxItem = item;
+        });
+
+        var avg = sum / filtered.length;
+
+        dom.statMinVal.textContent = formatMetricNumber(getMetricValue(minItem, mKey), mInfo);
+        dom.statMinSub.textContent = minItem.algorithm + ' (N=' + minItem.inputSize + ')';
+
+        dom.statMaxVal.textContent = formatMetricNumber(getMetricValue(maxItem, mKey), mInfo);
+        dom.statMaxSub.textContent = maxItem.algorithm + ' (N=' + maxItem.inputSize + ')';
+
+        dom.statAvgVal.textContent = formatMetricNumber(avg, mInfo);
+        dom.statAvgSub.textContent = 'média de ' + filtered.length + ' execuções';
+      }
+
+      function formatMetricNumber(num, mInfo) {
+        if (num === 0) return '0 ' + mInfo.unit;
+        if (num < 0.01 && mInfo.decimals > 2) {
+          return num.toFixed(4) + ' ' + mInfo.unit;
+        }
+        return num.toLocaleString('pt-BR', { maximumFractionDigits: mInfo.decimals }) + ' ' + mInfo.unit;
+      }
+
+      // =========================================================================
+      // 5. RENDERIZAÇÃO DE GRÁFICOS SVG INTERATIVOS
+      // =========================================================================
+      function renderChart(filtered) {
+        var svg = dom.benchSvg;
+        var mKey = state.filters.metric;
+        var mInfo = getMetricInfo(mKey);
+        var isLog = (state.filters.scale === 'log');
+        var isBars = (state.filters.chartType === 'bars');
+
+        // Atualiza títulos do painel
+        dom.chartMainTitle.textContent = (isBars ? 'Comparação Direta: ' : 'Curvas de Crescimento: ') +
+          mInfo.label + ' (' + mInfo.unit + ') ' + (isBars ? 'por Algoritmo' : '× Tamanho (N)');
+        dom.badgeChartMode.textContent = isBars ? 'Comparação em Barras' : 'Linhas (Tempo × N)';
+        dom.badgeChartScale.textContent = isLog ? 'Escala Logarítmica (log₁₀)' : 'Escala Linear';
+
+        if (filtered.length === 0) {
+          svg.innerHTML = '<text x="450" y="230" text-anchor="middle" fill="var(--text-muted)" font-size="15" font-family="var(--font-mono)">Nenhum dado coincide com os filtros selecionados.</text>';
+          return;
+        }
+
+        // Dimensões do viewBox do SVG
+        var width = 900;
+        var height = 460;
+        var padding = { top: 35, right: 40, bottom: 65, left: 85 };
+        var plotW = width - padding.left - padding.right;
+        var plotH = height - padding.top - padding.bottom;
+
+        // Agrupamento por algoritmo
+        var groups = {};
+        filtered.forEach(function(item) {
+          if (!groups[item.algorithmId]) {
+            groups[item.algorithmId] = {
+              id: item.algorithmId,
+              name: item.algorithm,
+              items: []
+            };
+          }
+          groups[item.algorithmId].items.push(item);
+        });
+
+        // Ordena itens de cada grupo por inputSize
+        Object.keys(groups).forEach(function(id) {
+          groups[id].items.sort(function(a, b) { return a.inputSize - b.inputSize; });
+        });
+
+        if (isBars) {
+          renderBarChart(svg, filtered, groups, padding, plotW, plotH, width, height, mKey, mInfo, isLog);
+        } else {
+          renderLineChart(svg, groups, padding, plotW, plotH, width, height, mKey, mInfo, isLog);
+        }
+      }
+
+      // 5.A: Gráfico de Linhas (Curvas de Crescimento)
+      function renderLineChart(svg, groups, pad, plotW, plotH, W, H, mKey, mInfo, isLog) {
+        // Encontrar limites X (inputSize) e Y (métrica)
+        var allSizes = [];
+        var allVals = [];
+
+        Object.keys(groups).forEach(function(id) {
+          groups[id].items.forEach(function(item) {
+            allSizes.push(item.inputSize);
+            var val = getMetricValue(item, mKey);
+            allVals.push(val);
+          });
+        });
+
+        var minX = Math.min.apply(null, allSizes);
+        var maxX = Math.max.apply(null, allSizes);
+        if (minX === maxX) minX = Math.max(0, minX - 10);
+
+        var minY = 0;
+        var maxY = Math.max.apply(null, allVals);
+        if (maxY <= 0) maxY = 1;
+
+        if (isLog) {
+          var positiveVals = allVals.filter(function(v) { return v > 0; });
+          var minPos = positiveVals.length > 0 ? Math.min.apply(null, positiveVals) : 0.001;
+          minY = Math.max(0.0001, minPos);
+        }
+
+        // Escalas
+        function scaleX(xVal) {
+          return pad.left + ((xVal - minX) / (maxX - minX)) * plotW;
+        }
+
+        function scaleY(yVal) {
+          if (isLog) {
+            var safeY = Math.max(minY, yVal);
+            var logMin = Math.log10(minY);
+            var logMax = Math.log10(maxY * 1.15);
+            var norm = (Math.log10(safeY) - logMin) / (logMax - logMin);
+            return pad.top + plotH - (norm * plotH);
+          } else {
+            var yTop = maxY * 1.12;
+            return pad.top + plotH - ((yVal / yTop) * plotH);
+          }
+        }
+
+        var html = '';
+
+        // 1. Linhas de grade e eixos
+        html += renderGridAndAxes(pad, plotW, plotH, minX, maxX, minY, maxY, isLog, mInfo, scaleX, scaleY);
+
+        // 2. Linhas das séries e pontos
+        Object.keys(groups).forEach(function(algoId) {
+          var group = groups[algoId];
+          var color = ALGO_COLORS[algoId] || ALGO_COLORS.default;
+          var points = group.items;
+
+          // Caminho da linha SVG
+          var pathD = '';
+          points.forEach(function(pt, idx) {
+            var cx = scaleX(pt.inputSize);
+            var cy = scaleY(getMetricValue(pt, mKey));
+            pathD += (idx === 0 ? 'M ' : ' L ') + cx.toFixed(1) + ' ' + cy.toFixed(1);
+          });
+
+          html += '<path d="' + pathD + '" fill="none" stroke="' + color + '" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.9" />';
+
+          // Pontos de dados interativos
+          points.forEach(function(pt) {
+            var cx = scaleX(pt.inputSize);
+            var cy = scaleY(getMetricValue(pt, mKey));
+            var isSelected = (state.selectedPointId === pt.id);
+
+            html += '<circle class="bench-chart-point" ' +
+              'cx="' + cx.toFixed(1) + '" cy="' + cy.toFixed(1) + '" ' +
+              'r="' + (isSelected ? '7' : '4.5') + '" ' +
+              'fill="' + (isSelected ? 'var(--color-accent)' : color) + '" ' +
+              'stroke="var(--bg-surface)" stroke-width="2" ' +
+              'data-id="' + pt.id + '" ' +
+              'data-algo="' + escapeHtml(pt.algorithm) + '" ' +
+              'data-size="' + pt.inputSize + '" ' +
+              'data-val="' + getMetricValue(pt, mKey) + '" ' +
+              'data-comp="' + escapeHtml(pt.complexity) + '" ' +
+              'style="cursor: pointer; transition: transform 0.15s ease;" />';
+          });
+        });
+
+        svg.innerHTML = html;
+        bindSvgInteractions(svg, mInfo);
+      }
+
+      // 5.B: Gráfico de Barras (Comparação Direta)
+      function renderBarChart(svg, filtered, groups, pad, plotW, plotH, W, H, mKey, mInfo, isLog) {
+        var algoIds = Object.keys(groups);
+        var groupCount = algoIds.length;
+
+        // Se há apenas um tamanho de entrada selecionado ou vários
+        // Mapeia médias ou valores por algoritmo
+        var algoAggregates = algoIds.map(function(id) {
+          var items = groups[id].items;
+          var sum = 0;
+          items.forEach(function(it) { sum += getMetricValue(it, mKey); });
+          var avg = items.length > 0 ? (sum / items.length) : 0;
+          return {
+            id: id,
+            name: groups[id].name,
+            value: avg,
+            items: items,
+            item: items[0] // amostra
+          };
+        });
+
+        var maxVal = Math.max.apply(null, algoAggregates.map(function(a) { return a.value; }));
+        if (maxVal <= 0) maxVal = 1;
+        var minVal = isLog ? 0.001 : 0;
+
+        function scaleBarY(val) {
+          if (isLog) {
+            var safe = Math.max(minVal, val);
+            var logMin = Math.log10(minVal);
+            var logMax = Math.log10(maxVal * 1.2);
+            var norm = (Math.log10(safe) - logMin) / (logMax - logMin);
+            return pad.top + plotH - (norm * plotH);
+          } else {
+            var yTop = maxVal * 1.15;
+            return pad.top + plotH - ((val / yTop) * plotH);
+          }
+        }
+
+        var html = '';
+
+        // Eixo Y e linhas de grade
+        html += renderVerticalGridOnly(pad, plotW, plotH, minVal, maxVal, isLog, mInfo, scaleBarY);
+
+        // Barras
+        var barSpacing = plotW / groupCount;
+        var barWidth = Math.min(68, barSpacing * 0.65);
+
+        algoAggregates.forEach(function(agg, idx) {
+          var color = ALGO_COLORS[agg.id] || ALGO_COLORS.default;
+          var x = pad.left + (idx * barSpacing) + (barSpacing - barWidth) / 2;
+          var y = scaleBarY(agg.value);
+          var h = Math.max(2, (pad.top + plotH) - y);
+
+          html += '<rect class="bench-chart-bar" ' +
+            'x="' + x.toFixed(1) + '" y="' + y.toFixed(1) + '" ' +
+            'width="' + barWidth.toFixed(1) + '" height="' + h.toFixed(1) + '" ' +
+            'fill="' + color + '" rx="3" opacity="0.88" ' +
+            'data-id="' + agg.id + '" ' +
+            'data-algo="' + escapeHtml(agg.name) + '" ' +
+            'data-size="' + (agg.items.length === 1 ? agg.items[0].inputSize : 'Média (' + agg.items.length + ' Ns)') + '" ' +
+            'data-val="' + agg.value + '" ' +
+            'data-comp="' + escapeHtml(agg.items[0].complexity) + '" ' +
+            'style="cursor: pointer; transition: opacity 0.15s ease;" />';
+
+          // Rótulo na base da barra (Eixo X)
+          var labelX = x + barWidth / 2;
+          var shortName = agg.name.split(' ')[0] + (agg.name.includes('Memo') ? ' (M)' : (agg.name.includes('Rec') ? ' (R)' : ''));
+          html += '<text x="' + labelX.toFixed(1) + '" y="' + (pad.top + plotH + 22) + '" text-anchor="middle" font-size="11" fill="var(--text-secondary)">' + escapeHtml(shortName) + '</text>';
+
+          // Valor numérico no topo da barra
+          html += '<text x="' + labelX.toFixed(1) + '" y="' + (y - 6).toFixed(1) + '" text-anchor="middle" font-size="10.5" font-weight="700" fill="var(--text-primary)">' + formatMetricNumber(agg.value, mInfo) + '</text>';
+        });
+
+        // Linha base Eixo X
+        html += '<line x1="' + pad.left + '" y1="' + (pad.top + plotH) + '" x2="' + (pad.left + plotW) + '" y2="' + (pad.top + plotH) + '" stroke="var(--border-color)" stroke-width="1.5" />';
+
+        svg.innerHTML = html;
+        bindSvgInteractions(svg, mInfo);
+      }
+
+      // Função auxiliar: Eixos e Grade para o gráfico de linhas
+      function renderGridAndAxes(pad, plotW, plotH, minX, maxX, minY, maxY, isLog, mInfo, scaleX, scaleY) {
+        var g = '';
+
+        // Linhas de Grade Horizontais Y (5 divisões)
+        var yTicks = 5;
+        for (var i = 0; i <= yTicks; i++) {
+          var yRatio = i / yTicks;
+          var valY = 0;
+          if (isLog) {
+            var logMin = Math.log10(minY);
+            var logMax = Math.log10(maxY * 1.15);
+            var curLog = logMin + yRatio * (logMax - logMin);
+            valY = Math.pow(10, curLog);
+          } else {
+            valY = yRatio * (maxY * 1.12);
+          }
+          var yPos = scaleY(valY);
+
+          // Linha sutil
+          g += '<line x1="' + pad.left + '" y1="' + yPos.toFixed(1) + '" x2="' + (pad.left + plotW) + '" y2="' + yPos.toFixed(1) + '" stroke="var(--border-subtle)" stroke-dasharray="3,3" stroke-width="1" />';
+
+          // Rótulo Y
+          var labelYText = formatMetricShort(valY, mInfo);
+          g += '<text x="' + (pad.left - 10) + '" y="' + (yPos + 4).toFixed(1) + '" text-anchor="end" font-size="11" fill="var(--text-secondary)">' + labelYText + '</text>';
+        }
+
+        // Linhas de Grade Verticais X (Marcas nos valores de N)
+        var xSteps = 5;
+        for (var j = 0; j <= xSteps; j++) {
+          var curX = minX + (j / xSteps) * (maxX - minX);
+          var xPos = scaleX(curX);
+
+          g += '<line x1="' + xPos.toFixed(1) + '" y1="' + pad.top + '" x2="' + xPos.toFixed(1) + '" y2="' + (pad.top + plotH) + '" stroke="var(--border-subtle)" stroke-dasharray="3,3" stroke-width="1" opacity="0.6" />';
+          g += '<text x="' + xPos.toFixed(1) + '" y="' + (pad.top + plotH + 20) + '" text-anchor="middle" font-size="11" fill="var(--text-secondary)">' + Math.round(curX) + '</text>';
+        }
+
+        // Eixo X e Eixo Y
+        g += '<line x1="' + pad.left + '" y1="' + (pad.top + plotH) + '" x2="' + (pad.left + plotW) + '" y2="' + (pad.top + plotH) + '" stroke="var(--border-color)" stroke-width="1.5" />';
+        g += '<line x1="' + pad.left + '" y1="' + pad.top + '" x2="' + pad.left + '" y2="' + (pad.top + plotH) + '" stroke="var(--border-color)" stroke-width="1.5" />';
+
+        // Legenda dos Eixos
+        g += '<text x="' + (pad.left + plotW / 2) + '" y="' + (pad.top + plotH + 46) + '" text-anchor="middle" font-size="12" font-weight="700" fill="var(--text-primary)">Tamanho da Entrada (N)</text>';
+        g += '<text x="' + 22 + '" y="' + (pad.top + plotH / 2) + '" text-anchor="middle" font-size="12" font-weight="700" fill="var(--text-primary)" transform="rotate(-90, 22, ' + (pad.top + plotH / 2) + ')">' + escapeHtml(mInfo.label + ' (' + mInfo.unit + ')') + '</text>';
+
+        return g;
+      }
+
+      function renderVerticalGridOnly(pad, plotW, plotH, minY, maxY, isLog, mInfo, scaleBarY) {
+        var g = '';
+        var yTicks = 5;
+        for (var i = 0; i <= yTicks; i++) {
+          var yRatio = i / yTicks;
+          var valY = 0;
+          if (isLog) {
+            var logMin = Math.log10(minY);
+            var logMax = Math.log10(maxY * 1.2);
+            valY = Math.pow(10, logMin + yRatio * (logMax - logMin));
+          } else {
+            valY = yRatio * (maxY * 1.15);
+          }
+          var yPos = scaleBarY(valY);
+
+          g += '<line x1="' + pad.left + '" y1="' + yPos.toFixed(1) + '" x2="' + (pad.left + plotW) + '" y2="' + yPos.toFixed(1) + '" stroke="var(--border-subtle)" stroke-dasharray="3,3" stroke-width="1" />';
+          g += '<text x="' + (pad.left - 10) + '" y="' + (yPos + 4).toFixed(1) + '" text-anchor="end" font-size="11" fill="var(--text-secondary)">' + formatMetricShort(valY, mInfo) + '</text>';
+        }
+
+        g += '<line x1="' + pad.left + '" y1="' + pad.top + '" x2="' + pad.left + '" y2="' + (pad.top + plotH) + '" stroke="var(--border-color)" stroke-width="1.5" />';
+        g += '<text x="' + 22 + '" y="' + (pad.top + plotH / 2) + '" text-anchor="middle" font-size="12" font-weight="700" fill="var(--text-primary)" transform="rotate(-90, 22, ' + (pad.top + plotH / 2) + ')">' + escapeHtml(mInfo.label + ' (' + mInfo.unit + ')') + '</text>';
+        return g;
+      }
+
+      function formatMetricShort(val, mInfo) {
+        if (val === 0) return '0';
+        if (val >= 1000000) return (val / 1000000).toFixed(1) + 'M';
+        if (val >= 1000) return (val / 1000).toFixed(1) + 'k';
+        if (val < 0.01) return val.toFixed(3);
+        if (val < 1) return val.toFixed(2);
+        return Math.round(val).toLocaleString('pt-BR');
+      }
+
+      // =========================================================================
+      // 6. INTERATIVIDADE DO SVG: TOOLTIP E SELEÇÃO DE PONTOS
+      // =========================================================================
+      function bindSvgInteractions(svg, mInfo) {
+        var targets = svg.querySelectorAll('.bench-chart-point, .bench-chart-bar');
+
+        targets.forEach(function(el) {
+          // Hover / Mouseover
+          el.addEventListener('mouseenter', function(e) {
+            var algo = el.getAttribute('data-algo');
+            var size = el.getAttribute('data-size');
+            var rawVal = parseFloat(el.getAttribute('data-val'));
+            var comp = el.getAttribute('data-comp');
+
+            dom.tooltipTitle.textContent = algo;
+            dom.tooltipSize.textContent = 'Tamanho da Entrada: N = ' + size;
+            dom.tooltipValue.textContent = mInfo.label + ': ' + formatMetricNumber(rawVal, mInfo);
+            dom.tooltipComp.textContent = 'Complexidade Assintótica: ' + comp;
+
+            positionTooltip(e);
+            dom.tooltip.classList.add('is-visible');
+            dom.tooltip.setAttribute('aria-hidden', 'false');
+
+            if (el.tagName === 'circle') {
+              el.setAttribute('r', '8');
+              el.setAttribute('stroke-width', '3');
+            } else {
+              el.setAttribute('opacity', '1');
+            }
+          });
+
+          el.addEventListener('mousemove', function(e) {
+            positionTooltip(e);
+          });
+
+          el.addEventListener('mouseleave', function() {
+            dom.tooltip.classList.remove('is-visible');
+            dom.tooltip.setAttribute('aria-hidden', 'true');
+
+            if (el.tagName === 'circle') {
+              var isSel = (el.getAttribute('data-id') === state.selectedPointId);
+              el.setAttribute('r', isSel ? '7' : '4.5');
+              el.setAttribute('stroke-width', '2');
+            } else {
+              el.setAttribute('opacity', '0.88');
+            }
+          });
+
+          // Clique para selecionar na tabela
+          el.addEventListener('click', function() {
+            var id = el.getAttribute('data-id');
+            state.selectedPointId = (state.selectedPointId === id) ? null : id;
+            updateDashboard();
+
+            if (state.selectedPointId) {
+              highlightAndScrollToTableRow(state.selectedPointId);
+            }
+          });
+        });
+      }
+
+      function positionTooltip(event) {
+        var rect = dom.svgWrapper.getBoundingClientRect();
+        var x = event.clientX - rect.left;
+        var y = event.clientY - rect.top;
+
+        dom.tooltip.style.left = x + 'px';
+        dom.tooltip.style.top = y + 'px';
+      }
+
+      function highlightAndScrollToTableRow(id) {
+        var row = document.getElementById('table-row-' + id);
+        if (row) {
+          row.classList.add('is-selected');
+          row.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+      }
+
+      // =========================================================================
+      // 7. LEGENDA INTERATIVA COM TOGGLE DE SÉRIES
+      // =========================================================================
+      function renderLegend() {
+        var algoMap = {};
+        state.experiments.forEach(function(e) {
+          if (!algoMap[e.algorithmId]) {
+            algoMap[e.algorithmId] = e.algorithm;
+          }
+        });
+
+        var html = '';
+        Object.keys(algoMap).forEach(function(id) {
+          var color = ALGO_COLORS[id] || ALGO_COLORS.default;
+          var isDisabled = !!state.disabledAlgorithms[id];
+
+          html += '<button type="button" class="bench-legend-item ' + (isDisabled ? 'is-disabled' : '') + '" data-algoid="' + id + '" title="Clique para ocultar ou exibir este algoritmo">';
+          html += '  <span class="bench-legend-dot" style="background-color: ' + color + ';"></span>';
+          html += '  <span>' + escapeHtml(algoMap[id]) + '</span>';
+          html += '</button>';
+        });
+
+        dom.benchLegend.innerHTML = html;
+
+        // Binds de clique na legenda
+        dom.benchLegend.querySelectorAll('.bench-legend-item').forEach(function(btn) {
+          btn.addEventListener('click', function() {
+            var algoId = btn.getAttribute('data-algoid');
+            state.disabledAlgorithms[algoId] = !state.disabledAlgorithms[algoId];
+            updateDashboard();
+          });
+        });
+      }
+
+      // =========================================================================
+      // 8. RENDERIZAÇÃO E ORDENAÇÃO DA TABELA DE DADOS
+      // =========================================================================
+      function renderTable(filtered) {
+        var query = state.tableSearchQuery.toLowerCase().trim();
+        var mKey = state.filters.metric;
+        var mInfo = getMetricInfo(mKey);
+
+        // Aplica busca textual se houver
+        var displayList = filtered.filter(function(item) {
+          if (!query) return true;
+          return item.algorithm.toLowerCase().includes(query) ||
+                 item.paradigm.toLowerCase().includes(query) ||
+                 item.complexity.toLowerCase().includes(query) ||
+                 String(item.inputSize).includes(query);
+        });
+
+        // Aplica ordenação de colunas
+        var col = state.tableSort.column;
+        var asc = state.tableSort.asc ? 1 : -1;
+
+        displayList.sort(function(a, b) {
+          var valA = a[col];
+          var valB = b[col];
+
+          if (typeof valA === 'string') {
+            return valA.localeCompare(valB) * asc;
+          }
+          return (valA - valB) * asc;
+        });
+
+        dom.tableRecordCount.textContent = '(' + displayList.length + ' de ' + filtered.length + ' visíveis)';
+
+        // Atualiza cabeçalhos da tabela com indicadores de ordenação
+        dom.benchTable.querySelectorAll('th[data-col]').forEach(function(th) {
+          var cName = th.getAttribute('data-col');
+          var ind = th.querySelector('.sort-indicator');
+          if (cName === col) {
+            th.classList.add('is-sorted');
+            if (ind) ind.textContent = state.tableSort.asc ? '▲' : '▼';
+          } else {
+            th.classList.remove('is-sorted');
+            if (ind) ind.textContent = '↕';
+          }
+        });
+
+        if (displayList.length === 0) {
+          dom.benchTableBody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--text-muted); padding: 2rem;">Nenhuma medição encontrada para os filtros atuais.</td></tr>';
+          return;
+        }
+
+        var rowsHtml = '';
+        displayList.forEach(function(item) {
+          var color = ALGO_COLORS[item.algorithmId] || ALGO_COLORS.default;
+          var isSelected = (state.selectedPointId === item.id);
+
+          rowsHtml += '<tr id="table-row-' + item.id + '" class="' + (isSelected ? 'is-selected' : '') + '">';
+          rowsHtml += '  <td style="font-weight: 700; color: var(--text-primary);"><span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: ' + color + '; margin-right: 6px;"></span>' + escapeHtml(item.algorithm) + '</td>';
+          rowsHtml += '  <td><span class="badge" style="font-size: 0.725rem;">' + escapeHtml(item.paradigm) + '</span></td>';
+          rowsHtml += '  <td style="font-weight: 600;">' + item.inputSize + '</td>';
+          rowsHtml += '  <td style="color: ' + (mKey === 'timeMs' ? 'var(--color-primary)' : 'var(--text-primary)') + '; font-weight: ' + (mKey === 'timeMs' ? '700' : 'normal') + ';">' + item.timeMs.toFixed(3) + ' ms</td>';
+          rowsHtml += '  <td style="color: ' + (mKey === 'operations' ? 'var(--color-accent)' : 'var(--text-primary)') + '; font-weight: ' + (mKey === 'operations' ? '700' : 'normal') + ';">' + item.operations.toLocaleString('pt-BR') + '</td>';
+          rowsHtml += '  <td style="color: ' + (mKey === 'memoryKb' ? 'var(--color-secondary)' : 'var(--text-primary)') + '; font-weight: ' + (mKey === 'memoryKb' ? '700' : 'normal') + ';">' + item.memoryKb.toFixed(2) + ' KB</td>';
+          rowsHtml += '  <td><code style="font-size: 0.775rem;">' + escapeHtml(item.complexity) + '</code></td>';
+          rowsHtml += '</tr>';
+        });
+
+        dom.benchTableBody.innerHTML = rowsHtml;
+      }
+
+      // =========================================================================
+      // 9. EVENT LISTENERS E CONTROLES
+      // =========================================================================
+      function initEvents() {
+        // Filtros
+        dom.filterAlgorithm.addEventListener('change', function() {
+          state.filters.algorithm = dom.filterAlgorithm.value;
+          state.selectedPointId = null;
+          updateDashboard();
+        });
+
+        dom.filterMetric.addEventListener('change', function() {
+          state.filters.metric = dom.filterMetric.value;
+          updateDashboard();
+        });
+
+        dom.filterSize.addEventListener('change', function() {
+          state.filters.size = dom.filterSize.value;
+          state.selectedPointId = null;
+          updateDashboard();
+        });
+
+        dom.filterScale.addEventListener('change', function() {
+          state.filters.scale = dom.filterScale.value;
+          updateDashboard();
+        });
+
+        dom.filterChartType.addEventListener('change', function() {
+          state.filters.chartType = dom.filterChartType.value;
+          updateDashboard();
+        });
+
+        dom.btnResetFilters.addEventListener('click', function() {
+          state.filters.algorithm = 'all';
+          state.filters.metric = 'timeMs';
+          state.filters.size = 'all';
+          state.filters.scale = 'linear';
+          state.filters.chartType = 'lines';
+          state.disabledAlgorithms = {};
+          state.selectedPointId = null;
+          state.tableSearchQuery = '';
+
+          dom.filterAlgorithm.value = 'all';
+          dom.filterMetric.value = 'timeMs';
+          dom.filterSize.value = 'all';
+          dom.filterScale.value = 'linear';
+          dom.filterChartType.value = 'lines';
+          dom.tableSearch.value = '';
+
+          updateDashboard();
+        });
+
+        // Ordenação de colunas da tabela
+        dom.benchTable.querySelectorAll('th[data-col]').forEach(function(th) {
+          th.addEventListener('click', function() {
+            var col = th.getAttribute('data-col');
+            if (state.tableSort.column === col) {
+              state.tableSort.asc = !state.tableSort.asc;
+            } else {
+              state.tableSort.column = col;
+              state.tableSort.asc = true;
+            }
+            renderTable(getFilteredExperiments());
+          });
+        });
+
+        // Busca rápida na tabela
+        dom.tableSearch.addEventListener('input', function() {
+          state.tableSearchQuery = dom.tableSearch.value;
+          renderTable(getFilteredExperiments());
+        });
+
+        // Botões de recarregar nos estados de erro / vazio
+        dom.btnRetryFetch.addEventListener('click', loadBenchmarkData);
+        dom.btnReloadEmpty.addEventListener('click', loadBenchmarkData);
+
+        // Suporte ao redimensionamento de janela para recalcular posições de SVG se necessário
+        window.addEventListener('resize', function() {
+          if (state.experiments.length > 0) {
+            renderChart(getFilteredExperiments());
+          }
+        });
+      }
+
+      function escapeHtml(str) {
+        if (!str) return '';
+        return String(str)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#039;');
+      }
+
+      // Inicialização da página
+      function init() {
+        initEvents();
+        loadBenchmarkData();
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+      } else {
+        init();
+      }
+
+    })();
+  </script>
 </body>
 </html>
