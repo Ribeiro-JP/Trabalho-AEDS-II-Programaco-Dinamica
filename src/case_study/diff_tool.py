@@ -29,7 +29,44 @@ def diff_lines(a_lines: list[str], b_lines: list[str]) -> list[str]:
     Returns:
         Lista de strings formatadas com os prefixos de adição, remoção ou preservação.
     """
-    raise NotImplementedError("TODO(P4): Implementar diff_lines usando LCS")
+    m = len(a_lines)
+    n = len(b_lines)
+    
+    # 1. Construção da matriz LCS utilizando programação dinâmica
+    # dp[i][j] guardará o comprimento do LCS entre a_lines[0:i] e b_lines[0:j]
+    dp = [[0] * (n + 1) for _ in range(m + 1)]
+    
+    for i in range(1, m + 1):
+        for j in range(1, n + 1):
+            if a_lines[i - 1] == b_lines[j - 1]:
+                dp[i][j] = dp[i - 1][j - 1] + 1
+            else:
+                dp[i][j] = max(dp[i - 1][j], dp[i][j - 1])
+                
+    # 2. Backtracking para reconstruir o diff
+    # Como começamos do final, o resultado será gerado de trás para frente
+    result = []
+    i, j = m, n
+    
+    while i > 0 or j > 0:
+        if i > 0 and j > 0 and a_lines[i - 1] == b_lines[j - 1]:
+            # Linha idêntica em ambos os arquivos
+            result.append(f"  {a_lines[i - 1]}")
+            i -= 1
+            j -= 1
+        elif j > 0 and (i == 0 or dp[i][j - 1] >= dp[i - 1][j]):
+            # Linha adicionada no texto B
+            result.append(f"+ {b_lines[j - 1]}")
+            j -= 1
+        else:
+            # Linha removida do texto A
+            result.append(f"- {a_lines[i - 1]}")
+            i -= 1
+            
+    # Como o backtracking foi feito de trás para frente, invertemos a lista
+    result.reverse()
+    return result
+
 
 
 def main() -> None:
