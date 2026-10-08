@@ -10,13 +10,15 @@ Recorrência fundamental:
 
 A tabela auxiliar s[i, j] registra o índice k que produziu o custo mínimo para o subproblema (i, j).
 """
-
 from __future__ import annotations
 
-from src.common import CallCounter
+import math
+
+from .common import CallCounter
 
 
-def matrix_chain_naive(dims: list[int], counter: CallCounter | None = None) -> int:
+def matrix_chain_naive(dims: list[int], counter: CallCounter | None = None,
+        i: int = 1, j: int | None = None) -> int:
     """Calcula o custo mínimo de multiplicação por recursão ingênua sem memoização.
 
     Explora exaustivamente todas as divisões possíveis da cadeia.
@@ -32,10 +34,34 @@ def matrix_chain_naive(dims: list[int], counter: CallCounter | None = None) -> i
     Returns:
         O número mínimo de multiplicações escalares necessárias.
     """
-    raise NotImplementedError("TODO(P3): Implementar matrix_chain_naive")
+    if counter is not None:
+        counter.increment()
+
+    if j is None:
+        j = len(dims) - 1
+
+    if len(dims) < 3 or i >= j:
+        return 0
+
+    min_cost = float('inf')
+
+    for k in range(i, j):
+        cost = (
+            matrix_chain_naive(dims, counter, i, k)
+            + matrix_chain_naive(dims, counter, k + 1, j)
+            + dims[i - 1] * dims[k] * dims[j]
+        )
+        if cost < min_cost:
+            min_cost = cost
+
+    return min_cost
 
 
-def matrix_chain_memo(dims: list[int]) -> int:
+def matrix_chain_memo(    dims: list[int], 
+    counter: CallCounter | None = None, 
+    i: int = 1, 
+    j: int | None = None,
+    memo: dict[tuple[int, int], int] | None = None) -> int:
     """Calcula o custo mínimo com recursão e memoização (Top-Down).
 
     Utiliza uma tabela/dicionário para salvar os custos dos subproblemas (i, j).
@@ -50,7 +76,33 @@ def matrix_chain_memo(dims: list[int]) -> int:
     Returns:
         O número mínimo de multiplicações escalares necessárias.
     """
-    raise NotImplementedError("TODO(P3): Implementar matrix_chain_memo")
+    if counter is not None:
+        counter.increment()
+
+    if j is None:
+        j = len(dims) - 1
+    if memo is None:
+        memo = {}
+
+    if len(dims) < 3 or i >= j:
+        return 0
+
+    if (i, j) in memo:
+        return memo[(i, j)]
+
+    min_cost = float('inf')
+
+    for k in range(i, j):
+        cost = (
+            matrix_chain_memo(dims, counter, i, k, memo)
+            + matrix_chain_memo(dims, counter, k + 1, j, memo)
+            + dims[i - 1] * dims[k] * dims[j]
+        )
+        if cost < min_cost:
+            min_cost = cost
+
+    memo[(i, j)] = min_cost
+    return min_cost
 
 
 def matrix_chain_order(dims: list[int]) -> tuple[list[list[int]], list[list[int]]]:
@@ -71,7 +123,27 @@ def matrix_chain_order(dims: list[int]) -> tuple[list[list[int]], list[list[int]
             - m: Tabela 2D onde m[i][j] é o custo mínimo de multiplicar A_i..A_j (1-indexado).
             - s: Tabela 2D onde s[i][j] é o ponto de corte ótimo k (1-indexado).
     """
-    raise NotImplementedError("TODO(P3): Implementar matrix_chain_order")
+    n = len(dims) - 1
+    
+    m = [[0] * (n + 1) for _ in range(n + 1)]
+    s = [[0] * (n + 1) for _ in range(n + 1)]
+    
+    for i in range(1, n + 1):
+        m[i][i] = 0
+        
+    for l in range(2, n + 1):
+        for i in range(1, n - l + 2):
+            j = i + l - 1
+            m[i][j] = float('inf')
+            
+            for k in range(i, j):
+                cost = m[i][k] + m[k + 1][j] + dims[i - 1] * dims[k] * dims[j]
+                
+                if cost < m[i][j]:
+                    m[i][j] = cost
+                    s[i][j] = k  
+                    
+    return m, s
 
 
 def optimal_parens(s: list[list[int]], i: int, j: int) -> str:
@@ -88,7 +160,15 @@ def optimal_parens(s: list[list[int]], i: int, j: int) -> str:
     Returns:
         String representando a parentização ótima.
     """
-    raise NotImplementedError("TODO(P3): Implementar optimal_parens")
+    if i == j:
+        return f"A{i}"
+        
+    k = s[i][j]
+    
+    left_side = optimal_parens(s, i, k)
+    right_side = optimal_parens(s, k + 1, j)
+    
+    return f"({left_side}{right_side})"
 
 
 def count_parenthesizations(n: int) -> int:
@@ -108,4 +188,8 @@ def count_parenthesizations(n: int) -> int:
     Returns:
         Número total de maneiras distintas de parentizar o produto de n matrizes.
     """
-    raise NotImplementedError("TODO(P3): Implementar count_parenthesizations")
+    if n <= 1:
+        return 1
+        
+    k = n - 1
+    return math.comb(2 * k, k) // (k + 1)
