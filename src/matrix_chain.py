@@ -10,10 +10,9 @@ Recorrência fundamental:
 
 A tabela auxiliar s[i, j] registra o índice k que produziu o custo mínimo para o subproblema (i, j).
 """
+from __future__ import annotations
 
 import math
-
-from __future__ import annotations
 
 from .common import CallCounter
 

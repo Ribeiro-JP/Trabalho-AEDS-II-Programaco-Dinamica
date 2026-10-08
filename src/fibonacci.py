@@ -120,6 +120,8 @@ def fib_o1_space(n: int) -> int:
     Returns:
         O valor do n-ésimo termo de Fibonacci.
     """
+    if n <=1:
+         return n
 
     a, b = 0, 1
 
