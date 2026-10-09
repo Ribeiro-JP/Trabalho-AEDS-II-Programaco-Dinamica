@@ -1,0 +1,275 @@
+experiment,algorithm,approach,n,time_seconds,memory_bytes,calls,status,notes
+E1,Fibonacci,naive,2,4.6000059228390455e-06,0,0,success,Theta(2^n) Recursivo Puro
+E1,Fibonacci,naive,4,1.789999078027904e-05,0,0,success,Theta(2^n) Recursivo Puro
+E1,Fibonacci,naive,6,1.1999974958598614e-05,0,0,success,Theta(2^n) Recursivo Puro
+E1,Fibonacci,naive,8,1.8399994587525725e-05,0,0,success,Theta(2^n) Recursivo Puro
+E1,Fibonacci,naive,10,3.519997699186206e-05,0,0,success,Theta(2^n) Recursivo Puro
+E1,Fibonacci,naive,12,9.759998647496104e-05,0,0,success,Theta(2^n) Recursivo Puro
+E1,Fibonacci,naive,14,0.00023440000950358808,0,0,success,Theta(2^n) Recursivo Puro
+E1,Fibonacci,naive,16,0.0005216000135987997,0,0,success,Theta(2^n) Recursivo Puro
+E1,Fibonacci,naive,18,0.001398100022925064,0,0,success,Theta(2^n) Recursivo Puro
+E1,Fibonacci,naive,20,0.003350599989062175,0,0,success,Theta(2^n) Recursivo Puro
+E1,Fibonacci,naive,22,0.01012389999232255,0,0,success,Theta(2^n) Recursivo Puro
+E1,Fibonacci,naive,24,0.02592349998303689,0,0,success,Theta(2^n) Recursivo Puro
+E1,Fibonacci,naive,26,0.0650700000114739,0,0,success,Theta(2^n) Recursivo Puro
+E1,Fibonacci,naive,28,0.18702240000129677,0,0,success,Theta(2^n) Recursivo Puro
+E1,Fibonacci,naive,30,0.4568980000040028,0,0,success,Theta(2^n) Recursivo Puro
+E1,Fibonacci,memo,2,4.4000043999403715e-06,0,3,success,Theta(n) Top-Down com Memoização
+E1,Fibonacci,bottom_up,2,8.00006091594696e-07,0,1,success,Theta(n) Bottom-Up Iterativo
+E1,Fibonacci,o1_space,2,4.00003045797348e-07,0,1,success,"Theta(n) Tempo, O(1) Espaço"
+E1,Fibonacci,memo,5,2.00001522898674e-06,0,9,success,Theta(n) Top-Down com Memoização
+E1,Fibonacci,bottom_up,5,1.700012944638729e-06,0,1,success,Theta(n) Bottom-Up Iterativo
+E1,Fibonacci,o1_space,5,7.00005330145359e-07,0,1,success,"Theta(n) Tempo, O(1) Espaço"
+E1,Fibonacci,memo,8,3.2999960239976645e-06,0,15,success,Theta(n) Top-Down com Memoização
+E1,Fibonacci,bottom_up,8,9.999785106629133e-07,0,1,success,Theta(n) Bottom-Up Iterativo
+E1,Fibonacci,o1_space,8,5.00003807246685e-07,0,1,success,"Theta(n) Tempo, O(1) Espaço"
+E1,Fibonacci,memo,10,3.7999998312443495e-06,0,19,success,Theta(n) Top-Down com Memoização
+E1,Fibonacci,bottom_up,10,1.100008375942707e-06,0,1,success,Theta(n) Bottom-Up Iterativo
+E1,Fibonacci,o1_space,10,6.00004568696022e-07,0,1,success,"Theta(n) Tempo, O(1) Espaço"
+E1,Fibonacci,memo,15,5.700014298781753e-06,0,29,success,Theta(n) Top-Down com Memoização
+E1,Fibonacci,bottom_up,15,1.5999830793589354e-06,0,1,success,Theta(n) Bottom-Up Iterativo
+E1,Fibonacci,o1_space,15,9.00006853044033e-07,0,1,success,"Theta(n) Tempo, O(1) Espaço"
+E1,Fibonacci,memo,20,7.299997378140688e-06,0,39,success,Theta(n) Top-Down com Memoização
+E1,Fibonacci,bottom_up,20,1.8999853637069464e-06,0,1,success,Theta(n) Bottom-Up Iterativo
+E1,Fibonacci,o1_space,20,1.200009137392044e-06,0,1,success,"Theta(n) Tempo, O(1) Espaço"
+E1,Fibonacci,memo,25,9.99998883344233e-06,0,49,success,Theta(n) Top-Down com Memoização
+E1,Fibonacci,bottom_up,25,2.100015990436077e-06,0,1,success,Theta(n) Bottom-Up Iterativo
+E1,Fibonacci,o1_space,25,1.00000761449337e-06,0,1,success,"Theta(n) Tempo, O(1) Espaço"
+E1,Fibonacci,memo,30,1.170000177808106e-05,0,59,success,Theta(n) Top-Down com Memoização
+E1,Fibonacci,bottom_up,30,2.3999891709536314e-06,0,1,success,Theta(n) Bottom-Up Iterativo
+E1,Fibonacci,o1_space,30,1.200009137392044e-06,0,1,success,"Theta(n) Tempo, O(1) Espaço"
+E1,Fibonacci,memo,40,1.4699995517730713e-05,0,79,success,Theta(n) Top-Down com Memoização
+E1,Fibonacci,bottom_up,40,2.7999922167509794e-06,0,1,success,Theta(n) Bottom-Up Iterativo
+E1,Fibonacci,o1_space,40,1.4999823179095984e-06,0,1,success,"Theta(n) Tempo, O(1) Espaço"
+E1,Fibonacci,memo,50,1.889999839477241e-05,0,99,success,Theta(n) Top-Down com Memoização
+E1,Fibonacci,bottom_up,50,3.9000005926936865e-06,0,1,success,Theta(n) Bottom-Up Iterativo
+E1,Fibonacci,o1_space,50,2.200016751885414e-06,0,1,success,"Theta(n) Tempo, O(1) Espaço"
+E1,Fibonacci,memo,75,2.7600006433203816e-05,0,149,success,Theta(n) Top-Down com Memoização
+E1,Fibonacci,bottom_up,75,5.700014298781753e-06,0,1,success,Theta(n) Bottom-Up Iterativo
+E1,Fibonacci,o1_space,75,2.9999937396496534e-06,0,1,success,"Theta(n) Tempo, O(1) Espaço"
+E1,Fibonacci,memo,100,3.9300008211284876e-05,0,199,success,Theta(n) Top-Down com Memoização
+E1,Fibonacci,bottom_up,100,7.100024959072471e-06,0,1,success,Theta(n) Bottom-Up Iterativo
+E1,Fibonacci,o1_space,100,3.6999990697950125e-06,0,1,success,"Theta(n) Tempo, O(1) Espaço"
+E1,Fibonacci,memo,150,7.399998139590025e-05,0,299,success,Theta(n) Top-Down com Memoização
+E1,Fibonacci,bottom_up,150,9.99998883344233e-06,0,1,success,Theta(n) Bottom-Up Iterativo
+E1,Fibonacci,o1_space,150,5.80001506023109e-06,0,1,success,"Theta(n) Tempo, O(1) Espaço"
+E1,Fibonacci,memo,200,9.309998131357133e-05,0,399,success,Theta(n) Top-Down com Memoização
+E1,Fibonacci,bottom_up,200,1.2200005585327744e-05,0,1,success,Theta(n) Bottom-Up Iterativo
+E1,Fibonacci,o1_space,200,6.900023436173797e-06,0,1,success,"Theta(n) Tempo, O(1) Espaço"
+E1,Fibonacci,memo,300,0.00015369997709058225,0,599,success,Theta(n) Top-Down com Memoização
+E1,Fibonacci,bottom_up,300,2.1499989088624716e-05,0,1,success,Theta(n) Bottom-Up Iterativo
+E1,Fibonacci,o1_space,300,1.0199990356341004e-05,0,1,success,"Theta(n) Tempo, O(1) Espaço"
+E1,Fibonacci,memo,500,0.0002521999995224178,0,999,success,Theta(n) Top-Down com Memoização
+E1,Fibonacci,bottom_up,500,3.440000000409782e-05,0,1,success,Theta(n) Bottom-Up Iterativo
+E1,Fibonacci,o1_space,500,1.780001912266016e-05,0,1,success,"Theta(n) Tempo, O(1) Espaço"
+E2,Corte de Hastes,naive,2,1.1099997209385037e-05,0,0,success,Theta(2^n) Recursivo Puro
+E2,Corte de Hastes,naive,3,1.8699996871873736e-05,0,0,success,Theta(2^n) Recursivo Puro
+E2,Corte de Hastes,naive,4,2.269999822601676e-05,0,0,success,Theta(2^n) Recursivo Puro
+E2,Corte de Hastes,naive,5,2.7399975806474686e-05,0,0,success,Theta(2^n) Recursivo Puro
+E2,Corte de Hastes,naive,6,4.190002800896764e-05,0,0,success,Theta(2^n) Recursivo Puro
+E2,Corte de Hastes,naive,7,6.510000093840063e-05,0,0,success,Theta(2^n) Recursivo Puro
+E2,Corte de Hastes,naive,8,0.00013139998191036284,0,0,success,Theta(2^n) Recursivo Puro
+E2,Corte de Hastes,naive,9,0.00021840000408701599,0,0,success,Theta(2^n) Recursivo Puro
+E2,Corte de Hastes,naive,10,0.00041450001299381256,0,0,success,Theta(2^n) Recursivo Puro
+E2,Corte de Hastes,naive,11,0.000825099996291101,0,0,success,Theta(2^n) Recursivo Puro
+E2,Corte de Hastes,naive,12,0.0020871000015176833,0,0,success,Theta(2^n) Recursivo Puro
+E2,Corte de Hastes,naive,13,0.0032427000114694238,0,0,success,Theta(2^n) Recursivo Puro
+E2,Corte de Hastes,naive,14,0.007863800012273714,0,0,success,Theta(2^n) Recursivo Puro
+E2,Corte de Hastes,naive,15,0.013603200000943616,0,0,success,Theta(2^n) Recursivo Puro
+E2,Corte de Hastes,memo,2,2.00001522898674e-06,0,3,success,Theta(n^2) Top-Down Memoização
+E2,Corte de Hastes,bottom_up,2,2.200016751885414e-06,0,1,success,Theta(n^2) Bottom-Up Tabulação
+E2,Corte de Hastes,memo,5,4.2000028770416975e-06,0,6,success,Theta(n^2) Top-Down Memoização
+E2,Corte de Hastes,bottom_up,5,2.900022082030773e-06,0,1,success,Theta(n^2) Bottom-Up Tabulação
+E2,Corte de Hastes,memo,8,7.90000194683671e-06,0,9,success,Theta(n^2) Top-Down Memoização
+E2,Corte de Hastes,bottom_up,8,5.4000120144337416e-06,0,1,success,Theta(n^2) Bottom-Up Tabulação
+E2,Corte de Hastes,memo,10,1.1600001016631722e-05,0,11,success,Theta(n^2) Top-Down Memoização
+E2,Corte de Hastes,bottom_up,10,6.600021151825786e-06,0,1,success,Theta(n^2) Bottom-Up Tabulação
+E2,Corte de Hastes,memo,15,2.1299987565726042e-05,0,16,success,Theta(n^2) Top-Down Memoização
+E2,Corte de Hastes,bottom_up,15,1.2100004823878407e-05,0,1,success,Theta(n^2) Bottom-Up Tabulação
+E2,Corte de Hastes,memo,20,3.470000228844583e-05,0,21,success,Theta(n^2) Top-Down Memoização
+E2,Corte de Hastes,bottom_up,20,1.8699996871873736e-05,0,1,success,Theta(n^2) Bottom-Up Tabulação
+E2,Corte de Hastes,memo,25,5.060000694356859e-05,0,26,success,Theta(n^2) Top-Down Memoização
+E2,Corte de Hastes,bottom_up,25,2.8199981898069382e-05,0,1,success,Theta(n^2) Bottom-Up Tabulação
+E2,Corte de Hastes,memo,30,7.039998308755457e-05,0,31,success,Theta(n^2) Top-Down Memoização
+E2,Corte de Hastes,bottom_up,30,3.9000005926936865e-05,0,1,success,Theta(n^2) Bottom-Up Tabulação
+E2,Corte de Hastes,memo,40,0.00013270002091303468,0,41,success,Theta(n^2) Top-Down Memoização
+E2,Corte de Hastes,bottom_up,40,6.330001633614302e-05,0,1,success,Theta(n^2) Bottom-Up Tabulação
+E2,Corte de Hastes,memo,50,0.0001973999897018075,0,51,success,Theta(n^2) Top-Down Memoização
+E2,Corte de Hastes,bottom_up,50,9.740001405589283e-05,0,1,success,Theta(n^2) Bottom-Up Tabulação
+E2,Corte de Hastes,memo,60,0.00028959999326616526,0,61,success,Theta(n^2) Top-Down Memoização
+E2,Corte de Hastes,bottom_up,60,0.0001373999984934926,0,1,success,Theta(n^2) Bottom-Up Tabulação
+E2,Corte de Hastes,memo,70,0.0005315000016707927,0,71,success,Theta(n^2) Top-Down Memoização
+E2,Corte de Hastes,bottom_up,70,0.00017179999849759042,0,1,success,Theta(n^2) Bottom-Up Tabulação
+E2,Corte de Hastes,memo,80,0.0004151000175625086,0,81,success,Theta(n^2) Top-Down Memoização
+E2,Corte de Hastes,bottom_up,80,0.0001889999839477241,0,1,success,Theta(n^2) Bottom-Up Tabulação
+E2,Corte de Hastes,memo,90,0.0010301999864168465,0,91,success,Theta(n^2) Top-Down Memoização
+E2,Corte de Hastes,bottom_up,90,0.00025290000485256314,0,1,success,Theta(n^2) Bottom-Up Tabulação
+E2,Corte de Hastes,memo,100,0.000673700007610023,0,101,success,Theta(n^2) Top-Down Memoização
+E2,Corte de Hastes,bottom_up,100,0.0002700999903026968,0,1,success,Theta(n^2) Bottom-Up Tabulação
+E2,Corte de Hastes,memo,120,0.001003899989882484,0,121,success,Theta(n^2) Top-Down Memoização
+E2,Corte de Hastes,bottom_up,120,0.0003819999983534217,0,1,success,Theta(n^2) Bottom-Up Tabulação
+E3,LCS,bottom_up,50,0.0006413999944925308,48448,1,success,Tabela completa: Theta(mn) (47.3 KB)
+E3,LCS,two_rows,50,0.0003722999827004969,928,1,success,"Duas linhas: Theta(min(m,n)) (0.9 KB)"
+E3,LCS,bottom_up,100,0.0015978000010363758,176544,1,success,Tabela completa: Theta(mn) (172.4 KB)
+E3,LCS,two_rows,100,0.002408899978036061,1728,1,success,"Duas linhas: Theta(min(m,n)) (1.7 KB)"
+E3,LCS,bottom_up,150,0.0037934999854769558,384768,1,success,Tabela completa: Theta(mn) (375.8 KB)
+E3,LCS,two_rows,150,0.0033183000050485134,2528,1,success,"Duas linhas: Theta(min(m,n)) (2.5 KB)"
+E3,LCS,bottom_up,200,0.006022899993695319,672920,1,success,Tabela completa: Theta(mn) (657.1 KB)
+E3,LCS,two_rows,200,0.005837000004248694,3328,1,success,"Duas linhas: Theta(min(m,n)) (3.2 KB)"
+E3,LCS,bottom_up,250,0.013388699997449294,1040704,1,success,Tabela completa: Theta(mn) (1016.3 KB)
+E3,LCS,two_rows,250,0.008834700012812391,4128,1,success,"Duas linhas: Theta(min(m,n)) (4.0 KB)"
+E3,LCS,bottom_up,300,0.016285499994410202,1488664,1,success,Tabela completa: Theta(mn) (1453.8 KB)
+E3,LCS,two_rows,300,0.015132300002733245,5072,1,success,"Duas linhas: Theta(min(m,n)) (5.0 KB)"
+E3,LCS,bottom_up,350,0.02507780000451021,2016568,1,success,Tabela completa: Theta(mn) (1969.3 KB)
+E3,LCS,two_rows,350,0.018642400013050064,5872,1,success,"Duas linhas: Theta(min(m,n)) (5.7 KB)"
+E3,LCS,bottom_up,400,0.026527499983785674,2625432,1,success,Tabela completa: Theta(mn) (2563.9 KB)
+E3,LCS,two_rows,400,0.02515739999944344,6672,1,success,"Duas linhas: Theta(min(m,n)) (6.5 KB)"
+E3,LCS,bottom_up,450,0.03470469999592751,3354712,1,success,Tabela completa: Theta(mn) (3276.1 KB)
+E3,LCS,two_rows,450,0.03379089999361895,10624,1,success,"Duas linhas: Theta(min(m,n)) (10.4 KB)"
+E3,LCS,bottom_up,500,0.04237679997459054,4243864,1,success,Tabela completa: Theta(mn) (4144.4 KB)
+E3,LCS,two_rows,500,0.05101190001005307,14080,1,success,"Duas linhas: Theta(min(m,n)) (13.8 KB)"
+E3,LCS,bottom_up,550,0.05464739998569712,5268728,1,success,Tabela completa: Theta(mn) (5145.2 KB)
+E3,LCS,two_rows,550,0.05325799999991432,18272,1,success,"Duas linhas: Theta(min(m,n)) (17.8 KB)"
+E3,LCS,bottom_up,600,0.06277409999165684,6395896,1,success,Tabela completa: Theta(mn) (6246.0 KB)
+E3,LCS,two_rows,600,0.05941220000386238,20800,1,success,"Duas linhas: Theta(min(m,n)) (20.3 KB)"
+E3,LCS,bottom_up,700,0.08510959998238832,9074200,1,success,Tabela completa: Theta(mn) (8861.5 KB)
+E3,LCS,two_rows,700,0.08014639999601059,26752,1,success,"Duas linhas: Theta(min(m,n)) (26.1 KB)"
+E3,LCS,bottom_up,800,0.11364749999484047,12261176,1,success,Tabela completa: Theta(mn) (11973.8 KB)
+E3,LCS,two_rows,800,0.10433659999398515,32512,1,success,"Duas linhas: Theta(min(m,n)) (31.8 KB)"
+E3,LCS,bottom_up,900,0.14299599998048507,15916152,1,success,Tabela completa: Theta(mn) (15543.1 KB)
+E3,LCS,two_rows,900,0.13649569998960942,38304,1,success,"Duas linhas: Theta(min(m,n)) (37.4 KB)"
+E3,LCS,bottom_up,1000,0.19009499999810942,20085720,1,success,Tabela completa: Theta(mn) (19615.0 KB)
+E3,LCS,two_rows,1000,0.17318739998154342,43936,1,success,"Duas linhas: Theta(min(m,n)) (42.9 KB)"
+E4,LCS,bottom_up,50,0.0004270999925211072,0,1,success,Python 3.11 (CPython Bottom-Up)
+E4,LCS,bottom_up,100,0.0018274000030942261,0,1,success,Python 3.11 (CPython Bottom-Up)
+E4,LCS,bottom_up,200,0.005653599975630641,0,1,success,Python 3.11 (CPython Bottom-Up)
+E4,LCS,bottom_up,300,0.013766199990641326,0,1,success,Python 3.11 (CPython Bottom-Up)
+E4,LCS,bottom_up,400,0.025809100014157593,0,1,success,Python 3.11 (CPython Bottom-Up)
+E4,LCS,bottom_up,500,0.039731600001687184,0,1,success,Python 3.11 (CPython Bottom-Up)
+E4,LCS,bottom_up,600,0.058540600002743304,0,1,success,Python 3.11 (CPython Bottom-Up)
+E4,LCS,bottom_up,800,0.10990169999422505,0,1,success,Python 3.11 (CPython Bottom-Up)
+E4,LCS,bottom_up,1000,0.18744549999246374,0,1,success,Python 3.11 (CPython Bottom-Up)
+E6,Corte de Hastes,greedy,5,,,,success,Guloso falhou em 3/50 instâncias (perda média: 4.8%)
+E6,Corte de Hastes,greedy,8,,,,success,Guloso falhou em 5/50 instâncias (perda média: 6.0%)
+E6,Corte de Hastes,greedy,10,,,,success,Guloso falhou em 8/50 instâncias (perda média: 3.0%)
+E6,Corte de Hastes,greedy,12,,,,success,Guloso falhou em 10/50 instâncias (perda média: 4.6%)
+E6,Corte de Hastes,greedy,15,,,,success,Guloso falhou em 10/50 instâncias (perda média: 4.4%)
+E6,Corte de Hastes,greedy,18,,,,success,Guloso falhou em 7/50 instâncias (perda média: 3.0%)
+E6,Corte de Hastes,greedy,20,,,,success,Guloso falhou em 7/50 instâncias (perda média: 2.5%)
+E6,Corte de Hastes,greedy,25,,,,success,Guloso falhou em 17/50 instâncias (perda média: 1.9%)
+E6,Corte de Hastes,greedy,30,,,,success,Guloso falhou em 5/50 instâncias (perda média: 1.2%)
+E6,Corte de Hastes,greedy,35,,,,success,Guloso falhou em 11/50 instâncias (perda média: 1.5%)
+E7,Cadeia de Matrizes,naive,2,1.4599994756281376e-05,0,0,success,Naive: C(1) = 1 parentizações
+E7,Cadeia de Matrizes,naive,3,2.120001590810716e-05,0,0,success,Naive: C(2) = 2 parentizações
+E7,Cadeia de Matrizes,naive,4,2.7799978852272034e-05,0,0,success,Naive: C(3) = 5 parentizações
+E7,Cadeia de Matrizes,naive,5,4.700000863522291e-05,0,0,success,Naive: C(4) = 14 parentizações
+E7,Cadeia de Matrizes,naive,6,0.00018839997937902808,0,0,success,Naive: C(5) = 42 parentizações
+E7,Cadeia de Matrizes,naive,7,0.0002736000169534236,0,0,success,Naive: C(6) = 132 parentizações
+E7,Cadeia de Matrizes,naive,8,0.0008007999858818948,0,0,success,Naive: C(7) = 429 parentizações
+E7,Cadeia de Matrizes,naive,9,0.002638000005390495,0,0,success,Naive: C(8) = 1430 parentizações
+E7,Cadeia de Matrizes,memo,2,6.599992047995329e-06,0,1,success,Theta(n^3) Top-Down Memoização
+E7,Cadeia de Matrizes,bottom_up,2,9.300012607127428e-06,440,1,success,Theta(n^3) Bottom-Up Matrix-Chain-Order (0.4 KB)
+E7,Cadeia de Matrizes,memo,4,1.4599994756281376e-05,0,1,success,Theta(n^3) Top-Down Memoização
+E7,Cadeia de Matrizes,bottom_up,4,1.580000389367342e-05,952,1,success,Theta(n^3) Bottom-Up Matrix-Chain-Order (0.9 KB)
+E7,Cadeia de Matrizes,memo,6,5.020000389777124e-05,0,1,success,Theta(n^3) Top-Down Memoização
+E7,Cadeia de Matrizes,bottom_up,6,3.500000457279384e-05,1656,1,success,Theta(n^3) Bottom-Up Matrix-Chain-Order (1.6 KB)
+E7,Cadeia de Matrizes,memo,8,9.950000094249845e-05,0,1,success,Theta(n^3) Top-Down Memoização
+E7,Cadeia de Matrizes,bottom_up,8,5.720002809539437e-05,2712,1,success,Theta(n^3) Bottom-Up Matrix-Chain-Order (2.6 KB)
+E7,Cadeia de Matrizes,memo,10,0.00022200000239536166,0,1,success,Theta(n^3) Top-Down Memoização
+E7,Cadeia de Matrizes,bottom_up,10,0.00011710001854225993,3896,1,success,Theta(n^3) Bottom-Up Matrix-Chain-Order (3.8 KB)
+E7,Cadeia de Matrizes,memo,12,0.00018309999722987413,0,1,success,Theta(n^3) Top-Down Memoização
+E7,Cadeia de Matrizes,bottom_up,12,7.82000133767724e-05,5336,1,success,Theta(n^3) Bottom-Up Matrix-Chain-Order (5.2 KB)
+E7,Cadeia de Matrizes,memo,14,0.0002601000014692545,0,1,success,Theta(n^3) Top-Down Memoização
+E7,Cadeia de Matrizes,bottom_up,14,0.00010309999925084412,7144,1,success,Theta(n^3) Bottom-Up Matrix-Chain-Order (7.0 KB)
+E7,Cadeia de Matrizes,memo,16,0.0008650000090710819,0,1,success,Theta(n^3) Top-Down Memoização
+E7,Cadeia de Matrizes,bottom_up,16,0.0002851999888662249,9672,1,success,Theta(n^3) Bottom-Up Matrix-Chain-Order (9.4 KB)
+E7,Cadeia de Matrizes,memo,18,0.0007901999924797565,0,1,success,Theta(n^3) Top-Down Memoização
+E7,Cadeia de Matrizes,bottom_up,18,0.000319099985063076,11880,1,success,Theta(n^3) Bottom-Up Matrix-Chain-Order (11.6 KB)
+E7,Cadeia de Matrizes,memo,20,0.0014106000016909093,0,1,success,Theta(n^3) Top-Down Memoização
+E7,Cadeia de Matrizes,bottom_up,20,0.00026929998421110213,14456,1,success,Theta(n^3) Bottom-Up Matrix-Chain-Order (14.1 KB)
+E7,Cadeia de Matrizes,memo,25,0.001361099974019453,0,1,success,Theta(n^3) Top-Down Memoização
+E7,Cadeia de Matrizes,bottom_up,25,0.0004820999747607857,23152,1,success,Theta(n^3) Bottom-Up Matrix-Chain-Order (22.6 KB)
+E7,Cadeia de Matrizes,memo,30,0.00236020001466386,0,1,success,Theta(n^3) Top-Down Memoização
+E7,Cadeia de Matrizes,bottom_up,30,0.0008215000270865858,33152,1,success,Theta(n^3) Bottom-Up Matrix-Chain-Order (32.4 KB)
+E7,Cadeia de Matrizes,memo,35,0.00398110001697205,0,1,success,Theta(n^3) Top-Down Memoização
+E7,Cadeia de Matrizes,bottom_up,35,0.0012069999938830733,44768,1,success,Theta(n^3) Bottom-Up Matrix-Chain-Order (43.7 KB)
+E7,Cadeia de Matrizes,memo,40,0.006140299985418096,0,1,success,Theta(n^3) Top-Down Memoização
+E7,Cadeia de Matrizes,bottom_up,40,0.0017911000177264214,57600,1,success,Theta(n^3) Bottom-Up Matrix-Chain-Order (56.2 KB)
+E7,Cadeia de Matrizes,memo,45,0.013197899999795482,0,1,success,Theta(n^3) Top-Down Memoização
+E7,Cadeia de Matrizes,bottom_up,45,0.0032491999736521393,71840,1,success,Theta(n^3) Bottom-Up Matrix-Chain-Order (70.2 KB)
+E7,Cadeia de Matrizes,memo,50,0.011909799999557436,0,1,success,Theta(n^3) Top-Down Memoização
+E7,Cadeia de Matrizes,bottom_up,50,0.0034073999850079417,87680,1,success,Theta(n^3) Bottom-Up Matrix-Chain-Order (85.6 KB)
+E8,Mochila 0/1,bottom_up,100,0.0008306999807246029,48944,1,success,Tabela 2D: O(nW) espaço (47.8 KB)
+E8,Mochila 0/1,one_row,100,0.00039859997923485935,3416,1,success,Vetor 1D: O(W) espaço (3.3 KB)
+E8,Mochila 0/1,bottom_up,250,0.0014728000096511096,173152,1,success,Tabela 2D: O(nW) espaço (169.1 KB)
+E8,Mochila 0/1,one_row,250,0.001037600013660267,9416,1,success,Vetor 1D: O(W) espaço (9.2 KB)
+E8,Mochila 0/1,bottom_up,500,0.003110599995125085,458032,1,success,Tabela 2D: O(nW) espaço (447.3 KB)
+E8,Mochila 0/1,one_row,500,0.0022908000100869685,19448,1,success,Vetor 1D: O(W) espaço (19.0 KB)
+E8,Mochila 0/1,bottom_up,750,0.005015600007027388,797216,1,success,Tabela 2D: O(nW) espaço (778.5 KB)
+E8,Mochila 0/1,one_row,750,0.005486200010636821,29448,1,success,Vetor 1D: O(W) espaço (28.8 KB)
+E8,Mochila 0/1,bottom_up,1000,0.009421000024303794,1151216,1,success,Tabela 2D: O(nW) espaço (1124.2 KB)
+E8,Mochila 0/1,one_row,1000,0.005993500002659857,39448,1,success,Vetor 1D: O(W) espaço (38.5 KB)
+E8,Mochila 0/1,bottom_up,1500,0.010198200005106628,1859280,1,success,Tabela 2D: O(nW) espaço (1815.7 KB)
+E8,Mochila 0/1,one_row,1500,0.008281599992187694,59448,1,success,Vetor 1D: O(W) espaço (58.1 KB)
+E8,Mochila 0/1,bottom_up,2000,0.014418600010685623,2567280,1,success,Tabela 2D: O(nW) espaço (2507.1 KB)
+E8,Mochila 0/1,one_row,2000,0.011800599982962012,79448,1,success,Vetor 1D: O(W) espaço (77.6 KB)
+E8,Mochila 0/1,bottom_up,3000,0.026051399996504188,3983280,1,success,Tabela 2D: O(nW) espaço (3889.9 KB)
+E8,Mochila 0/1,one_row,3000,0.016956499981461093,119448,1,success,Vetor 1D: O(W) espaço (116.6 KB)
+E8,Mochila 0/1,bottom_up,4000,0.029335200000787154,5399280,1,success,Tabela 2D: O(nW) espaço (5272.7 KB)
+E8,Mochila 0/1,one_row,4000,0.02215429997886531,159448,1,success,Vetor 1D: O(W) espaço (155.7 KB)
+E8,Mochila 0/1,bottom_up,5000,0.037543099984759465,6815280,1,success,Tabela 2D: O(nW) espaço (6655.5 KB)
+E8,Mochila 0/1,one_row,5000,0.02731060000951402,199448,1,success,Vetor 1D: O(W) espaço (194.8 KB)
+E8,Mochila 0/1,bottom_up,6000,0.044589500001166016,8231280,1,success,Tabela 2D: O(nW) espaço (8038.4 KB)
+E8,Mochila 0/1,one_row,6000,0.03492419997928664,239448,1,success,Vetor 1D: O(W) espaço (233.8 KB)
+E8,Mochila 0/1,bottom_up,7500,0.056645600008778274,10355280,1,success,Tabela 2D: O(nW) espaço (10112.6 KB)
+E8,Mochila 0/1,one_row,7500,0.040927099995315075,299448,1,success,Vetor 1D: O(W) espaço (292.4 KB)
+E8,Mochila 0/1,bottom_up,10000,0.07831640000222251,13895280,1,success,Tabela 2D: O(nW) espaço (13569.6 KB)
+E8,Mochila 0/1,one_row,10000,0.05585629999404773,399448,1,success,Vetor 1D: O(W) espaço (390.1 KB)
+E8,Mochila 0/1,bottom_up,12500,0.0972407000081148,17435280,1,success,Tabela 2D: O(nW) espaço (17026.6 KB)
+E8,Mochila 0/1,one_row,12500,0.07123860000865534,499448,1,success,Vetor 1D: O(W) espaço (487.7 KB)
+E8,Mochila 0/1,bottom_up,15000,0.13079860000289045,20975280,1,success,Tabela 2D: O(nW) espaço (20483.7 KB)
+E8,Mochila 0/1,one_row,15000,0.08262040000408888,599448,1,success,Vetor 1D: O(W) espaço (585.4 KB)
+E8,Mochila 0/1,bottom_up,17500,0.1317136000143364,24515280,1,success,Tabela 2D: O(nW) espaço (23940.7 KB)
+E8,Mochila 0/1,one_row,17500,0.12532079999800771,699448,1,success,Vetor 1D: O(W) espaço (683.1 KB)
+E8,Mochila 0/1,bottom_up,20000,0.15139149999595247,28055280,1,success,Tabela 2D: O(nW) espaço (27397.7 KB)
+E8,Mochila 0/1,one_row,20000,0.11207259999355301,799448,1,success,Vetor 1D: O(W) espaço (780.7 KB)
+E5,Fibonacci Top-Down,memo,100,2.7900008717551827e-05,0,199,success,Pilha Python: success (limite global: 1000)
+E5,Fibonacci Bottom-Up,bottom_up,100,1.1900013002256552e-05,0,1,success,Bottom-Up Iterativo (sem chamadas de pilha recursiva)
+E5,Fibonacci Top-Down,memo,200,9.780000740041335e-05,0,399,success,Pilha Python: success (limite global: 1000)
+E5,Fibonacci Bottom-Up,bottom_up,200,1.9366668614869315e-05,0,1,success,Bottom-Up Iterativo (sem chamadas de pilha recursiva)
+E5,Fibonacci Top-Down,memo,300,0.00017443333247986933,0,599,success,Pilha Python: success (limite global: 1000)
+E5,Fibonacci Bottom-Up,bottom_up,300,3.72333355092754e-05,0,1,success,Bottom-Up Iterativo (sem chamadas de pilha recursiva)
+E5,Fibonacci Top-Down,memo,400,0.0002837000065483153,0,799,success,Pilha Python: success (limite global: 1000)
+E5,Fibonacci Bottom-Up,bottom_up,400,6.303332823639114e-05,0,1,success,Bottom-Up Iterativo (sem chamadas de pilha recursiva)
+E5,Fibonacci Top-Down,memo,500,0.00039343335083685815,0,999,success,Pilha Python: success (limite global: 1000)
+E5,Fibonacci Bottom-Up,bottom_up,500,7.929999264888465e-05,0,1,success,Bottom-Up Iterativo (sem chamadas de pilha recursiva)
+E5,Fibonacci Top-Down,memo,600,0.0005880333483219147,0,1199,success,Pilha Python: success (limite global: 1000)
+E5,Fibonacci Bottom-Up,bottom_up,600,0.00014943332644179463,0,1,success,Bottom-Up Iterativo (sem chamadas de pilha recursiva)
+E5,Fibonacci Top-Down,memo,700,0.000410633326585715,0,1399,success,Pilha Python: success (limite global: 1000)
+E5,Fibonacci Bottom-Up,bottom_up,700,5.706667434424162e-05,0,1,success,Bottom-Up Iterativo (sem chamadas de pilha recursiva)
+E5,Fibonacci Top-Down,memo,800,0.00030216666831014055,0,1599,success,Pilha Python: success (limite global: 1000)
+E5,Fibonacci Bottom-Up,bottom_up,800,5.740000051446259e-05,0,1,success,Bottom-Up Iterativo (sem chamadas de pilha recursiva)
+E5,Fibonacci Top-Down,memo,850,0.0002829999915168931,0,1699,success,Pilha Python: success (limite global: 1000)
+E5,Fibonacci Bottom-Up,bottom_up,850,5.843333201482892e-05,0,1,success,Bottom-Up Iterativo (sem chamadas de pilha recursiva)
+E5,Fibonacci Top-Down,memo,900,0.00030766667138474685,0,1799,success,Pilha Python: success (limite global: 1000)
+E5,Fibonacci Bottom-Up,bottom_up,900,6.326667304771642e-05,0,1,success,Bottom-Up Iterativo (sem chamadas de pilha recursiva)
+E5,Fibonacci Top-Down,memo,950,0.00031476666723998886,0,1899,success,Pilha Python: success (limite global: 1000)
+E5,Fibonacci Bottom-Up,bottom_up,950,6.550000398419797e-05,0,1,success,Bottom-Up Iterativo (sem chamadas de pilha recursiva)
+E5,Fibonacci Top-Down,memo,970,0.00032899999253762263,0,1939,success,Pilha Python: success (limite global: 1000)
+E5,Fibonacci Bottom-Up,bottom_up,970,7.096668317293127e-05,0,1,success,Bottom-Up Iterativo (sem chamadas de pilha recursiva)
+E5,Fibonacci Top-Down,memo,980,0.0003297333411561946,0,1959,success,Pilha Python: success (limite global: 1000)
+E5,Fibonacci Bottom-Up,bottom_up,980,7.013332409163316e-05,0,1,success,Bottom-Up Iterativo (sem chamadas de pilha recursiva)
+E5,Fibonacci Top-Down,memo,990,0.0005245666640500227,0,1979,success,Pilha Python: success (limite global: 1000)
+E5,Fibonacci Bottom-Up,bottom_up,990,7.963333822165926e-05,0,1,success,Bottom-Up Iterativo (sem chamadas de pilha recursiva)
+E5,Fibonacci Top-Down,memo,1000,,0,,recursion_error,Pilha Python: recursion_error (limite global: 1000)
+E5,Fibonacci Bottom-Up,bottom_up,1000,7.873333136861523e-05,0,1,success,Bottom-Up Iterativo (sem chamadas de pilha recursiva)
+E5,Fibonacci Top-Down,memo,1020,,0,,recursion_error,Pilha Python: recursion_error (limite global: 1000)
+E5,Fibonacci Bottom-Up,bottom_up,1020,8.493333007209003e-05,0,1,success,Bottom-Up Iterativo (sem chamadas de pilha recursiva)
+E5,Fibonacci Top-Down,memo,1050,,0,,recursion_error,Pilha Python: recursion_error (limite global: 1000)
+E5,Fibonacci Bottom-Up,bottom_up,1050,8.160000046094258e-05,0,1,success,Bottom-Up Iterativo (sem chamadas de pilha recursiva)
+E5,Fibonacci Top-Down,memo,1100,,0,,recursion_error,Pilha Python: recursion_error (limite global: 1000)
+E5,Fibonacci Bottom-Up,bottom_up,1100,8.213332815406223e-05,0,1,success,Bottom-Up Iterativo (sem chamadas de pilha recursiva)
+E5,Fibonacci Top-Down,memo,1200,,0,,recursion_error,Pilha Python: recursion_error (limite global: 1000)
+E5,Fibonacci Bottom-Up,bottom_up,1200,9.486668083506326e-05,0,1,success,Bottom-Up Iterativo (sem chamadas de pilha recursiva)
+E5,Fibonacci Top-Down,memo,1300,,0,,recursion_error,Pilha Python: recursion_error (limite global: 1000)
+E5,Fibonacci Bottom-Up,bottom_up,1300,9.780000740041335e-05,0,1,success,Bottom-Up Iterativo (sem chamadas de pilha recursiva)

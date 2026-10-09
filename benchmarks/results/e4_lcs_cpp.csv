@@ -1,0 +1,10 @@
+experiment,algorithm,approach,n,time_seconds,memory_bytes,calls,status,notes
+E4,LCS,bottom_up,50,0.0004270999925211072,0,1,success,Python 3.11 (CPython Bottom-Up)
+E4,LCS,bottom_up,100,0.0018274000030942261,0,1,success,Python 3.11 (CPython Bottom-Up)
+E4,LCS,bottom_up,200,0.005653599975630641,0,1,success,Python 3.11 (CPython Bottom-Up)
+E4,LCS,bottom_up,300,0.013766199990641326,0,1,success,Python 3.11 (CPython Bottom-Up)
+E4,LCS,bottom_up,400,0.025809100014157593,0,1,success,Python 3.11 (CPython Bottom-Up)
+E4,LCS,bottom_up,500,0.039731600001687184,0,1,success,Python 3.11 (CPython Bottom-Up)
+E4,LCS,bottom_up,600,0.058540600002743304,0,1,success,Python 3.11 (CPython Bottom-Up)
+E4,LCS,bottom_up,800,0.10990169999422505,0,1,success,Python 3.11 (CPython Bottom-Up)
+E4,LCS,bottom_up,1000,0.18744549999246374,0,1,success,Python 3.11 (CPython Bottom-Up)

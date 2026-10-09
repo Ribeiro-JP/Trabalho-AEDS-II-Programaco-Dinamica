@@ -1,0 +1,64 @@
+experiment,algorithm,approach,n,time_seconds,memory_bytes,calls,status,notes
+E1,Fibonacci,naive,2,4.6000059228390455e-06,0,0,success,Theta(2^n) Recursivo Puro
+E1,Fibonacci,naive,4,1.789999078027904e-05,0,0,success,Theta(2^n) Recursivo Puro
+E1,Fibonacci,naive,6,1.1999974958598614e-05,0,0,success,Theta(2^n) Recursivo Puro
+E1,Fibonacci,naive,8,1.8399994587525725e-05,0,0,success,Theta(2^n) Recursivo Puro
+E1,Fibonacci,naive,10,3.519997699186206e-05,0,0,success,Theta(2^n) Recursivo Puro
+E1,Fibonacci,naive,12,9.759998647496104e-05,0,0,success,Theta(2^n) Recursivo Puro
+E1,Fibonacci,naive,14,0.00023440000950358808,0,0,success,Theta(2^n) Recursivo Puro
+E1,Fibonacci,naive,16,0.0005216000135987997,0,0,success,Theta(2^n) Recursivo Puro
+E1,Fibonacci,naive,18,0.001398100022925064,0,0,success,Theta(2^n) Recursivo Puro
+E1,Fibonacci,naive,20,0.003350599989062175,0,0,success,Theta(2^n) Recursivo Puro
+E1,Fibonacci,naive,22,0.01012389999232255,0,0,success,Theta(2^n) Recursivo Puro
+E1,Fibonacci,naive,24,0.02592349998303689,0,0,success,Theta(2^n) Recursivo Puro
+E1,Fibonacci,naive,26,0.0650700000114739,0,0,success,Theta(2^n) Recursivo Puro
+E1,Fibonacci,naive,28,0.18702240000129677,0,0,success,Theta(2^n) Recursivo Puro
+E1,Fibonacci,naive,30,0.4568980000040028,0,0,success,Theta(2^n) Recursivo Puro
+E1,Fibonacci,memo,2,4.4000043999403715e-06,0,3,success,Theta(n) Top-Down com Memoização
+E1,Fibonacci,bottom_up,2,8.00006091594696e-07,0,1,success,Theta(n) Bottom-Up Iterativo
+E1,Fibonacci,o1_space,2,4.00003045797348e-07,0,1,success,"Theta(n) Tempo, O(1) Espaço"
+E1,Fibonacci,memo,5,2.00001522898674e-06,0,9,success,Theta(n) Top-Down com Memoização
+E1,Fibonacci,bottom_up,5,1.700012944638729e-06,0,1,success,Theta(n) Bottom-Up Iterativo
+E1,Fibonacci,o1_space,5,7.00005330145359e-07,0,1,success,"Theta(n) Tempo, O(1) Espaço"
+E1,Fibonacci,memo,8,3.2999960239976645e-06,0,15,success,Theta(n) Top-Down com Memoização
+E1,Fibonacci,bottom_up,8,9.999785106629133e-07,0,1,success,Theta(n) Bottom-Up Iterativo
+E1,Fibonacci,o1_space,8,5.00003807246685e-07,0,1,success,"Theta(n) Tempo, O(1) Espaço"
+E1,Fibonacci,memo,10,3.7999998312443495e-06,0,19,success,Theta(n) Top-Down com Memoização
+E1,Fibonacci,bottom_up,10,1.100008375942707e-06,0,1,success,Theta(n) Bottom-Up Iterativo
+E1,Fibonacci,o1_space,10,6.00004568696022e-07,0,1,success,"Theta(n) Tempo, O(1) Espaço"
+E1,Fibonacci,memo,15,5.700014298781753e-06,0,29,success,Theta(n) Top-Down com Memoização
+E1,Fibonacci,bottom_up,15,1.5999830793589354e-06,0,1,success,Theta(n) Bottom-Up Iterativo
+E1,Fibonacci,o1_space,15,9.00006853044033e-07,0,1,success,"Theta(n) Tempo, O(1) Espaço"
+E1,Fibonacci,memo,20,7.299997378140688e-06,0,39,success,Theta(n) Top-Down com Memoização
+E1,Fibonacci,bottom_up,20,1.8999853637069464e-06,0,1,success,Theta(n) Bottom-Up Iterativo
+E1,Fibonacci,o1_space,20,1.200009137392044e-06,0,1,success,"Theta(n) Tempo, O(1) Espaço"
+E1,Fibonacci,memo,25,9.99998883344233e-06,0,49,success,Theta(n) Top-Down com Memoização
+E1,Fibonacci,bottom_up,25,2.100015990436077e-06,0,1,success,Theta(n) Bottom-Up Iterativo
+E1,Fibonacci,o1_space,25,1.00000761449337e-06,0,1,success,"Theta(n) Tempo, O(1) Espaço"
+E1,Fibonacci,memo,30,1.170000177808106e-05,0,59,success,Theta(n) Top-Down com Memoização
+E1,Fibonacci,bottom_up,30,2.3999891709536314e-06,0,1,success,Theta(n) Bottom-Up Iterativo
+E1,Fibonacci,o1_space,30,1.200009137392044e-06,0,1,success,"Theta(n) Tempo, O(1) Espaço"
+E1,Fibonacci,memo,40,1.4699995517730713e-05,0,79,success,Theta(n) Top-Down com Memoização
+E1,Fibonacci,bottom_up,40,2.7999922167509794e-06,0,1,success,Theta(n) Bottom-Up Iterativo
+E1,Fibonacci,o1_space,40,1.4999823179095984e-06,0,1,success,"Theta(n) Tempo, O(1) Espaço"
+E1,Fibonacci,memo,50,1.889999839477241e-05,0,99,success,Theta(n) Top-Down com Memoização
+E1,Fibonacci,bottom_up,50,3.9000005926936865e-06,0,1,success,Theta(n) Bottom-Up Iterativo
+E1,Fibonacci,o1_space,50,2.200016751885414e-06,0,1,success,"Theta(n) Tempo, O(1) Espaço"
+E1,Fibonacci,memo,75,2.7600006433203816e-05,0,149,success,Theta(n) Top-Down com Memoização
+E1,Fibonacci,bottom_up,75,5.700014298781753e-06,0,1,success,Theta(n) Bottom-Up Iterativo
+E1,Fibonacci,o1_space,75,2.9999937396496534e-06,0,1,success,"Theta(n) Tempo, O(1) Espaço"
+E1,Fibonacci,memo,100,3.9300008211284876e-05,0,199,success,Theta(n) Top-Down com Memoização
+E1,Fibonacci,bottom_up,100,7.100024959072471e-06,0,1,success,Theta(n) Bottom-Up Iterativo
+E1,Fibonacci,o1_space,100,3.6999990697950125e-06,0,1,success,"Theta(n) Tempo, O(1) Espaço"
+E1,Fibonacci,memo,150,7.399998139590025e-05,0,299,success,Theta(n) Top-Down com Memoização
+E1,Fibonacci,bottom_up,150,9.99998883344233e-06,0,1,success,Theta(n) Bottom-Up Iterativo
+E1,Fibonacci,o1_space,150,5.80001506023109e-06,0,1,success,"Theta(n) Tempo, O(1) Espaço"
+E1,Fibonacci,memo,200,9.309998131357133e-05,0,399,success,Theta(n) Top-Down com Memoização
+E1,Fibonacci,bottom_up,200,1.2200005585327744e-05,0,1,success,Theta(n) Bottom-Up Iterativo
+E1,Fibonacci,o1_space,200,6.900023436173797e-06,0,1,success,"Theta(n) Tempo, O(1) Espaço"
+E1,Fibonacci,memo,300,0.00015369997709058225,0,599,success,Theta(n) Top-Down com Memoização
+E1,Fibonacci,bottom_up,300,2.1499989088624716e-05,0,1,success,Theta(n) Bottom-Up Iterativo
+E1,Fibonacci,o1_space,300,1.0199990356341004e-05,0,1,success,"Theta(n) Tempo, O(1) Espaço"
+E1,Fibonacci,memo,500,0.0002521999995224178,0,999,success,Theta(n) Top-Down com Memoização
+E1,Fibonacci,bottom_up,500,3.440000000409782e-05,0,1,success,Theta(n) Bottom-Up Iterativo
+E1,Fibonacci,o1_space,500,1.780001912266016e-05,0,1,success,"Theta(n) Tempo, O(1) Espaço"

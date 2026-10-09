@@ -1,0 +1,41 @@
+experiment,algorithm,approach,n,time_seconds,memory_bytes,calls,catalan_count,status,notes
+E7,Cadeia de Matrizes,naive,2,1.4599994756281376e-05,0,0,1,success,Naive: C(1) = 1 parentizações
+E7,Cadeia de Matrizes,naive,3,2.120001590810716e-05,0,0,2,success,Naive: C(2) = 2 parentizações
+E7,Cadeia de Matrizes,naive,4,2.7799978852272034e-05,0,0,5,success,Naive: C(3) = 5 parentizações
+E7,Cadeia de Matrizes,naive,5,4.700000863522291e-05,0,0,14,success,Naive: C(4) = 14 parentizações
+E7,Cadeia de Matrizes,naive,6,0.00018839997937902808,0,0,42,success,Naive: C(5) = 42 parentizações
+E7,Cadeia de Matrizes,naive,7,0.0002736000169534236,0,0,132,success,Naive: C(6) = 132 parentizações
+E7,Cadeia de Matrizes,naive,8,0.0008007999858818948,0,0,429,success,Naive: C(7) = 429 parentizações
+E7,Cadeia de Matrizes,naive,9,0.002638000005390495,0,0,1430,success,Naive: C(8) = 1430 parentizações
+E7,Cadeia de Matrizes,memo,2,6.599992047995329e-06,0,1,1,success,Theta(n^3) Top-Down Memoização
+E7,Cadeia de Matrizes,bottom_up,2,9.300012607127428e-06,440,1,1,success,Theta(n^3) Bottom-Up Matrix-Chain-Order (0.4 KB)
+E7,Cadeia de Matrizes,memo,4,1.4599994756281376e-05,0,1,5,success,Theta(n^3) Top-Down Memoização
+E7,Cadeia de Matrizes,bottom_up,4,1.580000389367342e-05,952,1,5,success,Theta(n^3) Bottom-Up Matrix-Chain-Order (0.9 KB)
+E7,Cadeia de Matrizes,memo,6,5.020000389777124e-05,0,1,42,success,Theta(n^3) Top-Down Memoização
+E7,Cadeia de Matrizes,bottom_up,6,3.500000457279384e-05,1656,1,42,success,Theta(n^3) Bottom-Up Matrix-Chain-Order (1.6 KB)
+E7,Cadeia de Matrizes,memo,8,9.950000094249845e-05,0,1,429,success,Theta(n^3) Top-Down Memoização
+E7,Cadeia de Matrizes,bottom_up,8,5.720002809539437e-05,2712,1,429,success,Theta(n^3) Bottom-Up Matrix-Chain-Order (2.6 KB)
+E7,Cadeia de Matrizes,memo,10,0.00022200000239536166,0,1,4862,success,Theta(n^3) Top-Down Memoização
+E7,Cadeia de Matrizes,bottom_up,10,0.00011710001854225993,3896,1,4862,success,Theta(n^3) Bottom-Up Matrix-Chain-Order (3.8 KB)
+E7,Cadeia de Matrizes,memo,12,0.00018309999722987413,0,1,58786,success,Theta(n^3) Top-Down Memoização
+E7,Cadeia de Matrizes,bottom_up,12,7.82000133767724e-05,5336,1,58786,success,Theta(n^3) Bottom-Up Matrix-Chain-Order (5.2 KB)
+E7,Cadeia de Matrizes,memo,14,0.0002601000014692545,0,1,742900,success,Theta(n^3) Top-Down Memoização
+E7,Cadeia de Matrizes,bottom_up,14,0.00010309999925084412,7144,1,742900,success,Theta(n^3) Bottom-Up Matrix-Chain-Order (7.0 KB)
+E7,Cadeia de Matrizes,memo,16,0.0008650000090710819,0,1,9694845,success,Theta(n^3) Top-Down Memoização
+E7,Cadeia de Matrizes,bottom_up,16,0.0002851999888662249,9672,1,9694845,success,Theta(n^3) Bottom-Up Matrix-Chain-Order (9.4 KB)
+E7,Cadeia de Matrizes,memo,18,0.0007901999924797565,0,1,129644790,success,Theta(n^3) Top-Down Memoização
+E7,Cadeia de Matrizes,bottom_up,18,0.000319099985063076,11880,1,129644790,success,Theta(n^3) Bottom-Up Matrix-Chain-Order (11.6 KB)
+E7,Cadeia de Matrizes,memo,20,0.0014106000016909093,0,1,1767263190,success,Theta(n^3) Top-Down Memoização
+E7,Cadeia de Matrizes,bottom_up,20,0.00026929998421110213,14456,1,1767263190,success,Theta(n^3) Bottom-Up Matrix-Chain-Order (14.1 KB)
+E7,Cadeia de Matrizes,memo,25,0.001361099974019453,0,1,1289904147324,success,Theta(n^3) Top-Down Memoização
+E7,Cadeia de Matrizes,bottom_up,25,0.0004820999747607857,23152,1,1289904147324,success,Theta(n^3) Bottom-Up Matrix-Chain-Order (22.6 KB)
+E7,Cadeia de Matrizes,memo,30,0.00236020001466386,0,1,1002242216651368,success,Theta(n^3) Top-Down Memoização
+E7,Cadeia de Matrizes,bottom_up,30,0.0008215000270865858,33152,1,1002242216651368,success,Theta(n^3) Bottom-Up Matrix-Chain-Order (32.4 KB)
+E7,Cadeia de Matrizes,memo,35,0.00398110001697205,0,1,812944042149730764,success,Theta(n^3) Top-Down Memoização
+E7,Cadeia de Matrizes,bottom_up,35,0.0012069999938830733,44768,1,812944042149730764,success,Theta(n^3) Bottom-Up Matrix-Chain-Order (43.7 KB)
+E7,Cadeia de Matrizes,memo,40,0.006140299985418096,0,1,680425371729975800390,success,Theta(n^3) Top-Down Memoização
+E7,Cadeia de Matrizes,bottom_up,40,0.0017911000177264214,57600,1,680425371729975800390,success,Theta(n^3) Bottom-Up Matrix-Chain-Order (56.2 KB)
+E7,Cadeia de Matrizes,memo,45,0.013197899999795482,0,1,583300119592996693088040,success,Theta(n^3) Top-Down Memoização
+E7,Cadeia de Matrizes,bottom_up,45,0.0032491999736521393,71840,1,583300119592996693088040,success,Theta(n^3) Bottom-Up Matrix-Chain-Order (70.2 KB)
+E7,Cadeia de Matrizes,memo,50,0.011909799999557436,0,1,509552245179617138054608572,success,Theta(n^3) Top-Down Memoização
+E7,Cadeia de Matrizes,bottom_up,50,0.0034073999850079417,87680,1,509552245179617138054608572,success,Theta(n^3) Bottom-Up Matrix-Chain-Order (85.6 KB)

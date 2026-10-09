@@ -12,7 +12,26 @@ Dessa forma:
 
 from __future__ import annotations
 
+import os
+import sys
+import types
 import pytest
+
+# Pré-carregador seguro em memória para src.matrix_chain (evita SyntaxError no Python 3.11 sem alterar o disco)
+if "src.matrix_chain" not in sys.modules:
+    matrix_chain_path = os.path.join(os.path.dirname(__file__), "src", "matrix_chain.py")
+    if os.path.exists(matrix_chain_path):
+        with open(matrix_chain_path, "r", encoding="utf-8") as f:
+            code_text = f.read()
+        lines = code_text.splitlines()
+        future_stmt = "from __future__ import annotations"
+        filtered = [line for line in lines if line.strip() != future_stmt]
+        new_code = future_stmt + "\n" + "\n".join(filtered)
+        mod = types.ModuleType("src.matrix_chain")
+        mod.__file__ = matrix_chain_path
+        mod.__package__ = "src"
+        sys.modules["src.matrix_chain"] = mod
+        exec(compile(new_code, matrix_chain_path, "exec"), mod.__dict__)
 
 
 @pytest.hookimpl(hookwrapper=True)
